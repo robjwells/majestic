@@ -30,6 +30,19 @@ class TestLoadSettings(unittest.TestCase):
         self.assertTrue(settings.getboolean('testing', 'test-blog cfg loaded'))
         self.assertTrue(settings.getboolean('testing', 'default cfg loaded'))
 
+    def test_defaults_overriden_by_local(self):
+        """Config files loaded in order so that locals override defaults"""
+        default_cfg = str(MAJESTIC_DIR.joinpath('majestic.cfg'))
+        default_settings = majestic.load_settings([default_cfg])
+        overridden_value = default_settings.getboolean('testing',
+                                                       'overridden setting')
+        self.assertFalse(overridden_value)
+        os.chdir(str(TEST_BLOG_DIR))
+        combined_settings = majestic.load_settings()
+        overridden_value = combined_settings.getboolean('testing',
+                                                        'overridden setting')
+        self.assertTrue(overridden_value)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
