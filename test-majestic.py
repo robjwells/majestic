@@ -3,7 +3,8 @@ import unittest
 
 import majestic
 
-TEST_BLOG_DIR = pathlib.Path(__file__).resolve().parent.joinpath('test-blog')
+MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent
+TEST_BLOG_DIR = MAJESTIC_DIR.joinpath('test-blog')
 
 class TestLoadSettings(unittest.TestCase):
     """Default and site-specific settings tests"""
