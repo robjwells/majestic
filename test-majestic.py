@@ -10,11 +10,10 @@ TEST_BLOG_DIR = MAJESTIC_DIR.joinpath('test-blog')
 class TestLoadSettings(unittest.TestCase):
     """Default and site-specific settings tests"""
     def setUp(self):
-        os.chdir(MAJESTIC_DIR)
+        os.chdir(str(MAJESTIC_DIR))
 
     def test_load_default_settings(self):
         """Config class contains setting set only in default .cfg file"""
-
         settings = majestic.load_settings()
         self.assertTrue(settings.getboolean('testing', 'default cfg loaded'))
 
