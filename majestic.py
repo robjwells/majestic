@@ -6,7 +6,10 @@ import pathlib
 MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent
 
 def load_settings(config_files=None):
-    """Load specified config files or the default and local ones"""
+    """Load specified config files or the default and local ones
+
+    config_files:   a list of filenames [str]
+    """
     if config_files is None:
         default_cfg = MAJESTIC_DIR.joinpath('majestic.cfg')
         local_cfg = pathlib.Path.cwd().joinpath('settings.cfg')
