@@ -127,12 +127,12 @@ class TestContent(unittest.TestCase):
         page = majestic.Page(title=self.title, body=self.body, meta=self.meta)
         self.assertEqual(
             [self.title, self.body, self.meta],
-            [post.title, post.body, post.meta]
+            [page.title, page.body, page.meta]
             )
 
     def test_page_init_missing_required_arguments(self):
         """Page raises if init not passed required arguments"""
-        arguments = [self.title, self.slug]
+        arguments = [self.title, self.body]
         for arg in arguments:
             with self.assertRaises(ValueError):
                 majestic.Page(
