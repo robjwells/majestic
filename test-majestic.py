@@ -14,26 +14,27 @@ class TestLoadSettings(unittest.TestCase):
 
     def test_load_default_settings(self):
         """Config class contains setting set only in default .cfg file"""
-        settings = majestic.load_settings()
+        settings = majestic.load_settings(default=True, local=False)
         self.assertTrue(settings.getboolean('testing', 'default cfg loaded'))
 
     def test_load_specific_only(self):
         """When given filenames, load only those files"""
         test_settings_fn = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
-        settings = majestic.load_settings([test_settings_fn])
+        settings = majestic.load_settings([test_settings_fn],
+                                          default=False, locals=False)
         self.assertTrue(settings.getboolean('testing', 'test-blog cfg loaded'))
 
     def test_load_default_and_local(self):
         """Properly load defaults and settings.cfg in current directory"""
         os.chdir(str(TEST_BLOG_DIR))
-        settings = majestic.load_settings()
+        settings = majestic.load_settings(default=True, local=False)
         self.assertTrue(settings.getboolean('testing', 'test-blog cfg loaded'))
         self.assertTrue(settings.getboolean('testing', 'default cfg loaded'))
 
     def test_defaults_overriden_by_local(self):
         """Config files loaded in order so that locals override defaults"""
         default_cfg = str(MAJESTIC_DIR.joinpath('majestic.cfg'))
-        default_settings = majestic.load_settings([default_cfg])
+        default_settings = majestic.load_settings(default=True, local=False)
         overridden_value = default_settings.getboolean('testing',
                                                        'overridden setting')
         self.assertFalse(overridden_value)
