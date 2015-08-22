@@ -45,9 +45,10 @@ class Page(object):
     def __init__(self, title, body, **kwargs):
         """Initialise Page
 
-        title:  str, required
-        body:   str, required
-        meta:   dict, optional
+        title:  str
+        body:   str
+
+        metadata container self.meta built from unused kwargs
         """
         self.title = title
         self.body = body
@@ -57,17 +58,16 @@ class Page(object):
 class Post(Page):
     """Content object representing a blog post
 
-    Has all the attributes of Page (title, body, meta) but
+    Has all the attributes of Page (title, body, meta via kwargs) but
     with the addition of a slug (for the URL) and a date
     """
     def __init__(self, title, body, slug, date, **kwargs):
         """Initialise Post
 
-        title:  str, required
-        body:   str, required
-        slug:   str, required
-        date:   datetime, required
-        meta:   dict, optional
+        title:  str
+        body:   str
+        slug:   str
+        date:   datetime
         """
         super().__init__(title=title, body=body, **kwargs)
         if not isinstance(date, datetime.datetime):
