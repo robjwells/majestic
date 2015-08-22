@@ -124,7 +124,7 @@ class TestContent(unittest.TestCase):
 
     def test_page_init(self):
         """init with valid values returns a Page with same values"""
-        page = majestic.Page(title=self.title, body=self.body, meta=self.meta)
+        page = majestic.Page(title=self.title, body=self.body, **self.meta)
         self.assertEqual(
             [self.title, self.body, self.meta],
             [page.title, page.body, page.meta]
@@ -144,7 +144,7 @@ class TestContent(unittest.TestCase):
         """init with valid values returns a Post with same values"""
         post = majestic.Post(title=self.title, date=self.date,
                              slug=self.slug, body=self.body,
-                             meta=self.meta)
+                             **self.meta)
         self.assertIsInstance(post, majestic.Post)
         self.assertEqual(
             [self.title, self.date, self.slug, self.body, self.meta],
