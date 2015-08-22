@@ -36,3 +36,24 @@ def markdown_files(dir):
     """
     extensions = {'.md', '.mkd', '.mkdown', '.markdown'}
     return (file for file in dir.iterdir() if file.suffix in extensions)
+
+
+class Page(object):
+    """Basic content object with a title, body and optional metadata"""
+    def __init__(self, title, body, meta=None):
+        """Initialise Page
+
+        title:  str, required
+        body:   str, required
+        meta:   dict, optional
+        """
+        if title is None:
+            raise ValueError('title cannot be None')
+        if body is None:
+            raise ValueError('body cannot be None')
+        if meta is None:
+            meta = {}
+
+        self.title = title
+        self.body = body
+        self.meta = meta
