@@ -1,0 +1,11 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+MAJESTIC_DIR	majestic.py	/^MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent$/;"	v
+configparser	majestic.py	/^import configparser$/;"	i
+load_settings	majestic.py	/^def load_settings(default=True, local=True, files=None):$/;"	f
+markdown_files	majestic.py	/^def markdown_files(dir):$/;"	f
+pathlib	majestic.py	/^import pathlib$/;"	i
