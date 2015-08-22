@@ -21,3 +21,18 @@ def load_settings(default=True, local=True, files=None):
         files.insert(0, str(default_cfg))
     settings.read(files)
     return settings
+
+
+def markdown_files(dir):
+    """Return a generator of all of the markdown files found in dir
+
+    dir:    a pathlib.Path
+
+    Acceptable extenions for markdown files:
+        * md
+        * mkd
+        * mkdown
+        * markdown
+    """
+    extensions = ['.md', '.mkd', '.mkdown', '.markdown']
+    return (file for file in dir.iterdir() if file.suffix in extensions)
