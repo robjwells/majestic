@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 import pathlib
 import tempfile
@@ -79,6 +80,45 @@ class TestLoadContentFiles(unittest.TestCase):
         for file in temp_dir.iterdir():
             file.unlink()
         temp_dir.rmdir()
+
+
+class TestPost(unittest.TestCase):
+    """Test the main Post class"""
+    def setUp(self):
+        """Set dummy values for use in testing"""
+        self.title = "Here’s a — test! — dummy title: (with lots o' symbols)"
+        self.date = datetime(2015, 8, 22, 9, 46)
+        self.slug = 'test-slug-with-no-relation-to-title'
+        self.body = (
+            # http://slipsum.com
+            "You see? It's curious. Ted did figure it out - time"
+            "travel. And when we get back, we gonna tell everyone. How"
+            "it's possible, how it's done, what the dangers are. But"
+            "then why fifty years in the future when the spacecraft"
+            "encounters a black hole does the computer call it an"
+            "'unknown entry event'? Why don't they know? If they don't"
+            "know, that means we never told anyone. And if we never"
+            "told anyone it means we never made it back. Hence we die"
+            "down here. Just as a matter of deductive logic."
+            "\n\n"
+            "You see? It's curious. Ted did figure it out - time"
+            "travel. And when we get back, we gonna tell everyone. How"
+            "it's possible, how it's done, what the dangers are. But"
+            "then why fifty years in the future when the spacecraft"
+            "encounters a black hole does the computer call it an"
+            "'unknown entry event'? Why don't they know? If they don't"
+            "know, that means we never told anyone. And if we never"
+            "told anyone it means we never made it back. Hence we die"
+            "down here. Just as a matter of deductive logic."
+            "\n\n"
+            "The lysine contingency - it's intended to prevent the"
+            "spread of the animals is case they ever got off the"
+            "island. Dr. Wu inserted a gene that makes a single faulty"
+            "enzyme in protein metabolism. The animals can't"
+            "manufacture the amino acid lysine. Unless they're"
+            "continually supplied with lysine by us, they'll slip into"
+            "a coma and die."
+        )
 
 
 if __name__ == '__main__':
