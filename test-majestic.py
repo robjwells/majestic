@@ -145,7 +145,7 @@ class TestContent(unittest.TestCase):
         post = majestic.Post(title=self.title, date=self.date,
                              slug=self.slug, body=self.body,
                              meta=self.meta)
-        self.assertIsInstance(majestic.Post, post)
+        self.assertIsInstance(post, majestic.Post)
         self.assertEqual(
             [self.title, self.date, self.slug, self.body, self.meta],
             [post.title, post.date, post.slug, post.body, post.meta]
