@@ -9,6 +9,7 @@ import majestic
 MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent
 TEST_BLOG_DIR = MAJESTIC_DIR.joinpath('test-blog')
 
+
 class TestLoadSettings(unittest.TestCase):
     """Default and site-specific settings tests"""
     def setUp(self):
@@ -89,9 +90,7 @@ class TestContent(unittest.TestCase):
         self.title = "Here’s a — test! — dummy title: (with lots o' symbols)"
         self.date = datetime(2015, 8, 22, 9, 46)
         self.slug = 'test-slug-with-no-relation-to-title'
-        self.meta = {
-            'tags': ['a', 'b']
-        }
+        self.meta = {'tags': ['a', 'b']}
         self.body = (
             # http://slipsum.com
             "You see? It's curious. Ted did figure it out - time"
@@ -121,7 +120,7 @@ class TestContent(unittest.TestCase):
             "manufacture the amino acid lysine. Unless they're"
             "continually supplied with lysine by us, they'll slip into"
             "a coma and die."
-        )
+            )
 
     def test_page_init(self):
         """init with valid values returns a Page with same values"""
