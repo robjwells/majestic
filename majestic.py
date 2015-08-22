@@ -42,7 +42,7 @@ def markdown_files(dir):
 
 class Page(object):
     """Basic content object with a title, body and optional metadata"""
-    def __init__(self, title, body, meta=None):
+    def __init__(self, title, body, **kwargs):
         """Initialise Page
 
         title:  str, required
@@ -53,12 +53,10 @@ class Page(object):
             raise ValueError('title cannot be None')
         if body is None:
             raise ValueError('body cannot be None')
-        if meta is None:
-            meta = {}
 
         self.title = title
         self.body = body
-        self.meta = meta
+        self.meta = kwargs
 
 
 class Post(Page):
@@ -67,7 +65,7 @@ class Post(Page):
     Has all the attributes of Page (title, body, meta) but
     with the addition of a slug (for the URL) and a date
     """
-    def __init__(self, title, body, slug, date, meta=None):
+    def __init__(self, title, body, slug, date, **kwargs):
         """Initialise Post
 
         title:  str, required
@@ -76,7 +74,7 @@ class Post(Page):
         date:   datetime, required
         meta:   dict, optional
         """
-        super().__init__(title=title, body=body, meta=meta)
+        super().__init__(title=title, body=body, **kwargs)
         if slug is None:
             raise ValueError('slug cannot be None')
         if not isinstance(date, datetime.datetime):
