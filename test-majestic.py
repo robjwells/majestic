@@ -130,16 +130,6 @@ class TestContent(unittest.TestCase):
             [page.title, page.body, page.meta]
             )
 
-    def test_page_init_missing_required_arguments(self):
-        """Page raises if init not passed required arguments"""
-        arguments = [self.title, self.body]
-        for arg in arguments:
-            with self.assertRaises(ValueError):
-                majestic.Page(
-                    title=self.title if arg is not self.title else None,
-                    body=self.body if arg is not self.body else None
-                    )
-
     def test_post_init(self):
         """init with valid values returns a Post with same values"""
         post = majestic.Post(title=self.title, date=self.date,
@@ -150,18 +140,6 @@ class TestContent(unittest.TestCase):
             [self.title, self.date, self.slug, self.body, self.meta],
             [post.title, post.date, post.slug, post.body, post.meta]
             )
-
-    def test_post_init_missing_required_arguments(self):
-        """Post raises if init not passed required arguments"""
-        arguments = [self.title, self.date, self.slug, self.body]
-        for arg in arguments:
-            with self.assertRaises(ValueError):
-                majestic.Post(
-                    title=self.title if arg is not self.title else None,
-                    date=self.date if arg is not self.date else None,
-                    slug=self.slug if arg is not self.slug else None,
-                    body=self.body if arg is not self.body else None
-                    )
 
     def test_post_init_invalid_date(self):
         """Post raises if date is not a datetime object"""

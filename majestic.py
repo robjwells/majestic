@@ -49,11 +49,6 @@ class Page(object):
         body:   str, required
         meta:   dict, optional
         """
-        if title is None:
-            raise ValueError('title cannot be None')
-        if body is None:
-            raise ValueError('body cannot be None')
-
         self.title = title
         self.body = body
         self.meta = kwargs
@@ -75,8 +70,6 @@ class Post(Page):
         meta:   dict, optional
         """
         super().__init__(title=title, body=body, **kwargs)
-        if slug is None:
-            raise ValueError('slug cannot be None')
         if not isinstance(date, datetime.datetime):
             raise ValueError('date must be a datetime.datetime object')
         self.slug = slug
