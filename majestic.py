@@ -34,5 +34,5 @@ def markdown_files(dir):
         * mkdown
         * markdown
     """
-    extensions = ['.md', '.mkd', '.mkdown', '.markdown']
+    extensions = {'.md', '.mkd', '.mkdown', '.markdown'}
     return (file for file in dir.iterdir() if file.suffix in extensions)
