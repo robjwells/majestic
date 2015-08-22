@@ -50,5 +50,17 @@ class TestLoadSettings(unittest.TestCase):
         self.assertEqual(1, len(settings))
         self.assertFalse(list(settings['DEFAULT']))
 
+
+class TestLoadContentFiles(unittest.TestCase):
+    """Test loading of markdown files"""
+    def test_markdown_files(self):
+        """markdown_files generates expected list for test-blog/posts"""
+        files = majestic.markdown_files(TEST_BLOG_DIR.joinpath('posts'))
+        extensions = ['.md', '.mkd', '.mkdown', '.markdown']
+        test_files = [f for f in TEST_BLOG_DIR.iterdir()
+                      if f.suffix in extensions]
+        self.assertEqual(test_files, files)
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
