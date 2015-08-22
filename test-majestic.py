@@ -83,7 +83,7 @@ class TestLoadContentFiles(unittest.TestCase):
 
 
 class TestContent(unittest.TestCase):
-    """Test the main Post class"""
+    """Test the main Page and Post classes"""
     def setUp(self):
         """Set dummy values for use in testing"""
         self.title = "Here’s a — test! — dummy title: (with lots o' symbols)"
