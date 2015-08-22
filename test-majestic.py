@@ -1,5 +1,6 @@
 import os
 import pathlib
+import tempfile
 import unittest
 
 import majestic
@@ -60,6 +61,13 @@ class TestLoadContentFiles(unittest.TestCase):
         extensions = ['.md', '.mkd', '.mkdown', '.markdown']
         test_files = [f for f in posts_dir.iterdir() if f.suffix in extensions]
         self.assertEqual(test_files, list(files))
+
+    def test_markdown_files_empty_dir(self):
+        """result is empty when given empty dir"""
+        temp_dir = pathlib.Path(tempfile.mkdtemp())
+        files = majestic.markdown_files(temp_dir)
+        self.assertFalse(list(files))
+        temp_dir.rmdir()
 
 
 if __name__ == '__main__':
