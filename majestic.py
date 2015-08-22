@@ -10,7 +10,9 @@ MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent
 def load_settings(default=True, local=True, files=None):
     """Load specified config files or the default and local ones
 
-    config_files:   a list of filenames [str]
+    default:    load default config file
+    local:      load config file from current directory
+    files:      [str] of filenames to load
     """
     settings = configparser.ConfigParser()
     if files is None:
