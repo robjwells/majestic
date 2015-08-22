@@ -69,6 +69,17 @@ class TestLoadContentFiles(unittest.TestCase):
         self.assertFalse(list(files))
         temp_dir.rmdir()
 
+    def test_markdown_files_nonempty_dir_no_md(self):
+        """result is empty when given nonempty dir containing no md files"""
+        temp_dir = pathlib.Path(tempfile.mkdtemp())
+        for x in range(20):
+            temp_dir.touch(x)
+        files = majestic.markdown_files(temp_dir)
+        self.assertFalse(list(files))
+        for file in temp_dir.iterdir():
+            file.unlink()
+        temp_dir.rmdir()
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
