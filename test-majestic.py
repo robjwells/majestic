@@ -20,8 +20,8 @@ class TestLoadSettings(unittest.TestCase):
     def test_load_specific_only(self):
         """When given filenames, load only those files"""
         test_settings_fn = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
-        settings = majestic.load_settings([test_settings_fn],
-                                          default=False, locals=False)
+        settings = majestic.load_settings(default=False, local=False,
+                                          files=[test_settings_fn])
         self.assertTrue(settings.getboolean('testing', 'test-blog cfg loaded'))
 
     def test_load_default_and_local(self):
