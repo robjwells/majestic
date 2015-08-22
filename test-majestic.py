@@ -27,7 +27,7 @@ class TestLoadSettings(unittest.TestCase):
     def test_load_default_and_local(self):
         """Properly load defaults and settings.cfg in current directory"""
         os.chdir(str(TEST_BLOG_DIR))
-        settings = majestic.load_settings(default=True, local=False)
+        settings = majestic.load_settings(default=True, local=True)
         self.assertTrue(settings.getboolean('testing', 'test-blog cfg loaded'))
         self.assertTrue(settings.getboolean('testing', 'default cfg loaded'))
 
