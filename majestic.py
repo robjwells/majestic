@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 import configparser
+import datetime
 import pathlib
 
 MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent
+
 
 def load_settings(default=True, local=True, files=None):
     """Load specified config files or the default and local ones
@@ -57,3 +59,27 @@ class Page(object):
         self.title = title
         self.body = body
         self.meta = meta
+
+
+class Post(Page):
+    """Content object representing a blog post
+
+    Has all the attributes of Page (title, body, meta) but
+    with the addition of a slug (for the URL) and a date
+    """
+    def __init__(self, title, body, slug, date, meta=None):
+        """Initialise Post
+
+        title:  str, required
+        body:   str, required
+        slug:   str, required
+        date:   datetime, required
+        meta:   dict, optional
+        """
+        super().__init__(title=title, body=body, meta=meta)
+        if slug is None:
+            raise ValueError('slug cannot be None')
+        if not isinstance(date, datetime.datetime):
+            raise ValueError('date must be a datetime.datetime object')
+        self.slug = slug
+        self.date = date
