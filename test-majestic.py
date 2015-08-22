@@ -44,6 +44,11 @@ class TestLoadSettings(unittest.TestCase):
                                                         'overridden setting')
         self.assertTrue(overridden_value)
 
+    def test_settings_empty_when_not_given_anything(self):
+        """Returned config object should be empty when everything disabled"""
+        settings = majestic.load_settings(default=False, local=False)
+        self.assertEqual(1, len(settings))
+        self.assertFalse(list(settings['DEFAULT']))
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
