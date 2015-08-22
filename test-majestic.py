@@ -89,6 +89,9 @@ class TestPost(unittest.TestCase):
         self.title = "Here’s a — test! — dummy title: (with lots o' symbols)"
         self.date = datetime(2015, 8, 22, 9, 46)
         self.slug = 'test-slug-with-no-relation-to-title'
+        self.meta = {
+            'tags': ['a', 'b']
+        }
         self.body = (
             # http://slipsum.com
             "You see? It's curious. Ted did figure it out - time"
@@ -123,11 +126,12 @@ class TestPost(unittest.TestCase):
     def test_init(self):
         """init with valid values returns a Post with same values"""
         post = majestic.Post(title=self.title, date=self.date,
-                             slug=self.slug, body=self.body)
+                             slug=self.slug, body=self.body,
+                             meta=self.meta)
         self.assertIsInstance(majestic.Post, post)
         self.assertEqual(
-            [self.title, self.date, self.slug, self.body],
-            [post.title, post.date, post.slug, post.body]
+            [self.title, self.date, self.slug, self.body, self.meta],
+            [post.title, post.date, post.slug, post.body, post.meta]
             )
 
     def test_init_missing_required_arguments(self):
