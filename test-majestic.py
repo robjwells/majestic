@@ -60,7 +60,7 @@ class TestLoadContentFiles(unittest.TestCase):
         """markdown_files generates expected list for test-blog/posts"""
         posts_dir = TEST_BLOG_DIR.joinpath('posts')
         files = majestic.markdown_files(posts_dir)
-        extensions = ['.md', '.mkd', '.mkdown', '.markdown']
+        extensions = ['.md', '.mkd', '.mdown', '.mkdown', '.markdown']
         test_files = [f for f in posts_dir.iterdir() if f.suffix in extensions]
         self.assertEqual(test_files, list(files))
 

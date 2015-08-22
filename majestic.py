@@ -35,10 +35,11 @@ def markdown_files(dir):
     Acceptable extenions for markdown files:
         * md
         * mkd
+        * mdown
         * mkdown
         * markdown
     """
-    extensions = {'.md', '.mkd', '.mkdown', '.markdown'}
+    extensions = {'.md', '.mkd', '.mdown', '.mkdown', '.markdown'}
     return (file for file in dir.iterdir() if file.suffix in extensions)
 
 
