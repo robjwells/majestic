@@ -82,7 +82,7 @@ class TestLoadContentFiles(unittest.TestCase):
         temp_dir.rmdir()
 
 
-class TestPost(unittest.TestCase):
+class TestContent(unittest.TestCase):
     """Test the main Post class"""
     def setUp(self):
         """Set dummy values for use in testing"""
@@ -123,7 +123,7 @@ class TestPost(unittest.TestCase):
             "a coma and die."
         )
 
-    def test_init(self):
+    def test_post_init(self):
         """init with valid values returns a Post with same values"""
         post = majestic.Post(title=self.title, date=self.date,
                              slug=self.slug, body=self.body,
@@ -134,7 +134,7 @@ class TestPost(unittest.TestCase):
             [post.title, post.date, post.slug, post.body, post.meta]
             )
 
-    def test_init_missing_required_arguments(self):
+    def test_post_init_missing_required_arguments(self):
         """Post raises if init not passed required arguments"""
         arguments = [self.title, self.date, self.slug, self.body]
         for arg in arguments:
@@ -146,7 +146,7 @@ class TestPost(unittest.TestCase):
                     body=self.body if arg is not self.body else None
                     )
 
-    def test_init_invalid_date(self):
+    def test_post_init_invalid_date(self):
         """Post raises if date is not a datetime object"""
         with self.assertRaises(ValueError):
             majestic.Post(
