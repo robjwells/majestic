@@ -4,6 +4,7 @@ import configparser
 import datetime
 import pathlib
 import re
+import string
 from unidecode import unidecode
 
 MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent
@@ -95,7 +96,18 @@ def is_valid_slug(slug):
     Slugs containing a percent character that is not followed by
     two hex digits are also deemed to be invalid.
     """
-    raise NotImplementedError()
+    bad_chars = set(" :?#[]@!$&'()*+,;=")
+    hex_set = set(string.hexdigits)
+
+    is_empty_string = len(slug) == 0
+    contains_bad_chars = bool(set(slug) & bad_chars)
+
+    contains_bad_percent = False
+    for match in re.finditer(r'%(.{,2})', slug):
+        encoded = match.group(1)
+        if len(encoded) < 2 or not set(encoded).issubset(hex_set):
+            contains_bad_percent = True
+    return not (is_empty_string or contains_bad_chars or contains_bad_percent)
 
 
 def normalise_slug(slug):
