@@ -44,12 +44,15 @@ def markdown_files(dir):
 
 
 class Page(object):
-    """Basic content object with a title, body and optional metadata"""
+    """Basic content object
+
+    Has a title, body, slug (for the URL) and optional metadata"""
     def __init__(self, title, body, slug, **kwargs):
         """Initialise Page
 
         title:  str
         body:   str
+        slug:   str
 
         metadata container self.meta built from unused kwargs
         """
@@ -62,8 +65,8 @@ class Page(object):
 class Post(Page):
     """Content object representing a blog post
 
-    Has all the attributes of Page (title, body, meta via kwargs) but
-    with the addition of a slug (for the URL) and a date
+    Has all the attributes of Page (title, body, slug, meta via kwargs)
+    but with the addition of a date
     """
     def __init__(self, title, body, slug, date, **kwargs):
         """Initialise Post
