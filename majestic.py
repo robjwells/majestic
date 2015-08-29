@@ -110,6 +110,10 @@ def normalise_slug(slug):
     new_slug = new_slug.replace(' ', '-')
     new_slug = hyphens.sub('-', new_slug)
     new_slug = new_slug.strip('-')
+
+    if not new_slug:
+        raise ValueError('Slug is the empty string')
+
     return new_slug
 
 
