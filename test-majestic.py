@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 import pathlib
+import string
 import tempfile
 import unittest
 
@@ -236,6 +237,38 @@ class TestParseFile(unittest.TestCase):
             post_dict['body'] = post.body
 
             self.assertEqual(file_dict, post_dict)
+
+    def test_parse_known_bad_slug(self):
+        """Invalid slugs are detected and normalised correctly
+
+        When given a file containing an invalid value for the slug,
+        parse_file should return a content object where the slug
+        has been normalised.
+
+        Slugs containing the following characters are deemed to be
+        invalid (note the quoted space at the beginning):
+
+        " " : ? # [ ] @ ! $ & ' ( ) * + , ; =
+
+        A normalised slug contain only the following characters:
+
+        a-z 0-9 - . _ ~
+
+        A file's slug *is not* checked against the character class.
+        It is only normalised if it contains one of the reserved
+        characters.
+
+        Both reserved and unreserved character sets come from
+        IETF RFC 3986, Uniform Resource Identifier (URI): Generic Syntax
+
+        """
+        known_bad_file = self.posts_path.joinpath('test_invalid_slug.md')
+        known_bad_slug = "This is a completely invalid slug :?#[]@!$&'()*+,;="
+
+        good_chars = set(string.ascii_lowercase + string.digits + '-._~')
+
+        post = majestic.parse_file(known_bad_file, content=majestic.Post)
+        self.assertTrue(set(post.slug).issubset(good_chars))
 
 
 if __name__ == '__main__':
