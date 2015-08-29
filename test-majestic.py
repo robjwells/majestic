@@ -4,6 +4,7 @@ import pathlib
 import tempfile
 import unittest
 
+
 import majestic
 
 MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent
@@ -178,6 +179,52 @@ class TestParseFile(unittest.TestCase):
         self.assertEqual(len(parsed_posts), len(list(self.posts)))
         for post in parsed_pages:
             self.assertTrue(type(post) == majestic.Post)
+
+    def test_posts(self):
+        """Posts returned with file's contents correctly stored
+
+        The parsing rules should differentiate between the metadata and
+        body. The metadata is all the lines between the start of the file
+        and a blank line. The body is everything following the blank line.
+
+        Of the metadata in the header, the title, slug and date should
+        be available as attributes. The date should be a datetime object
+        corresponding to the textual date in the metadata header.
+
+        All other metadata should be available in a dictionary stored
+        on the post as the meta attribute. The keys in that dictionary
+        should be lower-case and stripped of leading and trailing
+        whitespace. The values should be stripped only.
+
+        The body should be stripped of leading and trailing newlines only.
+        """
+        for file in self.posts:
+            with file.open() as f:
+                header, body = f.read().split('\n\n', maxsplit=1)
+            meta_pairs = [line.split(':', maxsplit=1)
+                          for line in header.splitlines()]
+            meta_dict = {label.lower().strip(): data.strip()
+                         for label, data in meta_pairs}
+            body = body.strip('\n')
+
+            post = majestic.parse_file(file, majestic.Post)
+
+            # The date format will have to be read from the config file
+            # when that's implemented
+            date_format = '%Y-%m-%d %H:%M'
+
+            title = meta_dict.pop('title')
+            slug = meta_dict.pop('slug')
+            date = meta_dict.pop('date')
+
+            pairs = [(post.title, title),
+                     (post.slug, slug),
+                     (post.date.strftime(date_format), date)]
+            for key, value in meta_dict.items():
+                pairs.append(post.meta[key], value)
+
+            for parsed_value, test_value in pairs:
+                self.assertEqual(parsed_value, test_value)
 
 
 if __name__ == '__main__':
