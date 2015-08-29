@@ -157,8 +157,8 @@ class TestContent(unittest.TestCase):
 class TestParseFile(unittest.TestCase):
     """Test that parse_file correctly processes markdown pages and posts"""
     def setUp(self):
-        self.pages = TEST_BLOG_DIR.joinpath('pages').iterdir()
-        self.posts = TEST_BLOG_DIR.joinpath('posts').iterdir()
+        self.pages_path = TEST_BLOG_DIR.joinpath('pages')
+        self.posts_path = TEST_BLOG_DIR.joinpath('posts')
 
     def test_parsed_type(self):
         """Object returned is of correct content type
@@ -166,18 +166,20 @@ class TestParseFile(unittest.TestCase):
         Test both Pages and Posts
         """
         parsed_pages = [majestic.parse_file(page, content=majestic.Page)
-                        for page in self.pages]
+                        for page in self.pages_path.iterdir()]
         # Check the function returned the right number of objects
         # (This is mostly in here so that the test doesn't pass when
         #  the function just contains the `pass` statement)
-        self.assertEqual(len(parsed_pages), len(list(self.pages)))
+        self.assertEqual(len(parsed_pages),
+                         len(list(self.pages_path.iterdir())))
         for page in parsed_pages:
             self.assertTrue(type(page) == majestic.Page)
 
         parsed_posts = [majestic.parse_file(post, content=majestic.Post)
-                        for post in self.posts]
-        self.assertEqual(len(parsed_posts), len(list(self.posts)))
-        for post in parsed_pages:
+                        for post in self.posts_path.iterdir()]
+        self.assertEqual(len(parsed_posts),
+                         len(list(self.posts_path.iterdir())))
+        for post in parsed_posts:
             self.assertTrue(type(post) == majestic.Post)
 
     def test_posts(self):
@@ -198,7 +200,7 @@ class TestParseFile(unittest.TestCase):
 
         The body should be stripped of leading and trailing newlines only.
         """
-        for file in self.posts:
+        for file in self.posts_path.iterdir():
             with file.open() as f:
                 header, body = f.read().split('\n\n', maxsplit=1)
             meta_pairs = [line.split(':', maxsplit=1)
@@ -221,7 +223,7 @@ class TestParseFile(unittest.TestCase):
                      (post.slug, slug),
                      (post.date.strftime(date_format), date)]
             for key, value in meta_dict.items():
-                pairs.append(post.meta[key], value)
+                pairs.append((post.meta[key], value))
 
             for parsed_value, test_value in pairs:
                 self.assertEqual(parsed_value, test_value)
