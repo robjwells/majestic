@@ -85,6 +85,17 @@ class Post(Page):
 def parse_file(file, content):
     """Create a content object from the contents of file
 
-    Content should be Page or one of its subclasses
+    file:       a pathlib.Path
+    content:    Page or one of its subclasses
     """
-    pass
+    # This will have to change when the config file is implemented
+    date_format = '%Y-%m-%d %H:%M'
+
+    with file.open() as f:
+        meta, body = f.read().split('\n\n', maxsplit=1)
+    body = body.strip('\n')
+    meta = [line.split(':', maxsplit=1) for line in meta.splitlines()]
+    meta = {k.lower().strip(): v.strip() for k, v in meta}
+    if 'date' in meta:
+        meta['date'] = datetime.datetime.strptime(meta['date'], date_format)
+    return content(body=body, **meta)
