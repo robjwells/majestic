@@ -147,7 +147,7 @@ def parse_file(file, class_):
     """Create a content object from the contents of file
 
     file:       a pathlib.Path
-    class_:    Page or one of its subclasses
+    class_:     Page or one of its subclasses
     """
     # This will have to change when the config file is implemented
     date_format = '%Y-%m-%d %H:%M'
