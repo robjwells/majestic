@@ -159,4 +159,6 @@ def parse_file(file, content):
     meta = {k.lower().strip(): v.strip() for k, v in meta}
     if 'date' in meta:
         meta['date'] = datetime.datetime.strptime(meta['date'], date_format)
+    if not is_valid_slug(meta['slug']):
+        meta['slug'] = normalise_slug(meta['slug'])
     return content(body=body, **meta)
