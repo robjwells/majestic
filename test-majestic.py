@@ -159,6 +159,14 @@ class TestParseFile(unittest.TestCase):
     def setUp(self):
         self.pages_path = TEST_BLOG_DIR.joinpath('pages')
         self.posts_path = TEST_BLOG_DIR.joinpath('posts')
+        lib_post_names = '''\
+1917-11-07 Годовщина Великой Октябрьской социалистической революции.md
+1949-10-01 国庆节.mkd
+1959-01-01 Triunfo de la Revolución.mdown
+1975-04-30 Ngày Thống nhất.markdown
+1979-07-19 Liberation Day.mkdown'''.splitlines()
+        self.lib_posts = [self.posts_path.joinpath(post)
+                          for post in lib_post_names]
 
     def test_parsed_type(self):
         """Object returned is of correct content type
@@ -176,14 +184,21 @@ class TestParseFile(unittest.TestCase):
             self.assertTrue(type(page) == majestic.Page)
 
         parsed_posts = [majestic.parse_file(post, content=majestic.Post)
-                        for post in self.posts_path.iterdir()]
+                        for post in self.lib_posts]
         self.assertEqual(len(parsed_posts),
-                         len(list(self.posts_path.iterdir())))
+                         len(self.lib_posts))
         for post in parsed_posts:
             self.assertTrue(type(post) == majestic.Post)
 
-    def test_posts(self):
+    def test_posts_general(self):
         """Posts returned with file's contents correctly stored
+
+        This test tests the five liberation day posts, starting:
+            1917-11-07
+            1949-10-01
+            1959-01-01
+            1975-04-30
+            1979-07-19
 
         The parsing rules should differentiate between the metadata and
         body. The metadata is all the lines between the start of the file
@@ -200,7 +215,7 @@ class TestParseFile(unittest.TestCase):
 
         The body should be stripped of leading and trailing newlines only.
         """
-        for file in self.posts_path.iterdir():
+        for file in self.lib_posts:
             with file.open() as f:
                 header, body = f.read().split('\n\n', maxsplit=1)
             meta_pairs = [line.split(':', maxsplit=1)
