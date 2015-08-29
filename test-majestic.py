@@ -303,10 +303,14 @@ class TestParseFile(unittest.TestCase):
         bad_set = set(" :?#[]@!$&'()*+,;=")
         good_set = set(string.ascii_lowercase + string.digits + '-._~')
 
-        test_slug = "this is an :?#[]@!$&'()*+,;= invalid slug"
-        new_slug = majestic.normalise_slug(test_slug)
+        test_bad_slug = "this is an :?#[]@!$&'()*+,;= invalid slug"
+        new_slug = majestic.normalise_slug(test_bad_slug)
         self.assertTrue(set(new_slug).issubset(good_set))
         self.assertTrue(set(new_slug).isdisjoint(bad_set))
+
+        test_good_slug = "00-this-is_a~valid.slug"
+        self.assertEqual(majestic.normalise_slug(test_good_slug),
+                         test_good_slug)
 
     def test_normalise_slug_empty_string(self):
         """normalise_slug should raise if result is the empty string"""
