@@ -82,6 +82,11 @@ class Post(Page):
         self.date = date
 
 
+def normalise_slug(slug):
+    """..."""
+    pass
+
+
 def parse_file(file, content):
     """Create a content object from the contents of file
 

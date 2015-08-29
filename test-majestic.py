@@ -239,7 +239,7 @@ class TestParseFile(unittest.TestCase):
             self.assertEqual(file_dict, post_dict)
 
     def test_parse_known_bad_slug(self):
-        """Invalid slugs are detected and normalised correctly
+        """parse_file detects and normalises invalid slugs
 
         When given a file containing an invalid value for the slug,
         parse_file should return a content object where the slug
@@ -258,7 +258,7 @@ class TestParseFile(unittest.TestCase):
         It is only normalised if it contains one of the reserved
         characters.
 
-        Both reserved and unreserved character sets come from
+        Reserved and unreserved character are adapted from
         IETF RFC 3986, Uniform Resource Identifier (URI): Generic Syntax
 
         """
@@ -267,6 +267,41 @@ class TestParseFile(unittest.TestCase):
 
         post = majestic.parse_file(known_bad_file, content=majestic.Post)
         self.assertTrue(set(post.slug).issubset(good_chars))
+
+    def test_parse_known_good_slug(self):
+        """parse_file does not normalised known good slug"""
+        known_good_file = self.posts_path.joinpath('test_good_slug.md')
+        known_good_slug = 'valid%20slug'
+
+        post = majestic.parse_file(known_good_file, content=majestic.Post)
+        self.assertTrue(post.slug, known_good_slug)
+
+    def test_normalise_slug_known_bad(self):
+        """normalise_slug correctly normalises known bad slug"""
+        known_bad_slug = "This is a completely invalid slug :?#[]@!$&'()*+,;="
+        expected = 'this-is-a-completely-invalid-slug'
+        new_slug = majestic.normalise_slug(known_bad_slug)
+        self.assertEqual(new_slug, expected)
+
+    def test_normalise_slug_chars(self):
+        """normalise_slug function returns a valid slug
+
+        A valid slug is deemed to contain only the following characters:
+
+        a-z 0-9 - . _ ~
+        """
+        bad_set = set(" :?#[]@!$&'()*+,;=")
+        good_set = set(string.ascii_lowercase + string.digits + '-._~')
+
+        test_slug = "this is an :?#[]@!$&'()*+,;= invalid slug"
+        new_slug = majestic.normalise_slug(test_slug)
+        self.assertTrue(set(new_slug).issubset(good_set))
+        self.assertTrue(set(new_slug).isdisjoint(bad_set))
+
+    def test_normalise_slug_empty_string(self):
+        """normalise_slug should raise if result is the empty string"""
+        with self.assertRaises(ValueError):
+            majestic.normalise_slug(":?#[]@!$&'()*+,;=")
 
 
 if __name__ == '__main__':
