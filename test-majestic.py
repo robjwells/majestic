@@ -250,6 +250,9 @@ class TestParseFile(unittest.TestCase):
 
         " " : ? # [ ] @ ! $ & ' ( ) * + , ; =
 
+        Slugs containing a percent character that is not followed by
+        two hex digits are also deemed to be invalid.
+
         A normalised slug contain only the following characters:
 
         a-z 0-9 - . _ ~
@@ -268,8 +271,15 @@ class TestParseFile(unittest.TestCase):
         post = majestic.parse_file(known_bad_file, content=majestic.Post)
         self.assertTrue(set(post.slug).issubset(good_chars))
 
+    def test_parse_bad_percent_encoding(self):
+        """parse_file normalises slugs containing invalid percent encoding"""
+        bad_percent_file = self.posts_path.joinpath('test_bad_percent.md')
+        bad_percent_slug = 'this-is-not-100%-valid'
+        post = majestic.parse_file(bad_percent_file, content=majestic.Post)
+        self.assertNotEqual(post.slug, bad_percent_slug)
+
     def test_parse_known_good_slug(self):
-        """parse_file does not normalised known good slug"""
+        """parse_file does not normalise known good slug"""
         known_good_file = self.posts_path.joinpath('test_good_slug.md')
         known_good_slug = 'valid%20slug'
 
