@@ -80,3 +80,11 @@ class Post(Page):
         if not isinstance(date, datetime.datetime):
             raise ValueError('date must be a datetime.datetime object')
         self.date = date
+
+
+def parse_file(file, content):
+    """Create a content object from the contents of file
+
+    Content should be Page or one of its subclasses
+    """
+    pass

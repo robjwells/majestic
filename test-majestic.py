@@ -153,5 +153,30 @@ class TestContent(unittest.TestCase):
                 )
 
 
+class TestParseFile(unittest.TestCase):
+    """Test that parse_file correctly processes markdown pages and posts"""
+    def setUp(self):
+        self.pages = TEST_BLOG_DIR.joinpath('pages').iterdir()
+        self.posts = TEST_BLOG_DIR.joinpath('posts').iterdir()
+
+    def test_parsed_type(self):
+        """Object returned is of correct content type
+
+        Test both Pages and Posts
+        """
+        parsed_pages = [majestic.parse_file(page, content=majestic.Page)
+                        for page in self.pages]
+        # Check the function returned the right number of objects
+        self.assertEqual(len(parsed_pages), len(list(self.pages)))
+        for page in parsed_pages:
+            self.assertTrue(type(page) == majestic.Page)
+
+        parsed_posts = [majestic.parse_file(post, content=majestic.Post)
+                        for post in self.posts]
+        self.assertEqual(len(parsed_posts), len(list(self.posts)))
+        for post in parsed_pages:
+            self.assertTrue(type(post) == majestic.Post)
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
