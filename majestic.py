@@ -143,11 +143,11 @@ def normalise_slug(slug):
     return new_slug
 
 
-def parse_file(file, content):
+def parse_file(file, class_):
     """Create a content object from the contents of file
 
     file:       a pathlib.Path
-    content:    Page or one of its subclasses
+    class_:    Page or one of its subclasses
     """
     # This will have to change when the config file is implemented
     date_format = '%Y-%m-%d %H:%M'
@@ -161,4 +161,4 @@ def parse_file(file, content):
         meta['date'] = datetime.datetime.strptime(meta['date'], date_format)
     if not is_valid_slug(meta['slug']):
         meta['slug'] = normalise_slug(meta['slug'])
-    return content(body=body, **meta)
+    return class_(body=body, **meta)
