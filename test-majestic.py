@@ -263,8 +263,6 @@ class TestParseFile(unittest.TestCase):
 
         """
         known_bad_file = self.posts_path.joinpath('test_invalid_slug.md')
-        known_bad_slug = "This is a completely invalid slug :?#[]@!$&'()*+,;="
-
         good_chars = set(string.ascii_lowercase + string.digits + '-._~')
 
         post = majestic.parse_file(known_bad_file, content=majestic.Post)
