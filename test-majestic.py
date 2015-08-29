@@ -215,33 +215,27 @@ class TestParseFile(unittest.TestCase):
 
         The body should be stripped of leading and trailing newlines only.
         """
+        # The date format will have to be read from the config file
+        # when that's implemented
+        date_format = '%Y-%m-%d %H:%M'
+
         for file in self.lib_posts:
             with file.open() as f:
-                header, body = f.read().split('\n\n', maxsplit=1)
-            meta_pairs = [line.split(':', maxsplit=1)
-                          for line in header.splitlines()]
-            meta_dict = {label.lower().strip(): data.strip()
-                         for label, data in meta_pairs}
-            body = body.strip('\n')
+                meta, body = f.read().split('\n\n', maxsplit=1)
+            meta = [line.split(':', maxsplit=1) for line in meta.splitlines()]
+            meta = {key.lower().strip(): value.strip() for key, value in meta}
+
+            file_dict = meta
+            file_dict['body'] = body.strip('\n')
 
             post = majestic.parse_file(file, majestic.Post)
+            post_dict = post.meta.copy()
+            post_dict['title'] = post.title
+            post_dict['slug'] = post.slug
+            post_dict['date'] = post.date.strftime(date_format)
+            post_dict['body'] = post.body
 
-            # The date format will have to be read from the config file
-            # when that's implemented
-            date_format = '%Y-%m-%d %H:%M'
-
-            title = meta_dict.pop('title')
-            slug = meta_dict.pop('slug')
-            date = meta_dict.pop('date')
-
-            pairs = [(post.title, title),
-                     (post.slug, slug),
-                     (post.date.strftime(date_format), date)]
-            for key, value in meta_dict.items():
-                pairs.append((post.meta[key], value))
-
-            for parsed_value, test_value in pairs:
-                self.assertEqual(parsed_value, test_value)
+            self.assertEqual(file_dict, post_dict)
 
 
 if __name__ == '__main__':
