@@ -45,7 +45,7 @@ def markdown_files(dir):
 
 class Page(object):
     """Basic content object with a title, body and optional metadata"""
-    def __init__(self, title, body, **kwargs):
+    def __init__(self, title, body, slug, **kwargs):
         """Initialise Page
 
         title:  str
@@ -55,6 +55,7 @@ class Page(object):
         """
         self.title = title
         self.body = body
+        self.slug = slug
         self.meta = kwargs
 
 
@@ -72,8 +73,7 @@ class Post(Page):
         slug:   str
         date:   datetime
         """
-        super().__init__(title=title, body=body, **kwargs)
+        super().__init__(title=title, body=body, slug=slug, **kwargs)
         if not isinstance(date, datetime.datetime):
             raise ValueError('date must be a datetime.datetime object')
-        self.slug = slug
         self.date = date
