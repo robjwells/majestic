@@ -84,6 +84,20 @@ class Post(Page):
         self.date = date
 
 
+def is_valid_slug(slug):
+    """Test slug for validity and return a boolean
+
+    Slugs containing the following characters are deemed to be
+    invalid (note the quoted space at the beginning):
+
+    " " : ? # [ ] @ ! $ & ' ( ) * + , ; =
+
+    Slugs containing a percent character that is not followed by
+    two hex digits are also deemed to be invalid.
+    """
+    raise NotImplementedError()
+
+
 def normalise_slug(slug):
     """Rewrite slug to contain only valid characters
 

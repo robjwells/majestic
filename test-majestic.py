@@ -317,6 +317,30 @@ class TestParseFile(unittest.TestCase):
         with self.assertRaises(ValueError):
             majestic.normalise_slug(":?#[]@!$&'()*+,;=")
 
+    def test_is_valid_slug_empty(self):
+        """is_valid_slug returns False if slug is the empty string"""
+        self.assertFalse(majestic.is_valid_slug(''))
+
+    def test_is_valid_slug_false(self):
+        """is_valid_slug returns False if slug contains invalid characters"""
+        known_bad_slug = "This is a completely invalid slug :?#[]@!$&'()*+,;="
+        self.assertFalse(majestic.is_valid_slug(known_bad_slug))
+
+    def test_is_valid_slug_bad_percent(self):
+        """is_valid_slug returns False if slug has bad percent encoding"""
+        known_bad_slug = "this-is-not-100%-valid"
+        self.assertFalse(majestic.is_valid_slug(known_bad_slug))
+
+    def test_is_valid_slug_good_percent(self):
+        """is_valid_slug returns True given proper percent encoding"""
+        known_good_slug = 'hello%20world'
+        self.assertTrue(majestic.is_valid_slug(known_good_slug))
+
+    def test_is_valid_slug_true(self):
+        """is_valid_slug returns True when slug contains all valid chars"""
+        known_good_slug = "00-this-is_a~valid.slug"
+        self.assertTrue(majestic.is_valid_slug(known_good_slug))
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
