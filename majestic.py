@@ -3,6 +3,8 @@
 import configparser
 import datetime
 import pathlib
+import re
+from unidecode import unidecode
 
 MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent
 
@@ -83,8 +85,32 @@ class Post(Page):
 
 
 def normalise_slug(slug):
-    """..."""
-    pass
+    """Rewrite slug to contain only valid characters
+
+    Valid characters are deemed to be:
+
+    a-z 0-9 - . _ ~
+
+    Any other characters (including percent encoded characters)
+    are removed from the output.
+
+    Spaces are changed to hyphens.
+
+    This function borrows heavily from Dr Drang's post ASCIIfying:
+    http://www.leancrew.com/all-this/2014/10/asciifying/
+    """
+    separators = re.compile(r'[—–/:;,.]')
+    not_valid = re.compile(r'[^- a-z0-9]')
+    hyphens = re.compile(r'-+')
+
+    new_slug = slug.lower()
+    new_slug = separators.sub('-', new_slug)
+    new_slug = unidecode(new_slug)
+    new_slug = not_valid.sub('', new_slug)
+    new_slug = new_slug.replace(' ', '-')
+    new_slug = hyphens.sub('-', new_slug)
+    new_slug = new_slug.strip('-')
+    return new_slug
 
 
 def parse_file(file, content):
