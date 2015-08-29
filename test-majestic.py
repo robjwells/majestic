@@ -167,6 +167,8 @@ class TestParseFile(unittest.TestCase):
         parsed_pages = [majestic.parse_file(page, content=majestic.Page)
                         for page in self.pages]
         # Check the function returned the right number of objects
+        # (This is mostly in here so that the test doesn't pass when
+        #  the function just contains the `pass` statement)
         self.assertEqual(len(parsed_pages), len(list(self.pages)))
         for page in parsed_pages:
             self.assertTrue(type(page) == majestic.Page)
