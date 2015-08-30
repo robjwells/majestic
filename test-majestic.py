@@ -38,7 +38,6 @@ class TestLoadSettings(unittest.TestCase):
 
     def test_defaults_overriden_by_local(self):
         """Config files loaded in order so that locals override defaults"""
-        default_cfg = str(MAJESTIC_DIR.joinpath('majestic.cfg'))
         default_settings = majestic.load_settings(default=True, local=False)
         overridden_value = default_settings.getboolean('testing',
                                                        'overridden setting')
