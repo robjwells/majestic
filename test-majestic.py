@@ -145,7 +145,7 @@ class TestContent(unittest.TestCase):
 
     def test_content_init_invalid_date(self):
         """Content raises if date is not a datetime object"""
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(ValueError):
             majestic.Content(
                 date='a string',
                 title=self.title,
