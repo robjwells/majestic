@@ -238,12 +238,12 @@ class TestParseFile(unittest.TestCase):
         Slugs containing the following characters are deemed to be
         invalid (note the quoted space at the beginning):
 
-        " " : ? # [ ] @ ! $ & ' ( ) * + , ; =
+        " " : / ? # [ ] @ ! $ & ' ( ) * + , ; =
 
         Slugs containing a percent character that is not followed by
         two hex digits are also deemed to be invalid.
 
-        A normalised slug contain only the following characters:
+        A normalised slug contains only the following characters:
 
         a-z 0-9 -
 
@@ -284,7 +284,7 @@ class TestParseFile(unittest.TestCase):
 
     def test_normalise_slug_known_bad(self):
         """normalise_slug correctly normalises known bad slug"""
-        known_bad_slug = "This is a completely invalid slug :?#[]@!$&'()*+,;="
+        known_bad_slug = "This is a completely invalid slug :/?#[]@!$&'()*+,;="
         expected = 'this-is-a-completely-invalid-slug'
         new_slug = majestic.normalise_slug(known_bad_slug)
         self.assertEqual(new_slug, expected)
@@ -296,10 +296,10 @@ class TestParseFile(unittest.TestCase):
 
         a-z 0-9 - . _ ~
         """
-        bad_set = set(" :?#[]@!$&'()*+,;=")
+        bad_set = set(" :/?#[]@!$&'()*+,;=")
         good_set = set(string.ascii_lowercase + string.digits + '-')
 
-        test_bad_slug = "this is an :?#[]@!$&'()*+,;= invalid slug"
+        test_bad_slug = "this is an :/?#[]@!$&'()*+,;= invalid slug"
         new_slug = majestic.normalise_slug(test_bad_slug)
         self.assertTrue(set(new_slug).issubset(good_set))
         self.assertTrue(set(new_slug).isdisjoint(bad_set))
@@ -311,7 +311,7 @@ class TestParseFile(unittest.TestCase):
     def test_normalise_slug_empty_string(self):
         """normalise_slug should raise if result is the empty string"""
         with self.assertRaises(ValueError):
-            majestic.normalise_slug(":?#[]@!$&'()*+,;=")
+            majestic.normalise_slug(":/?#[]@!$&'()*+,;=")
 
     def test_normalise_slug_conservative(self):
         """Normalise correctly removes unreserved chars . _ ~
@@ -332,7 +332,7 @@ class TestParseFile(unittest.TestCase):
 
     def test_is_valid_slug_false(self):
         """is_valid_slug returns False if slug contains invalid characters"""
-        known_bad_slug = "This is a completely invalid slug :?#[]@!$&'()*+,;="
+        known_bad_slug = "This is a completely invalid slug :/?#[]@!$&'()*+,;="
         self.assertFalse(majestic.is_valid_slug(known_bad_slug))
 
     def test_is_valid_slug_bad_percent(self):

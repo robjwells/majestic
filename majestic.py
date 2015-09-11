@@ -73,7 +73,10 @@ def is_valid_slug(slug):
     Slugs containing the following characters are deemed to be
     invalid (note the quoted space at the beginning):
 
-    " " : ? # [ ] @ ! $ & ' ( ) * + , ; =
+    " " : / ? # [ ] @ ! $ & ' ( ) * + , ; =
+
+    (This is the reserved set according to IETF RFC 3986, with the
+    addition of the space character.)
 
     Slugs containing a percent character that is not followed by
     two hex digits are also deemed to be invalid.
@@ -97,10 +100,12 @@ def normalise_slug(slug):
 
     Valid characters are deemed to be:
 
-    a-z 0-9 - . _ ~
+    a-z 0-9 -
 
     Any other characters (including percent encoded characters)
-    are removed from the output.
+    are removed from the output. Note that this function is more
+    strict with the characters it emits than is_valid_slug is
+    with the characters that it accepts.
 
     Spaces are changed to hyphens.
 
