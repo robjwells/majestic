@@ -197,9 +197,7 @@ class TestParseFile(unittest.TestCase):
 
         The body should be stripped of leading and trailing newlines only.
         """
-        # The date format will have to be read from the config file
-        # when that's implemented
-        date_format = '%Y-%m-%d %H:%M'
+        date_format = self.settings.get('dates', 'date format')
 
         for file in self.lib_posts:
             with file.open() as f:
