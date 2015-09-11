@@ -9,7 +9,6 @@ MAJESTIC_DIR	majestic.py	/^MAJESTIC_DIR = pathlib.Path(__file__).resolve().paren
 __init__	majestic.py	/^    def __init__(self, title, body, slug, date=None, **kwargs):$/;"	m	class:Content
 configparser	majestic.py	/^import configparser$/;"	i
 datetime	majestic.py	/^import datetime$/;"	i
-is_valid_slug	majestic.py	/^def is_valid_slug(slug):$/;"	f
 load_settings	majestic.py	/^def load_settings(default=True, local=True, files=None):$/;"	f
 markdown_files	majestic.py	/^def markdown_files(dir):$/;"	f
 normalise_slug	majestic.py	/^def normalise_slug(slug):$/;"	f
@@ -18,3 +17,4 @@ pathlib	majestic.py	/^import pathlib$/;"	i
 re	majestic.py	/^import re$/;"	i
 string	majestic.py	/^import string$/;"	i
 unidecode	majestic.py	/^from unidecode import unidecode$/;"	i
+validate_slug	majestic.py	/^def validate_slug(slug):$/;"	f
