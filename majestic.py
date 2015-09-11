@@ -107,8 +107,8 @@ def normalise_slug(slug):
     This function borrows heavily from Dr Drang's post ASCIIfying:
     http://www.leancrew.com/all-this/2014/10/asciifying/
     """
-    separators = re.compile(r'[—–/:;,]')
-    not_valid = re.compile(r'[^- ._~a-z0-9]')  # Spaces handled separately
+    separators = re.compile(r'[—–/:;,.~_]')
+    not_valid = re.compile(r'[^- a-z0-9]')  # Spaces handled separately
     hyphens = re.compile(r'-+')
 
     new_slug = slug.lower()
