@@ -4,18 +4,16 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
+Content	majestic.py	/^class Content(object):$/;"	c
 MAJESTIC_DIR	majestic.py	/^MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent$/;"	v
-Page	majestic.py	/^class Page(object):$/;"	c
-Post	majestic.py	/^class Post(Page):$/;"	c
-__init__	majestic.py	/^    def __init__(self, title, body, slug, **kwargs):$/;"	m	class:Page
-__init__	majestic.py	/^    def __init__(self, title, body, slug, date, **kwargs):$/;"	m	class:Post
+__init__	majestic.py	/^    def __init__(self, title, body, slug, date=None, **kwargs):$/;"	m	class:Content
 configparser	majestic.py	/^import configparser$/;"	i
 datetime	majestic.py	/^import datetime$/;"	i
 is_valid_slug	majestic.py	/^def is_valid_slug(slug):$/;"	f
 load_settings	majestic.py	/^def load_settings(default=True, local=True, files=None):$/;"	f
 markdown_files	majestic.py	/^def markdown_files(dir):$/;"	f
 normalise_slug	majestic.py	/^def normalise_slug(slug):$/;"	f
-parse_file	majestic.py	/^def parse_file(file, class_):$/;"	f
+parse_file	majestic.py	/^def parse_file(file, settings):$/;"	f
 pathlib	majestic.py	/^import pathlib$/;"	i
 re	majestic.py	/^import re$/;"	i
 string	majestic.py	/^import string$/;"	i
