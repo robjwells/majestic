@@ -217,6 +217,17 @@ class TestParseFile(unittest.TestCase):
 
             self.assertEqual(file_dict, post_dict)
 
+    def test_about_page(self):
+        """Parsing basic page should work as with posts"""
+        page = majestic.parse_file(self.pages_path.joinpath('about.md'),
+                                   settings=self.settings)
+        self.assertEqual(page.title, 'About majestic')
+        self.assertEqual(page.slug, 'about')
+        self.assertEqual(
+            page.body,
+            ('Majestic makes websites out of markdown files.\n\n'
+             'It is written in Python and was started by Rob Wells.'))
+
     def test_parse_known_bad_slug(self):
         """parse_file detects and normalises invalid slugs
 
