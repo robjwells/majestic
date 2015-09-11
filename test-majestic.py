@@ -304,7 +304,7 @@ class TestParseFile(unittest.TestCase):
         self.assertTrue(set(new_slug).issubset(good_set))
         self.assertTrue(set(new_slug).isdisjoint(bad_set))
 
-        test_good_slug = "00-this-is_a~valid.slug"
+        test_good_slug = "00-this-is-a-valid-slug"
         self.assertEqual(majestic.normalise_slug(test_good_slug),
                          test_good_slug)
 
