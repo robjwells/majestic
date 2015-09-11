@@ -245,21 +245,27 @@ class TestParseFile(unittest.TestCase):
 
         A normalised slug contain only the following characters:
 
-        a-z 0-9 - . _ ~
+        a-z 0-9 -
 
-        A file's slug *is not* checked against the character class.
+        A file's slug *is not* checked against the normalised characters.
         It is only normalised if it contains one of the reserved
         characters.
+
+        The validator is liberal and the normaliser conservative. These
+        characters are not reserved in a URI (and so pass the validator)
+        but are not kept by the normaliser:
+
+        . _ ~
 
         Reserved and unreserved character are adapted from
         IETF RFC 3986, Uniform Resource Identifier (URI): Generic Syntax
 
         """
         known_bad_file = self.posts_path.joinpath('test_invalid_slug.md')
-        good_chars = set(string.ascii_lowercase + string.digits + '-._~')
+        good_chars = set(string.ascii_lowercase + string.digits + '-')
 
         post = majestic.parse_file(known_bad_file, settings=self.settings)
-        self.assertTrue(set(post.slug).issubset(good_chars))
+        self.assertLess(set(post.slug), good_chars) # Subset test
 
     def test_parse_bad_percent_encoding(self):
         """parse_file normalises slugs containing invalid percent encoding"""
@@ -291,7 +297,7 @@ class TestParseFile(unittest.TestCase):
         a-z 0-9 - . _ ~
         """
         bad_set = set(" :?#[]@!$&'()*+,;=")
-        good_set = set(string.ascii_lowercase + string.digits + '-._~')
+        good_set = set(string.ascii_lowercase + string.digits + '-')
 
         test_bad_slug = "this is an :?#[]@!$&'()*+,;= invalid slug"
         new_slug = majestic.normalise_slug(test_bad_slug)
@@ -306,6 +312,19 @@ class TestParseFile(unittest.TestCase):
         """normalise_slug should raise if result is the empty string"""
         with self.assertRaises(ValueError):
             majestic.normalise_slug(":?#[]@!$&'()*+,;=")
+
+    def test_normalise_slug_conservative(self):
+        """Normalise correctly removes unreserved chars . _ ~
+
+        Those characters pass the validator but should still be removed
+        if the slug is normalised because of another character.
+        """
+        slug = 'here are some valid chars . _ ~ and an invalid one!'
+        normalised = majestic.normalise_slug(slug)
+        self.assertEqual(
+            normalised,
+            'here-are-some-valid-chars-and-an-invalid-one'
+            )
 
     def test_is_valid_slug_empty(self):
         """is_valid_slug returns False if slug is the empty string"""
