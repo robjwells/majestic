@@ -17,7 +17,7 @@ def load_settings(default=True, local=True, files=None):
     local:      load config file from current directory
     files:      [str] of filenames to load
     """
-    settings = configparser.ConfigParser()
+    settings = configparser.ConfigParser(interpolation=None)
     if files is None:
         files = []
     if local:
