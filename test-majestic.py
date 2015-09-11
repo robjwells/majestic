@@ -85,7 +85,7 @@ class TestLoadContentFiles(unittest.TestCase):
 
 
 class TestContent(unittest.TestCase):
-    """Test the main Page and Post classes"""
+    """Test the main Content class"""
     def setUp(self):
         """Set dummy values for use in testing"""
         self.title = "Here’s a — test! — dummy title: (with lots o' symbols)"
@@ -123,30 +123,30 @@ class TestContent(unittest.TestCase):
             "a coma and die."
             )
 
-    def test_page_init(self):
-        """init with valid values returns a Page with same values"""
-        page = majestic.Page(title=self.title, body=self.body,
-                             slug=self.slug, **self.meta)
+    def test_content_init_no_date(self):
+        """init with valid values returns a Content with same values"""
+        content = majestic.Content(title=self.title, body=self.body,
+                                   slug=self.slug, **self.meta)
         self.assertEqual(
             [self.title, self.body, self.slug, self.meta],
-            [page.title, page.body, page.slug, page.meta]
+            [content.title, content.body, content.slug, content.meta]
             )
 
-    def test_post_init(self):
-        """init with valid values returns a Post with same values"""
-        post = majestic.Post(title=self.title, date=self.date,
-                             slug=self.slug, body=self.body,
-                             **self.meta)
-        self.assertIsInstance(post, majestic.Post)
+    def test_content_init_with_date(self):
+        """init with valid values returns a Content with same values"""
+        content = majestic.Content(title=self.title, date=self.date,
+                                   slug=self.slug, body=self.body,
+                                   **self.meta)
         self.assertEqual(
             [self.title, self.date, self.slug, self.body, self.meta],
-            [post.title, post.date, post.slug, post.body, post.meta]
+            [content.title, content.date, content.slug, content.body,
+             content.meta]
             )
 
-    def test_post_init_invalid_date(self):
-        """Post raises if date is not a datetime object"""
-        with self.assertRaises(ValueError):
-            majestic.Post(
+    def test_content_init_invalid_date(self):
+        """Content raises if date is not a datetime object"""
+        with self.assertRaises(AttributeError):
+            majestic.Content(
                 date='a string',
                 title=self.title,
                 slug=self.slug,
@@ -171,30 +171,6 @@ class TestParseFile(unittest.TestCase):
 1979-07-19 Liberation Day.mkdown'''.splitlines()
         self.lib_posts = [self.posts_path.joinpath(post)
                           for post in lib_post_names]
-
-    def test_parsed_type(self):
-        """Object returned is of correct content type
-
-        Test both Pages and Posts
-        """
-        parsed_pages = [majestic.parse_file(page, class_=majestic.Page,
-                                            settings=self.settings)
-                        for page in self.pages_path.iterdir()]
-        # Check the function returned the right number of objects
-        # (This is mostly in here so that the test doesn't pass when
-        #  the function just contains the `pass` statement)
-        self.assertEqual(len(parsed_pages),
-                         len(list(self.pages_path.iterdir())))
-        for page in parsed_pages:
-            self.assertTrue(type(page) == majestic.Page)
-
-        parsed_posts = [majestic.parse_file(post, class_=majestic.Post,
-                                            settings=self.settings)
-                        for post in self.lib_posts]
-        self.assertEqual(len(parsed_posts),
-                         len(self.lib_posts))
-        for post in parsed_posts:
-            self.assertTrue(type(post) == majestic.Post)
 
     def test_posts_general(self):
         """Posts returned with file's contents correctly stored
@@ -234,8 +210,7 @@ class TestParseFile(unittest.TestCase):
             file_dict = meta
             file_dict['body'] = body.strip('\n')
 
-            post = majestic.parse_file(file, class_=majestic.Post,
-                                       settings=self.settings)
+            post = majestic.parse_file(file, settings=self.settings)
             post_dict = post.meta.copy()
             post_dict['title'] = post.title
             post_dict['slug'] = post.slug
@@ -274,16 +249,14 @@ class TestParseFile(unittest.TestCase):
         known_bad_file = self.posts_path.joinpath('test_invalid_slug.md')
         good_chars = set(string.ascii_lowercase + string.digits + '-._~')
 
-        post = majestic.parse_file(known_bad_file, class_=majestic.Post,
-                                   settings=self.settings)
+        post = majestic.parse_file(known_bad_file, settings=self.settings)
         self.assertTrue(set(post.slug).issubset(good_chars))
 
     def test_parse_bad_percent_encoding(self):
         """parse_file normalises slugs containing invalid percent encoding"""
         bad_percent_file = self.posts_path.joinpath('test_bad_percent.md')
         bad_percent_slug = 'this-is-not-100%-valid'
-        post = majestic.parse_file(bad_percent_file, class_=majestic.Post,
-                                   settings=self.settings)
+        post = majestic.parse_file(bad_percent_file, settings=self.settings)
         self.assertNotEqual(post.slug, bad_percent_slug)
 
     def test_parse_known_good_slug(self):
@@ -291,8 +264,7 @@ class TestParseFile(unittest.TestCase):
         known_good_file = self.posts_path.joinpath('test_good_slug.md')
         known_good_slug = 'valid%20slug'
 
-        post = majestic.parse_file(known_good_file, class_=majestic.Post,
-                                   settings=self.settings)
+        post = majestic.parse_file(known_good_file, settings=self.settings)
         self.assertTrue(post.slug, known_good_slug)
 
     def test_normalise_slug_known_bad(self):
