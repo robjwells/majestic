@@ -157,6 +157,10 @@ class TestContent(unittest.TestCase):
 class TestParseFile(unittest.TestCase):
     """Test that parse_file correctly processes markdown pages and posts"""
     def setUp(self):
+        settings_path = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
+        self.settings = majestic.load_settings(files=[settings_path],
+                                               local=False)
+
         self.pages_path = TEST_BLOG_DIR.joinpath('pages')
         self.posts_path = TEST_BLOG_DIR.joinpath('posts')
         lib_post_names = '''\
@@ -173,7 +177,8 @@ class TestParseFile(unittest.TestCase):
 
         Test both Pages and Posts
         """
-        parsed_pages = [majestic.parse_file(page, class_=majestic.Page)
+        parsed_pages = [majestic.parse_file(page, class_=majestic.Page,
+                                            settings=self.settings)
                         for page in self.pages_path.iterdir()]
         # Check the function returned the right number of objects
         # (This is mostly in here so that the test doesn't pass when
@@ -183,7 +188,8 @@ class TestParseFile(unittest.TestCase):
         for page in parsed_pages:
             self.assertTrue(type(page) == majestic.Page)
 
-        parsed_posts = [majestic.parse_file(post, class_=majestic.Post)
+        parsed_posts = [majestic.parse_file(post, class_=majestic.Post,
+                                            settings=self.settings)
                         for post in self.lib_posts]
         self.assertEqual(len(parsed_posts),
                          len(self.lib_posts))
@@ -228,7 +234,8 @@ class TestParseFile(unittest.TestCase):
             file_dict = meta
             file_dict['body'] = body.strip('\n')
 
-            post = majestic.parse_file(file, majestic.Post)
+            post = majestic.parse_file(file, class_=majestic.Post,
+                                       settings=self.settings)
             post_dict = post.meta.copy()
             post_dict['title'] = post.title
             post_dict['slug'] = post.slug
@@ -267,14 +274,16 @@ class TestParseFile(unittest.TestCase):
         known_bad_file = self.posts_path.joinpath('test_invalid_slug.md')
         good_chars = set(string.ascii_lowercase + string.digits + '-._~')
 
-        post = majestic.parse_file(known_bad_file, class_=majestic.Post)
+        post = majestic.parse_file(known_bad_file, class_=majestic.Post,
+                                   settings=self.settings)
         self.assertTrue(set(post.slug).issubset(good_chars))
 
     def test_parse_bad_percent_encoding(self):
         """parse_file normalises slugs containing invalid percent encoding"""
         bad_percent_file = self.posts_path.joinpath('test_bad_percent.md')
         bad_percent_slug = 'this-is-not-100%-valid'
-        post = majestic.parse_file(bad_percent_file, class_=majestic.Post)
+        post = majestic.parse_file(bad_percent_file, class_=majestic.Post,
+                                   settings=self.settings)
         self.assertNotEqual(post.slug, bad_percent_slug)
 
     def test_parse_known_good_slug(self):
@@ -282,7 +291,8 @@ class TestParseFile(unittest.TestCase):
         known_good_file = self.posts_path.joinpath('test_good_slug.md')
         known_good_slug = 'valid%20slug'
 
-        post = majestic.parse_file(known_good_file, class_=majestic.Post)
+        post = majestic.parse_file(known_good_file, class_=majestic.Post,
+                                   settings=self.settings)
         self.assertTrue(post.slug, known_good_slug)
 
     def test_normalise_slug_known_bad(self):
