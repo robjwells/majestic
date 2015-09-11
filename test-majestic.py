@@ -326,29 +326,29 @@ class TestParseFile(unittest.TestCase):
             'here-are-some-valid-chars-and-an-invalid-one'
             )
 
-    def test_is_valid_slug_empty(self):
-        """is_valid_slug returns False if slug is the empty string"""
-        self.assertFalse(majestic.is_valid_slug(''))
+    def test_validate_slug_empty(self):
+        """validate_slug returns False if slug is the empty string"""
+        self.assertFalse(majestic.validate_slug(''))
 
-    def test_is_valid_slug_false(self):
-        """is_valid_slug returns False if slug contains invalid characters"""
+    def test_validate_slug_false(self):
+        """validate_slug returns False if slug contains invalid characters"""
         known_bad_slug = "This is a completely invalid slug :/?#[]@!$&'()*+,;="
-        self.assertFalse(majestic.is_valid_slug(known_bad_slug))
+        self.assertFalse(majestic.validate_slug(known_bad_slug))
 
-    def test_is_valid_slug_bad_percent(self):
-        """is_valid_slug returns False if slug has bad percent encoding"""
+    def test_validate_slug_bad_percent(self):
+        """validate_slug returns False if slug has bad percent encoding"""
         known_bad_slug = "this-is-not-100%-valid"
-        self.assertFalse(majestic.is_valid_slug(known_bad_slug))
+        self.assertFalse(majestic.validate_slug(known_bad_slug))
 
-    def test_is_valid_slug_good_percent(self):
-        """is_valid_slug returns True given proper percent encoding"""
+    def test_validate_slug_good_percent(self):
+        """validate_slug returns True given proper percent encoding"""
         known_good_slug = 'hello%20world'
-        self.assertTrue(majestic.is_valid_slug(known_good_slug))
+        self.assertTrue(majestic.validate_slug(known_good_slug))
 
-    def test_is_valid_slug_true(self):
-        """is_valid_slug returns True when slug contains all valid chars"""
+    def test_validate_slug_true(self):
+        """validate_slug returns True when slug contains all valid chars"""
         known_good_slug = "00-this-is_a~valid.slug"
-        self.assertTrue(majestic.is_valid_slug(known_good_slug))
+        self.assertTrue(majestic.validate_slug(known_good_slug))
 
 
 if __name__ == '__main__':

@@ -67,7 +67,7 @@ class Content(object):
         self.date = date
 
 
-def is_valid_slug(slug):
+def validate_slug(slug):
     """Test slug for validity and return a boolean
 
     Slugs containing the following characters are deemed to be
@@ -104,7 +104,7 @@ def normalise_slug(slug):
 
     Any other characters (including percent encoded characters)
     are removed from the output. Note that this function is more
-    strict with the characters it emits than is_valid_slug is
+    strict with the characters it emits than validate_slug is
     with the characters that it accepts.
 
     Spaces are changed to hyphens.
@@ -145,6 +145,6 @@ def parse_file(file, settings):
     meta = {k.lower().strip(): v.strip() for k, v in meta}
     if 'date' in meta:
         meta['date'] = datetime.datetime.strptime(meta['date'], date_format)
-    if not is_valid_slug(meta['slug']):
+    if not validate_slug(meta['slug']):
         meta['slug'] = normalise_slug(meta['slug'])
     return Content(body=body, **meta)
