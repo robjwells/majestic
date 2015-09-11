@@ -46,41 +46,23 @@ def markdown_files(dir):
     return (file for file in dir.iterdir() if file.suffix in extensions)
 
 
-class Page(object):
-    """Basic content object
-
-    Has a title, body, slug (for the URL) and optional metadata"""
-    def __init__(self, title, body, slug, **kwargs):
-        """Initialise Page
-
-        title:  str
-        body:   str
-        slug:   str
-
-        metadata container self.meta built from unused kwargs
-        """
-        self.title = title
-        self.body = body
-        self.slug = slug
-        self.meta = kwargs
-
-
-class Post(Page):
-    """Content object representing a blog post
-
-    Has all the attributes of Page (title, body, slug, meta via kwargs)
-    but with the addition of a date
-    """
-    def __init__(self, title, body, slug, date, **kwargs):
+class Content(object):
+    """Content object representing a markdown post or page"""
+    def __init__(self, title, body, slug, date=None, **kwargs):
         """Initialise Post
 
         title:  str
         body:   str
         slug:   str
-        date:   datetime
+        date:   datetime (if not None)
+
+        kwargs used to create metadata container self.meta
         """
-        super().__init__(title=title, body=body, slug=slug, **kwargs)
-        if not isinstance(date, datetime.datetime):
+        self.title = title
+        self.body = body
+        self.slug = slug
+        self.meta = kwargs
+        if date is not None and not isinstance(date, datetime.datetime):
             raise ValueError('date must be a datetime.datetime object')
         self.date = date
 
