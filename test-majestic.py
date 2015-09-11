@@ -265,7 +265,7 @@ class TestParseFile(unittest.TestCase):
         good_chars = set(string.ascii_lowercase + string.digits + '-')
 
         post = majestic.parse_file(known_bad_file, settings=self.settings)
-        self.assertLess(set(post.slug), good_chars) # Subset test
+        self.assertLess(set(post.slug), good_chars)  # Subset test
 
     def test_parse_bad_percent_encoding(self):
         """parse_file normalises slugs containing invalid percent encoding"""
