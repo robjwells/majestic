@@ -81,7 +81,7 @@ def is_valid_slug(slug):
     Slugs containing a percent character that is not followed by
     two hex digits are also deemed to be invalid.
     """
-    bad_chars = set(" :?#[]@!$&'()*+,;=")
+    bad_chars = set(" :/?#[]@!$&'()*+,;=")
     hex_set = set(string.hexdigits)
 
     is_empty_string = len(slug) == 0
