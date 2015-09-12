@@ -113,11 +113,13 @@ def normalise_slug(slug):
     http://www.leancrew.com/all-this/2014/10/asciifying/
     """
     separators = re.compile(r'[—–/:;,.~_]')
+    percent_enc = re.compile(r'%[0-9a-f]{2}')
     not_valid = re.compile(r'[^- a-z0-9]')  # Spaces handled separately
     hyphens = re.compile(r'-+')
 
     new_slug = slug.lower()
     new_slug = separators.sub('-', new_slug)
+    new_slug = percent_enc.sub('-', new_slug)
     new_slug = unidecode(new_slug)
     new_slug = not_valid.sub('', new_slug)
     new_slug = new_slug.replace(' ', '-')

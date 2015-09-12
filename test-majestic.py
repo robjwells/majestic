@@ -257,6 +257,8 @@ class TestParseFile(unittest.TestCase):
 
         . _ ~
 
+        The normaliser also removes percent-encoded characters (%20).
+
         Reserved and unreserved character are adapted from
         IETF RFC 3986, Uniform Resource Identifier (URI): Generic Syntax
 
@@ -325,6 +327,12 @@ class TestParseFile(unittest.TestCase):
             normalised,
             'here-are-some-valid-chars-and-an-invalid-one'
             )
+
+    def test_normalise_slug_percent_encoding(self):
+        """normalise_slug removes percent-encoded characters"""
+        slug = 'this%20slug%20has%20spaces'
+        normalised = majestic.normalise_slug(slug)
+        self.assertEqual(normalised, 'this-slug-has-spaces')
 
     def test_validate_slug_empty(self):
         """validate_slug returns False if slug is the empty string"""
