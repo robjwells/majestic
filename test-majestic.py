@@ -57,13 +57,21 @@ class TestLoadSettings(unittest.TestCase):
 
 class TestLoadContentFiles(unittest.TestCase):
     """Test loading of markdown files"""
-    def test_markdown_files(self):
+    def test_markdown_files_posts(self):
         """markdown_files generates expected list for test-blog/posts"""
         posts_dir = TEST_BLOG_DIR.joinpath('posts')
-        files = majestic.markdown_files(posts_dir)
         extensions = ['.md', '.mkd', '.mdown', '.mkdown', '.markdown']
-        test_files = [f for f in posts_dir.iterdir() if f.suffix in extensions]
-        self.assertEqual(test_files, list(files))
+
+        test_files = []
+        for path, dirs, files in os.walk(str(posts_dir)):
+            for f in files:
+                if os.path.splitext(f)[1] in extensions:
+                    test_files.append(os.path.join(path, f))
+        test_files = list(map(pathlib.Path, test_files))
+        returned_files = list(majestic.markdown_files(posts_dir))
+        test_files.sort()
+        returned_files.sort()
+        self.assertEqual(test_files, returned_files)
 
     def test_markdown_files_empty_dir(self):
         """result is empty when given empty dir"""

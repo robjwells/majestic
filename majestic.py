@@ -2,6 +2,7 @@
 
 import configparser
 import datetime
+import os
 import pathlib
 import re
 import string
@@ -43,7 +44,11 @@ def markdown_files(dir):
         * markdown
     """
     extensions = {'.md', '.mkd', '.mdown', '.mkdown', '.markdown'}
-    return (file for file in dir.iterdir() if file.suffix in extensions)
+    files = (pathlib.Path(os.path.join(dirpath, f))
+             for dirpath, dirnames, filenames in os.walk(str(dir))
+             for f in filenames
+             if os.path.splitext(f)[1] in extensions)
+    return files
 
 
 class Content(object):
