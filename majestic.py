@@ -32,11 +32,11 @@ def load_settings(default=True, local=True, files=None):
 
 
 def markdown_files(dir):
-    """Return a generator of all of the markdown files found in dir
+    """Return a generator of the markdown files found in dir and its subdirs
 
     dir:    a pathlib.Path
 
-    Acceptable extenions for markdown files:
+    Accepted extenions for markdown files:
         * md
         * mkd
         * mdown
