@@ -78,15 +78,14 @@ class Content(object):
         If not, or if the dates are the same, compare titles.
         If titles are the same then compare slugs.
 
-        Titles are compared case-insensitively, but slugs
-        are case-sensitive.
+        Titles and slugs are compared case-insensitively.
         """
         if all([self.date, other.date]):
             return self.date < other.date
         elif self.title.lower() != other.title.lower():
             return self.title.lower() < other.title.lower()
         else:
-            return self.slug < other.slug
+            return self.slug.lower() < other.slug.lower()
 
 
 def validate_slug(slug):
