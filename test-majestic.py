@@ -161,6 +161,70 @@ class TestContent(unittest.TestCase):
                 body=self.body
                 )
 
+    def test_content_lt_date(self):
+        """Content with different dates compare properly (less than)"""
+        post_1 = majestic.Content(date=datetime(2015, 9, 14), body=self.body,
+                                  title=self.title, slug=self.slug)
+        post_2 = majestic.Content(date=datetime(2002, 4, 14), body=self.body,
+                                  title=self.title, slug=self.slug)
+        self.assertFalse(post_1 < post_2)
+        self.assertTrue(post_2 < post_1)
+
+    def test_content_gt_date(self):
+        """Content with different dates compare properly (greater than)"""
+        post_1 = majestic.Content(date=datetime(2015, 9, 14), body=self.body,
+                                  title=self.title, slug=self.slug)
+        post_2 = majestic.Content(date=datetime(2002, 4, 14), body=self.body,
+                                  title=self.title, slug=self.slug)
+        self.assertFalse(post_2 > post_1)
+        self.assertTrue(post_1 > post_2)
+
+    def test_content_lt_title(self):
+        """Content with different titles compare properly (less than)"""
+        post_1 = majestic.Content(date=self.date, title='title a',
+                                  slug=self.slug, body=self.body)
+        post_2 = majestic.Content(date=self.date, title='title b',
+                                  slug=self.slug, body=self.body)
+        self.assertTrue(post_1 < post_2)
+        self.assertFalse(post_2 < post_1)
+
+    def test_content_gt_title(self):
+        """Content with different titles compare properly (greater than)"""
+        post_1 = majestic.Content(date=self.date, title='title a',
+                                  slug=self.slug, body=self.body)
+        post_2 = majestic.Content(date=self.date, title='title b',
+                                  slug=self.slug, body=self.body)
+        self.assertFalse(post_1 > post_2)
+        self.assertTrue(post_2 > post_1)
+
+    def test_content_compare_title_case_insensitive(self):
+        """Content with titles that differ in case compare properly"""
+        post_1 = majestic.Content(date=self.date, title='title a',
+                                  slug=self.slug, body=self.body)
+        post_2 = majestic.Content(date=self.date, title='title B',
+                                  slug=self.slug, body=self.body)
+        self.assertFalse(post_1 > post_2)
+        self.assertTrue(post_2 > post_1)
+
+    def test_content_lt_slug(self):
+        """Content with different slugs compare properly (less than)"""
+        post_1 = majestic.Content(date=self.date, title=self.title,
+                                  slug='test-a', body=self.body)
+        post_2 = majestic.Content(date=self.date, title=self.title,
+                                  slug='test-b', body=self.body)
+        self.assertTrue(post_1 < post_2)
+        self.assertFalse(post_2 < post_1)
+
+    def test_content_gt_slug(self):
+        """Content with different dates compare properly (greater)"""
+        post_1 = majestic.Content(date=self.date, title=self.title,
+                                  slug='test-a', body=self.body)
+        post_2 = majestic.Content(date=self.date, title=self.title,
+                                  slug='test-b', body=self.body)
+        self.assertFalse(post_1 > post_2)
+        self.assertTrue(post_2 > post_1)
+
+
 
 class TestParseFile(unittest.TestCase):
     """Test that parse_file correctly processes markdown pages and posts"""
