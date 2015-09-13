@@ -71,6 +71,23 @@ class Content(object):
             raise ValueError('date must be a datetime.datetime object')
         self.date = date
 
+    def __lt__(self, other):
+        """Compare self with other based on date, title then slug
+
+        If both self and other have dates, compare dates.
+        If not, or if the dates are the same, compare titles.
+        If titles are the same then compare slugs.
+
+        Titles are compared case-insensitively, but slugs
+        are case-sensitive.
+        """
+        if all([self.date, other.date]):
+            return self.date < other.date
+        elif self.title.lower() != other.title.lower():
+            return self.title.lower() < other.title.lower()
+        else:
+            return self.slug < other.slug
+
 
 def validate_slug(slug):
     """Test slug for validity and return a boolean
