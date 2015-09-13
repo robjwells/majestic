@@ -31,10 +31,10 @@ def load_settings(default=True, local=True, files=None):
     return settings
 
 
-def markdown_files(dir):
-    """Return a generator of the markdown files found in dir and its subdirs
+def markdown_files(directory):
+    """Return a generator of the markdown files found by walking directory
 
-    dir:    a pathlib.Path
+    directory:  a pathlib.Path
 
     Accepted extenions for markdown files:
         * md
@@ -45,7 +45,7 @@ def markdown_files(dir):
     """
     extensions = {'.md', '.mkd', '.mdown', '.mkdown', '.markdown'}
     files = (pathlib.Path(os.path.join(dirpath, f))
-             for dirpath, dirnames, filenames in os.walk(str(dir))
+             for dirpath, dirnames, filenames in os.walk(str(directory))
              for f in filenames
              if os.path.splitext(f)[1] in extensions)
     return files
