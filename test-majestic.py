@@ -185,7 +185,6 @@ class TestContent(unittest.TestCase):
                                   slug=self.slug, body=self.body)
         post_2 = majestic.Content(title='title B',
                                   slug=self.slug, body=self.body)
-        print(post_1.title, post_2.title)
         self.assertTrue(post_1 < post_2)
 
     def test_content_lt_slug(self):
