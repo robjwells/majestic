@@ -53,8 +53,10 @@ def markdown_files(directory):
 
 class Content(object):
     """Content object representing a markdown post or page"""
-    def __init__(self, title, body, slug, date=None,
-                 source_path=None, **kwargs):
+    def __init__(self, *,
+                 title, body, slug,
+                 date=None, source_path=None,
+                 **kwargs):
         """Initialise Post
 
         title:          str
