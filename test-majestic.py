@@ -403,6 +403,23 @@ class TestParseFile(unittest.TestCase):
         known_good_slug = "00-this-is_a~valid.slug"
         self.assertTrue(majestic.validate_slug(known_good_slug))
 
+    def test_draft_future_date(self):
+        """parse_file returns None given a file with a future date"""
+        result = majestic.parse_file(
+            file=self.posts_path.joinpath('test_future_date.md'),
+            settings=self.settings)
+        self.assertIsNone(result)
+
+    def test_explicit_draft(self):
+        """parse_file returns None given a file with 'draft' in meta
+
+        'draft' should appear (without quotes) at the end on a line by itself
+        """
+        result = majestic.parse_file(
+            file=self.posts_path.joinpath('test_explicit_draft.md'),
+            settings=self.settings)
+        self.assertIsNone(result)
+
 
 if __name__ == '__main__':
     unittest.main()
