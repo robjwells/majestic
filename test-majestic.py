@@ -94,7 +94,7 @@ class TestLoadContentFiles(unittest.TestCase):
 
 
 class TestContent(unittest.TestCase):
-    """Test the main Content class"""
+    """Test the Content base class"""
     def setUp(self):
         """Set dummy values for use in testing"""
         self.title = "Here’s a — test! — dummy title: (with lots o' symbols)"
@@ -105,71 +105,52 @@ class TestContent(unittest.TestCase):
             # http://slipsum.com
             "You see? It's curious. Ted did figure it out - time"
             "travel. And when we get back, we gonna tell everyone. How"
-            "it's possible, how it's done, what the dangers are. But"
-            "then why fifty years in the future when the spacecraft"
-            "encounters a black hole does the computer call it an"
-            "'unknown entry event'? Why don't they know? If they don't"
-            "know, that means we never told anyone. And if we never"
-            "told anyone it means we never made it back. Hence we die"
-            "down here. Just as a matter of deductive logic."
-            "\n\n"
-            "You see? It's curious. Ted did figure it out - time"
-            "travel. And when we get back, we gonna tell everyone. How"
-            "it's possible, how it's done, what the dangers are. But"
-            "then why fifty years in the future when the spacecraft"
-            "encounters a black hole does the computer call it an"
-            "'unknown entry event'? Why don't they know? If they don't"
-            "know, that means we never told anyone. And if we never"
-            "told anyone it means we never made it back. Hence we die"
-            "down here. Just as a matter of deductive logic."
+            "it's possible, how it's done, what the dangers are."
             "\n\n"
             "The lysine contingency - it's intended to prevent the"
             "spread of the animals is case they ever got off the"
             "island. Dr. Wu inserted a gene that makes a single faulty"
-            "enzyme in protein metabolism. The animals can't"
-            "manufacture the amino acid lysine. Unless they're"
-            "continually supplied with lysine by us, they'll slip into"
-            "a coma and die."
+            "enzyme in protein metabolism."
             )
 
-    def test_content_init_no_date(self):
-        """init with valid values returns a Content with same values"""
+    def test_content_init_basic(self):
+        """Content init properly sets core attributes
+
+        Core attributes are those all content requires as a minimum:
+            * title
+            * body
+
+        No other attributes are required.
+        """
+        content = majestic.Content(title=self.title, body=self.body)
+        self.assertEqual([self.title, self.body],
+                         [content.title, content.body])
+
+    def test_content_init_meta(self):
+        """Content stores extra kwargs as the .meta attribute"""
         content = majestic.Content(title=self.title, body=self.body,
-                                   slug=self.slug, **self.meta)
-        self.assertEqual(
-            [self.title, self.body, self.slug, self.meta],
-            [content.title, content.body, content.slug, content.meta]
-            )
+                                   foo='bar')
+        self.assertEqual(content.meta['foo'], 'bar')
 
-    def test_content_init_with_date(self):
-        """init with valid values returns a Content with same values"""
-        content = majestic.Content(title=self.title, date=self.date,
-                                   slug=self.slug, body=self.body,
-                                   **self.meta)
-        self.assertEqual(
-            [self.title, self.date, self.slug, self.body, self.meta],
-            [content.title, content.date, content.slug, content.body,
-             content.meta]
-            )
+    def test_content_init_slug(self):
+        """Content stores a valid slug as the slug attribute
 
-    def test_content_init_invalid_date(self):
-        """Content raises if date is not a datetime object"""
-        with self.assertRaises(ValueError):
-            majestic.Content(
-                date='a string',
-                title=self.title,
-                slug=self.slug,
-                body=self.body
-                )
+        Slug validity is defined elsewhere, but this test uses the
+        simplest possible slug, a single alphabetical character.
+        """
+        content = majestic.Content(title=self.title, body=self.body,
+                                   slug='a')
+        self.assertEqual(content.slug, 'a')
 
-    def test_content_lt_date(self):
-        """Content with different dates compare properly"""
-        post_1 = majestic.Content(date=datetime(2015, 9, 14), body=self.body,
-                                  title=self.title, slug=self.slug)
-        post_2 = majestic.Content(date=datetime(2002, 4, 14), body=self.body,
-                                  title=self.title, slug=self.slug)
-        self.assertFalse(post_1 < post_2)
-        self.assertTrue(post_2 < post_1)
+    def test_content_init_slug_from_title(self):
+        """Content creates a slug from the title one is not given
+
+        Slug validity is defined elsewhere, but this test uses the
+        simplest possible title for the source, a single alphabetical
+        character.
+        """
+        content = majestic.Content(title='a', body=self.body)
+        self.assertEqual(content.slug, 'a')
 
     def test_content_lt_title(self):
         """Content with different titles compare properly"""
