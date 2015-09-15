@@ -4,6 +4,7 @@ import configparser
 import datetime
 import os
 import pathlib
+import pytz
 import re
 import string
 from unidecode import unidecode
@@ -174,9 +175,14 @@ def parse_file(file, settings):
         meta, body = f.read().split('\n\n', maxsplit=1)
     body = body.strip('\n')
     meta = [line.split(':', maxsplit=1) for line in meta.splitlines()]
+    if ['draft'] in meta:
+        return None
     meta = {k.lower().strip(): v.strip() for k, v in meta}
     if 'date' in meta:
-        meta['date'] = datetime.datetime.strptime(meta['date'], date_format)
+        post_date = datetime.datetime.strptime(meta['date'], date_format)
+        if post_date > datetime.datetime.now():
+            return None
+        meta['date'] = post_date
     if not validate_slug(meta['slug']):
         meta['slug'] = normalise_slug(meta['slug'])
     meta['source_path'] = file
