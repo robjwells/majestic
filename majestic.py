@@ -164,7 +164,11 @@ def normalise_slug(slug):
 
 
 def parse_file(file, settings):
-    """Create a content object from the contents of file
+    """Create a Content object from the contents of file
+
+    Returns None if the file is a draft, by these criteria:
+        * date is in the future
+        * 'draft' appears (without quotes) alone on the header's last line
 
     file:       a pathlib.Path
     settings:   a ConfigParser object containing the site's settings
