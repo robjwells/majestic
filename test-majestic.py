@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 import pathlib
+import pytz
 import string
 import tempfile
 import unittest
@@ -419,6 +420,15 @@ class TestParseFile(unittest.TestCase):
             file=self.posts_path.joinpath('test_explicit_draft.md'),
             settings=self.settings)
         self.assertIsNone(result)
+
+    def test_date_has_timezone(self):
+        """parse_file correctly localizes the file's date"""
+        result = majestic.parse_file(
+            file=self.posts_path.joinpath('1979-07-19 Liberation Day.mkdown'),
+            settings=self.settings)
+        self.assertEqual(
+            result.date.tzinfo,
+            pytz.timezone(self.settings['dates']['timezone']))
 
 
 if __name__ == '__main__':
