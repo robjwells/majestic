@@ -53,14 +53,17 @@ def markdown_files(directory):
 
 class Content(object):
     """Content object representing a markdown post or page"""
-    def __init__(self, title, body, slug, date=None, **kwargs):
+    def __init__(self, title, body, slug, date=None,
+                 source_path=None, **kwargs):
         """Initialise Post
 
-        title:  str
-        body:   str
-        slug:   str
-        date:   datetime (if not None)
+        title:          str
+        body:           str
+        slug:           str
+        date:           datetime (if not None)
+        source_path:    pathlib.Path (if not None)
 
+        source_path can be None to allow programmatic Content creation
         kwargs used to create metadata container self.meta
         """
         self.title = title
@@ -70,6 +73,10 @@ class Content(object):
         if date is not None and not isinstance(date, datetime.datetime):
             raise ValueError('date must be a datetime.datetime object')
         self.date = date
+        if (source_path is not None and
+            not isinstance(source_path, pathlib.Path)):
+            raise ValueError('source_path must be a pathlib.Path object')
+        self.source_path = source_path
 
     def __lt__(self, other):
         """Compare self with other based on date, title then slug
@@ -170,4 +177,5 @@ def parse_file(file, settings):
         meta['date'] = datetime.datetime.strptime(meta['date'], date_format)
     if not validate_slug(meta['slug']):
         meta['slug'] = normalise_slug(meta['slug'])
+    meta['source_path'] = file
     return Content(body=body, **meta)

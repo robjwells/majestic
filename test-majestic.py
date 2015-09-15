@@ -250,6 +250,7 @@ class TestParseFile(unittest.TestCase):
 
             file_dict = meta
             file_dict['body'] = body.strip('\n')
+            file_dict['source_path'] = file
 
             post = majestic.parse_file(file, settings=self.settings)
             post_dict = post.meta.copy()
@@ -257,6 +258,7 @@ class TestParseFile(unittest.TestCase):
             post_dict['slug'] = post.slug
             post_dict['date'] = post.date.strftime(date_format)
             post_dict['body'] = post.body
+            post_dict['source_path'] = post.source_path
 
             self.assertEqual(file_dict, post_dict)
 
