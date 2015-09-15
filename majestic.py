@@ -167,8 +167,9 @@ def parse_file(file, settings):
     """Create a Content object from the contents of file
 
     Returns None if the file is a draft, by these criteria:
-        * date is in the future
-        * 'draft' appears (without quotes) alone on the header's last line
+        * date is in the future.
+        * draft appears alone on a line in the header.
+          Note that this is sensitive to extra whitespace.
 
     file:       a pathlib.Path
     settings:   a ConfigParser object containing the site's settings
