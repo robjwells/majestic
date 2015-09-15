@@ -76,7 +76,7 @@ class Content(object):
             raise ValueError('date must be a datetime.datetime object')
         self.date = date
         if (source_path is not None and
-            not isinstance(source_path, pathlib.Path)):
+                not isinstance(source_path, pathlib.Path)):
             raise ValueError('source_path must be a pathlib.Path object')
         self.source_path = source_path
 
