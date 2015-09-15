@@ -169,8 +169,6 @@ def parse_file(file, settings):
     file:       a pathlib.Path
     settings:   a ConfigParser object containing the site's settings
     """
-    date_format = settings.get('dates', 'date format')
-
     with file.open() as f:
         meta, body = f.read().split('\n\n', maxsplit=1)
     body = body.strip('\n')
@@ -178,12 +176,19 @@ def parse_file(file, settings):
     if ['draft'] in meta:
         return None
     meta = {k.lower().strip(): v.strip() for k, v in meta}
+
     if 'date' in meta:
+        timezone = pytz.timezone(settings['dates']['timezone'])
+        date_format = settings['dates']['date format']
         post_date = datetime.datetime.strptime(meta['date'], date_format)
-        if post_date > datetime.datetime.now():
+        post_date = timezone.localize(post_date)
+        if post_date > timezone.localize(datetime.datetime.now()):
             return None
         meta['date'] = post_date
+
     if not validate_slug(meta['slug']):
         meta['slug'] = normalise_slug(meta['slug'])
+
     meta['source_path'] = file
+
     return Content(body=body, **meta)
