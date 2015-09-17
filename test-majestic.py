@@ -364,6 +364,13 @@ class TestPost(unittest.TestCase):
                                date=self.naive_date, settings=self.settings)
         self.assertLess(post_1, post_2)
 
+    def test_post_future_date_raises_DraftPost(self):
+        """Initialising a Post with a future date raises DraftError"""
+        with self.assertRaises(majestic.DraftError):
+            post = majestic.Post(title=self.title, body=self.body,
+                                 settings=self.settings,
+                                 date=datetime(2100, 1, 1))
+
 
 class TestSlugFunctions(unittest.TestCase):
     """Test validate_slug and normalise_slug
@@ -578,14 +585,6 @@ class TestParseFile(unittest.TestCase):
         post = majestic.parse_file(known_good_file, class_=majestic.Post,
                                    settings=self.settings)
         self.assertTrue(post.slug, known_good_slug)
-
-    def test_draft_future_date(self):
-        """parse_file returns None given a file with a future date"""
-        result = majestic.parse_file(
-            file=self.posts_path.joinpath('test_future_date.md'),
-            class_=majestic.Post,
-            settings=self.settings)
-        self.assertIsNone(result)
 
     def test_explicit_draft(self):
         """parse_file returns None given a file with 'draft' in meta

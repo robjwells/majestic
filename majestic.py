@@ -53,6 +53,15 @@ def markdown_files(directory):
              if os.path.splitext(f)[1] in extensions)
     return files
 
+class DraftError(Exception):
+    """Raised when attempting to create a Content subclass from a draft
+
+    DraftError should be raised when:
+        * A post's date is in the future
+        * 'draft' appears on a line by itself in the file's metadata header
+    """
+    pass
+
 
 class Content(object):
     """Base class for content"""
@@ -173,7 +182,11 @@ class Post(Content):
             date_format = settings['dates']['date format']
             date = datetime.datetime.strptime(date, date_format)
         tz = pytz.timezone(settings['dates']['timezone'])
-        self.date = tz.localize(date)
+        date = tz.localize(date)
+        if date > tz.localize(datetime.datetime.now()):
+            # Post date is in the future and considered a draft
+            raise DraftError('Date is in the future')
+        self.date = date
 
     def __lt__(self, other):
         """Compare self with other based on date
