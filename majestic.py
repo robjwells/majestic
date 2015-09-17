@@ -53,7 +53,7 @@ def markdown_files(directory):
 
 
 class Content(object):
-    """Content object representing a markdown post or page"""
+    """Base class for content"""
     def __init__(self, *, title, body, settings,
                  slug=None, source_path=None, **kwargs):
         """Initialise Post
