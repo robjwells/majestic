@@ -164,7 +164,7 @@ class Content(object):
             raise DraftError('Marked draft in metadata header')
 
         return class_(body=body, settings=settings, source_path=file,
-                      **{k: v for k, v in meta})
+                      **dict(meta))
 
     @property
     def output_path(self):
