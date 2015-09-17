@@ -286,6 +286,111 @@ class TestPage(unittest.TestCase):
         self.assertEqual(expected_url, page.url)
 
 
+class TestSlugFunctions(unittest.TestCase):
+    """Test validate_slug and normalise_slug
+
+    Slugs containing the following characters are deemed to be
+    invalid (note the quoted space at the beginning):
+
+    " " : / ? # [ ] @ ! $ & ' ( ) * + , ; =
+
+    Slugs containing a percent character that is not followed by
+    two hex digits are also deemed to be invalid.
+
+    A normalised slug contains only the following characters:
+
+    a-z 0-9 -
+
+    A file's slug *is not* checked against the normalised characters.
+    It is only normalised if it contains one of the reserved
+    characters.
+
+    The validator is liberal and the normaliser conservative. These
+    characters are not reserved in a URI (and so pass the validator)
+    but are not kept by the normaliser:
+
+    . _ ~
+
+    The normaliser also removes percent-encoded characters (%20).
+
+    Reserved and unreserved character are adapted from
+    IETF RFC 3986, Uniform Resource Identifier (URI): Generic Syntax
+    """
+    def test_normalise_slug_known_bad(self):
+        """normalise_slug correctly normalises known bad slug"""
+        known_bad_slug = "This is a completely invalid slug :/?#[]@!$&'()*+,;="
+        expected = 'this-is-a-completely-invalid-slug'
+        new_slug = majestic.normalise_slug(known_bad_slug)
+        self.assertEqual(new_slug, expected)
+
+    def test_normalise_slug_chars(self):
+        """normalise_slug function returns a valid slug
+
+        A valid slug is deemed to contain only the following characters:
+
+        a-z 0-9 - . _ ~
+        """
+        bad_set = set(" :/?#[]@!$&'()*+,;=")
+        good_set = set(string.ascii_lowercase + string.digits + '-')
+
+        test_bad_slug = "this is an :/?#[]@!$&'()*+,;= invalid slug"
+        new_slug = majestic.normalise_slug(test_bad_slug)
+        self.assertTrue(set(new_slug).issubset(good_set))
+        self.assertTrue(set(new_slug).isdisjoint(bad_set))
+
+        test_good_slug = "00-this-is-a-valid-slug"
+        self.assertEqual(majestic.normalise_slug(test_good_slug),
+                         test_good_slug)
+
+    def test_normalise_slug_empty_string(self):
+        """normalise_slug should raise if result is the empty string"""
+        with self.assertRaises(ValueError):
+            majestic.normalise_slug(":/?#[]@!$&'()*+,;=")
+
+    def test_normalise_slug_conservative(self):
+        """Normalise correctly removes unreserved chars . _ ~
+
+        Those characters pass the validator but should still be removed
+        if the slug is normalised because of another character.
+        """
+        slug = 'here are some valid chars . _ ~ and an invalid one!'
+        normalised = majestic.normalise_slug(slug)
+        self.assertEqual(
+            normalised,
+            'here-are-some-valid-chars-and-an-invalid-one'
+            )
+
+    def test_normalise_slug_percent_encoding(self):
+        """normalise_slug removes percent-encoded characters"""
+        slug = 'this%20slug%20has%20spaces'
+        normalised = majestic.normalise_slug(slug)
+        self.assertEqual(normalised, 'this-slug-has-spaces')
+
+    def test_validate_slug_empty(self):
+        """validate_slug returns False if slug is the empty string"""
+        self.assertFalse(majestic.validate_slug(''))
+
+    def test_validate_slug_false(self):
+        """validate_slug returns False if slug contains invalid characters"""
+        known_bad_slug = "This is a completely invalid slug :/?#[]@!$&'()*+,;="
+        self.assertFalse(majestic.validate_slug(known_bad_slug))
+
+    def test_validate_slug_bad_percent(self):
+        """validate_slug returns False if slug has bad percent encoding"""
+        known_bad_slug = "this-is-not-100%-valid"
+        self.assertFalse(majestic.validate_slug(known_bad_slug))
+
+    def test_validate_slug_good_percent(self):
+        """validate_slug returns True given proper percent encoding"""
+        known_good_slug = 'hello%20world'
+        self.assertTrue(majestic.validate_slug(known_good_slug))
+
+    def test_validate_slug_true(self):
+        """validate_slug returns True when slug contains all valid chars"""
+        known_good_slug = "00-this-is_a~valid.slug"
+        self.assertTrue(majestic.validate_slug(known_good_slug))
+
+
 @unittest.SkipTest
 class TestParseFile(unittest.TestCase):
     """Test that parse_file correctly processes markdown pages and posts"""
@@ -369,34 +474,6 @@ class TestParseFile(unittest.TestCase):
         When given a file containing an invalid value for the slug,
         parse_file should return a content object where the slug
         has been normalised.
-
-        Slugs containing the following characters are deemed to be
-        invalid (note the quoted space at the beginning):
-
-        " " : / ? # [ ] @ ! $ & ' ( ) * + , ; =
-
-        Slugs containing a percent character that is not followed by
-        two hex digits are also deemed to be invalid.
-
-        A normalised slug contains only the following characters:
-
-        a-z 0-9 -
-
-        A file's slug *is not* checked against the normalised characters.
-        It is only normalised if it contains one of the reserved
-        characters.
-
-        The validator is liberal and the normaliser conservative. These
-        characters are not reserved in a URI (and so pass the validator)
-        but are not kept by the normaliser:
-
-        . _ ~
-
-        The normaliser also removes percent-encoded characters (%20).
-
-        Reserved and unreserved character are adapted from
-        IETF RFC 3986, Uniform Resource Identifier (URI): Generic Syntax
-
         """
         known_bad_file = self.posts_path.joinpath('test_invalid_slug.md')
         good_chars = set(string.ascii_lowercase + string.digits + '-')
@@ -418,80 +495,6 @@ class TestParseFile(unittest.TestCase):
 
         post = majestic.parse_file(known_good_file, settings=self.settings)
         self.assertTrue(post.slug, known_good_slug)
-
-    def test_normalise_slug_known_bad(self):
-        """normalise_slug correctly normalises known bad slug"""
-        known_bad_slug = "This is a completely invalid slug :/?#[]@!$&'()*+,;="
-        expected = 'this-is-a-completely-invalid-slug'
-        new_slug = majestic.normalise_slug(known_bad_slug)
-        self.assertEqual(new_slug, expected)
-
-    def test_normalise_slug_chars(self):
-        """normalise_slug function returns a valid slug
-
-        A valid slug is deemed to contain only the following characters:
-
-        a-z 0-9 - . _ ~
-        """
-        bad_set = set(" :/?#[]@!$&'()*+,;=")
-        good_set = set(string.ascii_lowercase + string.digits + '-')
-
-        test_bad_slug = "this is an :/?#[]@!$&'()*+,;= invalid slug"
-        new_slug = majestic.normalise_slug(test_bad_slug)
-        self.assertTrue(set(new_slug).issubset(good_set))
-        self.assertTrue(set(new_slug).isdisjoint(bad_set))
-
-        test_good_slug = "00-this-is-a-valid-slug"
-        self.assertEqual(majestic.normalise_slug(test_good_slug),
-                         test_good_slug)
-
-    def test_normalise_slug_empty_string(self):
-        """normalise_slug should raise if result is the empty string"""
-        with self.assertRaises(ValueError):
-            majestic.normalise_slug(":/?#[]@!$&'()*+,;=")
-
-    def test_normalise_slug_conservative(self):
-        """Normalise correctly removes unreserved chars . _ ~
-
-        Those characters pass the validator but should still be removed
-        if the slug is normalised because of another character.
-        """
-        slug = 'here are some valid chars . _ ~ and an invalid one!'
-        normalised = majestic.normalise_slug(slug)
-        self.assertEqual(
-            normalised,
-            'here-are-some-valid-chars-and-an-invalid-one'
-            )
-
-    def test_normalise_slug_percent_encoding(self):
-        """normalise_slug removes percent-encoded characters"""
-        slug = 'this%20slug%20has%20spaces'
-        normalised = majestic.normalise_slug(slug)
-        self.assertEqual(normalised, 'this-slug-has-spaces')
-
-    def test_validate_slug_empty(self):
-        """validate_slug returns False if slug is the empty string"""
-        self.assertFalse(majestic.validate_slug(''))
-
-    def test_validate_slug_false(self):
-        """validate_slug returns False if slug contains invalid characters"""
-        known_bad_slug = "This is a completely invalid slug :/?#[]@!$&'()*+,;="
-        self.assertFalse(majestic.validate_slug(known_bad_slug))
-
-    def test_validate_slug_bad_percent(self):
-        """validate_slug returns False if slug has bad percent encoding"""
-        known_bad_slug = "this-is-not-100%-valid"
-        self.assertFalse(majestic.validate_slug(known_bad_slug))
-
-    def test_validate_slug_good_percent(self):
-        """validate_slug returns True given proper percent encoding"""
-        known_good_slug = 'hello%20world'
-        self.assertTrue(majestic.validate_slug(known_good_slug))
-
-    def test_validate_slug_true(self):
-        """validate_slug returns True when slug contains all valid chars"""
-        known_good_slug = "00-this-is_a~valid.slug"
-        self.assertTrue(majestic.validate_slug(known_good_slug))
 
     def test_draft_future_date(self):
         """parse_file returns None given a file with a future date"""
