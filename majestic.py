@@ -103,6 +103,16 @@ class Content(object):
         else:
             return self.slug.lower() < other.slug.lower()
 
+    def __str__(self):
+        """Return str(self)
+
+        Format used:
+            Title: path to source file
+        """
+        return '{0}: {1}'.format(
+            self.title,
+            self.source_path if self.source_path is not None else 'No path')
+
     @property
     def html(self):
         """Render self.body markdown text as HTML
@@ -232,6 +242,16 @@ class Post(Content):
             return self.date < other.date
         else:
             return super().__lt__(other)
+
+    def __str__(self):
+        """Return str(self)
+
+        Format used:
+            %Y-%m-%d Title: path to source file
+        """
+        return '{0:%Y-%m-%d} {1}: {2}'.format(
+            self.date, self.title,
+            self.source_path if self.source_path is not None else 'No path')
 
     @property
     def output_path(self):
