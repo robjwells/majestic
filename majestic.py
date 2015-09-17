@@ -81,11 +81,6 @@ class Content(object):
         self.source_path = source_path
         self.meta = kwargs
 
-        # Placeholders
-        self._html = None
-        self._output_path = None
-        self._url = None
-
     def __lt__(self, other):
         """Compare self with other based on title and slug
 
@@ -107,7 +102,7 @@ class Content(object):
         'markdown.extensions.' is added to members of the extension list
         that are missing it
         """
-        if self._html is None:
+        if not hasattr(self, '_html'):
             prefix = 'markdown.extensions.'
             extensions = [
                 ext if ext.startswith(prefix) else prefix + ext
@@ -142,7 +137,7 @@ class Page(Content):
     @property
     def output_path(self):
         """Path to Page's output file"""
-        if self._output_path is None:
+        if not hasattr(self, '_output_path'):
             output_dir = self.settings['paths']['output root']
             path = self.settings['paths']['page output'].format(content=self)
             self._output_path = pathlib.Path(output_dir).joinpath(path)
@@ -151,7 +146,7 @@ class Page(Content):
     @property
     def url(self):
         """Page's URL"""
-        if self._url is None:
+        if not hasattr(self, '_url'):
             site_url = self.settings['site']['url']
             path = self.settings['paths']['page output'].format(content=self)
             self._url = urllib.parse.urljoin(site_url, path)
