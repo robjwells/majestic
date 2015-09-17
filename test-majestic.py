@@ -158,6 +158,14 @@ class TestContent(unittest.TestCase):
                                    settings=self.settings)
         self.assertEqual(content.slug, 'a')
 
+    def test_content_init_invalid_slug(self):
+        """Content normalises invalid slugs before storing them"""
+        invalid_slug = '!not:valid!'
+        expected = 'not-valid'
+        content = majestic.Content(title='a', body=self.body,
+                                   settings=self.settings, slug=invalid_slug)
+        self.assertEqual(content.slug, expected)
+
     def test_content_lt_title(self):
         """Content with different titles compare properly"""
         post_1 = majestic.Content(title='title a',

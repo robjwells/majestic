@@ -71,7 +71,11 @@ class Content(object):
         self.title = title
         self.body = body
         self.settings = settings
-        self.slug = slug or normalise_slug(title)
+        if slug is None:
+            slug = normalise_slug(title)
+        elif not validate_slug(slug):
+            slug = normalise_slug(slug)
+        self.slug = slug
         self.source_path = source_path
         self.meta = kwargs
 
