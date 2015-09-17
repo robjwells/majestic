@@ -54,45 +54,34 @@ def markdown_files(directory):
 
 class Content(object):
     """Content object representing a markdown post or page"""
-    def __init__(self, *,
-                 title, body, slug,
-                 date=None, source_path=None,
-                 **kwargs):
+    def __init__(self, *, title, body, settings,
+                 slug=None, source_path=None, **kwargs):
         """Initialise Post
 
         title:          str
         body:           str
-        slug:           str
-        date:           datetime (if not None)
+        slug:           str (if not None)
         source_path:    pathlib.Path (if not None)
 
+        If slug is None, a slug is created from title.
+
         source_path can be None to allow programmatic Content creation
-        kwargs used to create metadata container self.meta
+        kwargs used to create metadata container self.meta.
         """
         self.title = title
         self.body = body
-        self.slug = slug
-        self.meta = kwargs
-        if date is not None and not isinstance(date, datetime.datetime):
-            raise ValueError('date must be a datetime.datetime object')
-        self.date = date
-        if (source_path is not None and
-                not isinstance(source_path, pathlib.Path)):
-            raise ValueError('source_path must be a pathlib.Path object')
+        self.settings = settings
+        self.slug = slug or normalise_slug(title)
         self.source_path = source_path
+        self.meta = kwargs
 
     def __lt__(self, other):
-        """Compare self with other based on date, title then slug
+        """Compare self with other based on title and slug
 
-        If both self and other have dates, compare dates.
-        If not, or if the dates are the same, compare titles.
-        If titles are the same then compare slugs.
-
-        Titles and slugs are compared case-insensitively.
+        Slugs are compared if titles are the same.
+        Both checks are case-insensitive.
         """
-        if all([self.date, other.date]):
-            return self.date < other.date
-        elif self.title.lower() != other.title.lower():
+        if self.title.lower() != other.title.lower():
             return self.title.lower() < other.title.lower()
         else:
             return self.slug.lower() < other.slug.lower()
