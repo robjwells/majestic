@@ -62,6 +62,7 @@ class Content(object):
 
         title:          str
         body:           str
+        settings:       ConfigParser
         slug:           str (if not None)
         source_path:    pathlib.Path (if not None)
 
@@ -129,7 +130,7 @@ class Content(object):
 
 
 class Page(Content):
-    """A Content subclass representing a static Page
+    """A Content subclass representing a static page
 
     Page is largely just a concrete version of Content, with the stub
     methods implemented.
