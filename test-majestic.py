@@ -112,6 +112,9 @@ class TestContent(unittest.TestCase):
             "island. Dr. Wu inserted a gene that makes a single faulty"
             "enzyme in protein metabolism."
             )
+        settings_path = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
+        self.settings = majestic.load_settings(files=[settings_path],
+                                               local=False)
 
     def test_content_init_basic(self):
         """Content init properly sets core attributes
@@ -119,17 +122,19 @@ class TestContent(unittest.TestCase):
         Core attributes are those all content requires as a minimum:
             * title
             * body
+            * settings
 
         No other attributes are required.
         """
-        content = majestic.Content(title=self.title, body=self.body)
-        self.assertEqual([self.title, self.body],
-                         [content.title, content.body])
+        content = majestic.Content(title=self.title, body=self.body,
+                                   settings=self.settings)
+        self.assertEqual([self.title, self.body, self.settings],
+                         [content.title, content.body, content.settings])
 
     def test_content_init_meta(self):
         """Content stores extra kwargs as the .meta attribute"""
         content = majestic.Content(title=self.title, body=self.body,
-                                   foo='bar')
+                                   settings=self.settings, foo='bar')
         self.assertEqual(content.meta['foo'], 'bar')
 
     def test_content_init_slug(self):
@@ -139,7 +144,7 @@ class TestContent(unittest.TestCase):
         simplest possible slug, a single alphabetical character.
         """
         content = majestic.Content(title=self.title, body=self.body,
-                                   slug='a')
+                                   slug='a', settings=self.settings)
         self.assertEqual(content.slug, 'a')
 
     def test_content_init_slug_from_title(self):
@@ -149,32 +154,39 @@ class TestContent(unittest.TestCase):
         simplest possible title for the source, a single alphabetical
         character.
         """
-        content = majestic.Content(title='a', body=self.body)
+        content = majestic.Content(title='a', body=self.body,
+                                   settings=self.settings)
         self.assertEqual(content.slug, 'a')
 
     def test_content_lt_title(self):
         """Content with different titles compare properly"""
         post_1 = majestic.Content(title='title a',
-                                  slug=self.slug, body=self.body)
+                                  slug=self.slug, body=self.body,
+                                  settings=self.settings)
         post_2 = majestic.Content(title='title b',
-                                  slug=self.slug, body=self.body)
+                                  slug=self.slug, body=self.body,
+                                  settings=self.settings)
         self.assertTrue(post_1 < post_2)
         self.assertFalse(post_2 < post_1)
 
     def test_content_compare_title_case_insensitive(self):
         """Content with titles that differ in case compare properly"""
         post_1 = majestic.Content(title='title a',
-                                  slug=self.slug, body=self.body)
+                                  slug=self.slug, body=self.body,
+                                  settings=self.settings)
         post_2 = majestic.Content(title='title B',
-                                  slug=self.slug, body=self.body)
+                                  slug=self.slug, body=self.body,
+                                  settings=self.settings)
         self.assertTrue(post_1 < post_2)
 
     def test_content_lt_slug(self):
         """Content with different slugs compare properly"""
         post_1 = majestic.Content(title=self.title,
-                                  slug='test-a', body=self.body)
+                                  slug='test-a', body=self.body,
+                                  settings=self.settings)
         post_2 = majestic.Content(title=self.title,
-                                  slug='test-b', body=self.body)
+                                  slug='test-b', body=self.body,
+                                  settings=self.settings)
         self.assertTrue(post_1 < post_2)
         self.assertFalse(post_2 < post_1)
 
