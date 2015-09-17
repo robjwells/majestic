@@ -190,6 +190,21 @@ class TestContent(unittest.TestCase):
         self.assertTrue(post_1 < post_2)
         self.assertFalse(post_2 < post_1)
 
+    def test_url_property_raises(self):
+        """Accessing content.url should raise NotImplementedError"""
+        content = majestic.Content(title=self.title, body=self.body,
+                                   settings=self.settings)
+        with self.assertRaises(NotImplementedError):
+            content.url
+
+    def test_output_path_attribute_raises(self):
+        """Accessing content.output_path should raise NotImplementedError"""
+        content = majestic.Content(title=self.title, body=self.body,
+                                   settings=self.settings)
+        with self.assertRaises(NotImplementedError):
+            content.output_path
+
+
 @unittest.SkipTest
 class TestParseFile(unittest.TestCase):
     """Test that parse_file correctly processes markdown pages and posts"""

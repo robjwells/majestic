@@ -86,6 +86,21 @@ class Content(object):
         else:
             return self.slug.lower() < other.slug.lower()
 
+    @property
+    def output_path(self):
+        """On subclasses, return the content's output path
+
+        This raises NotImplementedError on the Content base class"""
+        raise NotImplementedError()
+
+    @property
+    def url(self):
+        """On subclasses, return the content's URL
+
+        This raises NotImplementedError on the Content base class
+        """
+        raise NotImplementedError()
+
 
 def validate_slug(slug):
     """Test slug for validity and return a boolean
