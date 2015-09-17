@@ -251,7 +251,7 @@ def normalise_slug(slug):
     return new_slug
 
 
-def parse_file(file, settings):
+def parse_file(file, class_, settings):
     """Create a Content object from the contents of file
 
     Returns None if the file is a draft, by these criteria:
@@ -260,6 +260,7 @@ def parse_file(file, settings):
           Note that this is sensitive to extra whitespace.
 
     file:       a pathlib.Path
+    class_:     the Content subclass to return
     settings:   a ConfigParser object containing the site's settings
     """
     with file.open() as f:
@@ -284,4 +285,4 @@ def parse_file(file, settings):
 
     meta['source_path'] = file
 
-    return Content(body=body, **meta)
+    return class_(body=body, settings=settings, **meta)
