@@ -8,6 +8,7 @@ import pytz
 import re
 import string
 from unidecode import unidecode
+import urllib.parse
 
 MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent
 
@@ -56,7 +57,7 @@ class Content(object):
     """Base class for content"""
     def __init__(self, *, title, body, settings,
                  slug=None, source_path=None, **kwargs):
-        """Initialise Post
+        """Initialise Content
 
         title:          str
         body:           str
@@ -78,6 +79,10 @@ class Content(object):
         self.slug = slug
         self.source_path = source_path
         self.meta = kwargs
+
+        # Placeholders
+        self._output_path = None
+        self._url = None
 
     def __lt__(self, other):
         """Compare self with other based on title and slug
@@ -112,7 +117,23 @@ class Page(Content):
     Page is largely just a concrete version of Content, with the stub
     methods implemented.
     """
-    pass
+    @property
+    def output_path(self):
+        """Path to Page's output file"""
+        if self._output_path is None:
+            output_dir = self.settings['paths']['output root']
+            path = self.settings['paths']['page output'].format(content=self)
+            self._output_path = pathlib.Path(output_dir).joinpath(path)
+        return self._output_path
+
+    @property
+    def url(self):
+        """Page's URL"""
+        if self._url is None:
+            site_url = self.settings['site']['url']
+            path = self.settings['paths']['page output'].format(content=self)
+            self._url = urllib.parse.urljoin(site_url, path)
+        return self._url
 
 
 def validate_slug(slug):

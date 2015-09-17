@@ -242,6 +242,26 @@ class TestPage(unittest.TestCase):
                              settings=self.settings)
         self.assertTrue(isinstance(page, majestic.Content))
 
+    def test_page_init_output_path_and_url(self):
+        """Page sets output_path and url on initialisation
+
+        Output path should be a pathlib.Path object, url a str
+        """
+        page = majestic.Page(title=self.title, body=self.body,
+                             settings=self.settings, slug='abc')
+
+        path_template = self.settings['paths']['page output']
+        path = path_template.format(content=page)
+
+        output_dir = self.settings['paths']['output root']
+        site_url = self.settings['site']['url']
+
+        expected_output = pathlib.Path(output_dir).joinpath(path)
+        expected_url = site_url + '/' + path
+
+        self.assertEqual(expected_output, page.output_path)
+        self.assertEqual(expected_url, page.url)
+
 
 @unittest.SkipTest
 class TestParseFile(unittest.TestCase):
