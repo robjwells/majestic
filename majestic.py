@@ -108,11 +108,11 @@ class Content(object):
         that are missing it
         """
         if self._html is None:
-            extensions = self.settings['markdown']['extensions'].split()
             prefix = 'markdown.extensions.'
-            for idx, ext in enumerate(extensions):
-                if not ext.startswith(prefix):
-                    extensions[idx] = prefix + ext
+            extensions = [
+                ext if ext.startswith(prefix) else prefix + ext
+                for ext in self.settings['markdown']['extensions'].split()
+                ]
             md = markdown.Markdown(extensions=extensions)
             self._html = md.convert(self.body)
         return self._html
