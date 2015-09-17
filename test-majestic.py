@@ -365,9 +365,9 @@ class TestPost(unittest.TestCase):
     def test_post_future_date_raises_DraftPost(self):
         """Initialising a Post with a future date raises DraftError"""
         with self.assertRaises(majestic.DraftError):
-            post = majestic.Post(title=self.title, body=self.body,
-                                 settings=self.settings,
-                                 date=datetime(2100, 1, 1))
+            majestic.Post(title=self.title, body=self.body,
+                          settings=self.settings,
+                          date=datetime(2100, 1, 1))
 
     def test_post_output_path_and_url(self):
         """Post defines output_path and url properties
