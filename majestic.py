@@ -123,6 +123,39 @@ class Content(object):
             self._html = md.convert(self.body)
         return self._html
 
+    @classmethod
+    def from_file(class_, file, settings):
+        """Parse file into an object of type class_
+
+        class_:     the class from which the class method was called
+        file:       a pathlib.Path
+        settings:   a ConfigParser object containing the site's settings
+
+        Raises DraftError if the file is explicitly marked as a draft,
+        by way of 'draft' appearing by itself on a line in the metadata
+        header.
+        """
+        with file.open() as f:
+            # Split on first blank line
+            meta, body = f.read().split('\n\n', maxsplit=1)
+        body = body.strip('\n')
+
+        # Split on first colon
+        meta = [line.split(':', maxsplit=1) for line in meta.splitlines()]
+
+        # Strip whitespace from keys and values
+        meta = [[s.strip() for s in sublist] for sublist in meta]
+
+        # Lowercase keys
+        for sublist in meta:
+            sublist[0] = sublist[0].lower()
+
+        if ['draft'] in meta:
+            raise DraftError('Marked draft in metadata header')
+
+        return class_(body=body, settings=settings, source_path=file,
+                      **{k: v for k, v in meta})
+
     @property
     def output_path(self):
         """On subclasses, return the content's output path
@@ -282,26 +315,3 @@ def normalise_slug(slug):
         raise ValueError('Slug is the empty string')
 
     return new_slug
-
-
-def parse_file(file, class_, settings):
-    """Create a Content object from the contents of file
-
-    Returns None if the file is a draft, by these criteria:
-        * date is in the future.
-        * draft appears alone on a line in the header.
-          Note that this is sensitive to extra whitespace.
-
-    file:       a pathlib.Path
-    class_:     the Content subclass to return
-    settings:   a ConfigParser object containing the site's settings
-    """
-    with file.open() as f:
-        meta, body = f.read().split('\n\n', maxsplit=1)
-    body = body.strip('\n')
-    meta = [line.split(':', maxsplit=1) for line in meta.splitlines()]
-    if ['draft'] in meta:
-        raise DraftError('Marked draft in metadata header')
-    meta = {k.lower().strip(): v.strip() for k, v in meta}
-
-    return class_(body=body, settings=settings, source_path=file, **meta)
