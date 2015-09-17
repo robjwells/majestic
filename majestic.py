@@ -162,7 +162,7 @@ class Post(Content):
 
         For most parameters, see the Content docstring
 
-        date:           datetime or str
+        date:   datetime or str
 
         If date is a str, it is parsed into a datetime object using the
         format defined in the config files.
