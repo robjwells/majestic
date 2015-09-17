@@ -212,6 +212,29 @@ class TestContent(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             content.output_path
 
+    def test_render_html(self):
+        """Content.html returns the body converted to HTML"""
+        content = majestic.Content(title=self.title, settings=self.settings,
+                                   body='*abc*')
+        expected = '<p><em>abc</em></p>'
+        self.assertEqual(expected, content.html)
+
+    def test_render_html_extensions(self):
+        """Content.html is rendered with specified Markdown extensions"""
+        original = "here's some 'quoted' text"
+        plain_html = "<p>here's some 'quoted' text</p>"
+        with_smarty = '<p>here&rsquo;s some &lsquo;quoted&rsquo; text</p>'
+
+        self.settings['markdown']['extensions'] = ''
+        content = majestic.Content(title=self.title, settings=self.settings,
+                                   body=original)
+        self.assertEqual(plain_html, content.html)
+
+        self.settings['markdown']['extensions'] = 'smarty'
+        content = majestic.Content(title=self.title, settings=self.settings,
+                                   body=original)
+        self.assertEqual(with_smarty, content.html)
+
 
 class TestPage(unittest.TestCase):
     """Test the Page content classes"""
