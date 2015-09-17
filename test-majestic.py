@@ -371,6 +371,26 @@ class TestPost(unittest.TestCase):
                                  settings=self.settings,
                                  date=datetime(2100, 1, 1))
 
+    def test_post_output_path_and_url(self):
+        """Post defines output_path and url properties
+
+        Output path should be a pathlib.Path object, url a str
+        """
+        post = majestic.Post(title=self.title, body=self.body,
+                             settings=self.settings, date=self.naive_date)
+
+        path_template = self.settings['paths']['post output']
+        path = path_template.format(content=post)
+
+        output_dir = self.settings['paths']['output root']
+        site_url = self.settings['site']['url']
+
+        expected_output = pathlib.Path(output_dir).joinpath(path)
+        expected_url = site_url + '/' + path
+
+        self.assertEqual(expected_output, post.output_path)
+        self.assertEqual(expected_url, post.url)
+
 
 class TestSlugFunctions(unittest.TestCase):
     """Test validate_slug and normalise_slug

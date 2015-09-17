@@ -199,6 +199,24 @@ class Post(Content):
         else:
             return super().__lt__(other)
 
+    @property
+    def output_path(self):
+        """Path to Post's output file"""
+        if not hasattr(self, '_output_path'):
+            output_dir = self.settings['paths']['output root']
+            path = self.settings['paths']['post output'].format(content=self)
+            self._output_path = pathlib.Path(output_dir).joinpath(path)
+        return self._output_path
+
+    @property
+    def url(self):
+        """Post's URL"""
+        if not hasattr(self, '_url'):
+            site_url = self.settings['site']['url']
+            path = self.settings['paths']['post output'].format(content=self)
+            self._url = urllib.parse.urljoin(site_url, path)
+        return self._url
+
 
 def validate_slug(slug):
     """Test slug for validity and return a boolean
