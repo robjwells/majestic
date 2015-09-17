@@ -284,6 +284,5 @@ def parse_file(file, class_, settings):
     if ['draft'] in meta:
         raise DraftError('Marked draft in metadata header')
     meta = {k.lower().strip(): v.strip() for k, v in meta}
-    meta['source_path'] = file
 
-    return class_(body=body, settings=settings, **meta)
+    return class_(body=body, settings=settings, source_path=file, **meta)
