@@ -315,7 +315,6 @@ class TestPost(unittest.TestCase):
         self.aware_date = self.tz.localize(self.naive_date)
         self.date_string = '2015-08-22 09:46'
 
-
     def test_post_inheritance(self):
         """Post instances are also an instance of Content"""
         post = majestic.Post(title=self.title, body=self.body,
@@ -340,7 +339,6 @@ class TestPost(unittest.TestCase):
         post = majestic.Post(title=self.title, body=self.body,
                              date=self.naive_date, settings=self.settings)
         self.assertEqual(post.date, self.aware_date)
-
 
     def test_post_compare_lt_dates(self):
         """Posts with different dates compare properly"""

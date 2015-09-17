@@ -53,6 +53,7 @@ def markdown_files(directory):
              if os.path.splitext(f)[1] in extensions)
     return files
 
+
 class DraftError(Exception):
     """Raised when attempting to create a Content subclass from a draft
 
