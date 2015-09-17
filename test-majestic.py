@@ -98,7 +98,7 @@ class TestContent(unittest.TestCase):
     def setUp(self):
         """Set dummy values for use in testing"""
         self.title = "Here’s a — test! — dummy title: (with lots o' symbols)"
-        self.date = datetime(2015, 8, 22, 9, 46)
+        self.naive_date = datetime(2015, 8, 22, 9, 46)
         self.slug = 'test-slug-with-no-relation-to-title'
         self.meta = {'tags': ['a', 'b']}
         self.body = (
@@ -241,7 +241,7 @@ class TestPage(unittest.TestCase):
     def setUp(self):
         """Set dummy values for use in testing"""
         self.title = "Here’s a — test! — dummy title: (with lots o' symbols)"
-        self.date = datetime(2015, 8, 22, 9, 46)
+        self.naive_date = datetime(2015, 8, 22, 9, 46)
         self.slug = 'test-slug-with-no-relation-to-title'
         self.meta = {'tags': ['a', 'b']}
         self.body = (
@@ -291,8 +291,6 @@ class TestPost(unittest.TestCase):
     def setUp(self):
         """Set dummy values for use in testing"""
         self.title = "Here’s a — test! — dummy title: (with lots o' symbols)"
-        self.date = datetime(2015, 8, 22, 9, 46)
-        self.date_string = '2015-08-22 09:46'
         self.slug = 'test-slug-with-no-relation-to-title'
         self.meta = {'tags': ['a', 'b']}
         self.body = (
@@ -310,24 +308,39 @@ class TestPost(unittest.TestCase):
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
 
+        # Override timezone for testing purposes
+        self.settings['dates']['timezone'] = 'Europe/London'
+        self.tz = pytz.timezone('Europe/London')
+        self.naive_date = datetime(2015, 8, 22, 9, 46)
+        self.aware_date = self.tz.localize(self.naive_date)
+        self.date_string = '2015-08-22 09:46'
+
+
     def test_post_inheritance(self):
         """Post instances are also an instance of Content"""
         post = majestic.Post(title=self.title, body=self.body,
-                             date=self.date, settings=self.settings)
+                             date=self.naive_date, settings=self.settings)
         self.assertTrue(isinstance(post, majestic.Content))
 
     def test_post_init_date(self):
         """Post stores provided date as self.date"""
         post = majestic.Post(title=self.title, body=self.body,
-                             date=self.date, settings=self.settings)
-        self.assertEqual(self.date, post.date)
+                             date=self.naive_date, settings=self.settings)
+        self.assertEqual(self.aware_date, post.date)
 
     def test_post_init_date_string(self):
         """If given a str for date, Post parses it into a datetime object"""
         self.settings['dates']['date_format'] = '%Y-%m-%d %H:%M'
         post = majestic.Post(title=self.title, body=self.body,
                              date=self.date_string, settings=self.settings)
-        self.assertEqual(self.date, post.date)
+        self.assertEqual(self.aware_date, post.date)
+
+    def test_date_has_timezone(self):
+        """Post correctly localizes the provided date"""
+        post = majestic.Post(title=self.title, body=self.body,
+                             date=self.naive_date, settings=self.settings)
+        self.assertEqual(post.date, self.aware_date)
+
 
     def test_post_compare_lt_dates(self):
         """Posts with different dates compare properly"""
@@ -346,9 +359,9 @@ class TestPost(unittest.TestCase):
         slug comparison to its superclass.
         """
         post_1 = majestic.Post(title='title a', body=self.body,
-                               date=self.date, settings=self.settings)
+                               date=self.naive_date, settings=self.settings)
         post_2 = majestic.Post(title='title B', body=self.body,
-                               date=self.date, settings=self.settings)
+                               date=self.naive_date, settings=self.settings)
         self.assertLess(post_1, post_2)
 
 
@@ -584,16 +597,6 @@ class TestParseFile(unittest.TestCase):
             class_=majestic.Post,
             settings=self.settings)
         self.assertIsNone(result)
-
-    def test_date_has_timezone(self):
-        """parse_file correctly localizes the file's date"""
-        result = majestic.parse_file(
-            file=self.posts_path.joinpath('1979-07-19 Liberation Day.mkdown'),
-            class_=majestic.Post,
-            settings=self.settings)
-        self.assertEqual(
-            result.date.tzinfo,
-            pytz.timezone(self.settings['dates']['timezone']))
 
 
 if __name__ == '__main__':

@@ -172,7 +172,8 @@ class Post(Content):
         if isinstance(date, str):
             date_format = settings['dates']['date format']
             date = datetime.datetime.strptime(date, date_format)
-        self.date = date
+        tz = pytz.timezone(settings['dates']['timezone'])
+        self.date = tz.localize(date)
 
     def __lt__(self, other):
         """Compare self with other based on date
@@ -270,15 +271,6 @@ def parse_file(file, class_, settings):
     if ['draft'] in meta:
         return None
     meta = {k.lower().strip(): v.strip() for k, v in meta}
-
-    if 'date' in meta:
-        timezone = pytz.timezone(settings['dates']['timezone'])
-        date_format = settings['dates']['date format']
-        post_date = datetime.datetime.strptime(meta['date'], date_format)
-        post_date = timezone.localize(post_date)
-        if post_date > timezone.localize(datetime.datetime.now()):
-            return None
-        meta['date'] = post_date
 
     if not validate_slug(meta['slug']):
         meta['slug'] = normalise_slug(meta['slug'])
