@@ -154,6 +154,27 @@ class Page(Content):
         return self._url
 
 
+class Post(Content):
+    """A Content subclass representing a blog post"""
+    def __init__(self, *, title, body, date, settings,
+                 slug=None, source_path=None, **kwargs):
+        """Initialise Post
+
+        For most parameters, see the Content docstring
+
+        date:           datetime or str
+
+        If date is a str, it is parsed into a datetime object using the
+        format defined in the config files.
+        """
+        super().__init__(title=title, body=body, settings=settings,
+                         slug=slug, source_path=source_path, **kwargs)
+        if isinstance(date, str):
+            date_format = settings['dates']['date format']
+            date = datetime.datetime.strptime(date, date_format)
+        self.date = date
+
+
 def validate_slug(slug):
     """Test slug for validity and return a boolean
 
