@@ -329,6 +329,28 @@ class TestPost(unittest.TestCase):
                              date=self.date_string, settings=self.settings)
         self.assertEqual(self.date, post.date)
 
+    def test_post_compare_lt_dates(self):
+        """Posts with different dates compare properly"""
+        post_1 = majestic.Post(title=self.title, body=self.body,
+                               settings=self.settings,
+                               date=datetime(2015, 1, 1))
+        post_2 = majestic.Post(title=self.title, body=self.body,
+                               settings=self.settings,
+                               date=datetime(2014, 1, 1))
+        self.assertLess(post_2, post_1)
+
+    def test_post_compare_lt_identical_dates(self):
+        """Posts with the same date but different titles compare properly
+
+        The Post class should only test the dates, and delegate title and
+        slug comparison to its superclass.
+        """
+        post_1 = majestic.Post(title='title a', body=self.body,
+                               date=self.date, settings=self.settings)
+        post_2 = majestic.Post(title='title B', body=self.body,
+                               date=self.date, settings=self.settings)
+        self.assertLess(post_1, post_2)
+
 
 class TestSlugFunctions(unittest.TestCase):
     """Test validate_slug and normalise_slug

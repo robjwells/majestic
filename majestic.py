@@ -174,6 +174,17 @@ class Post(Content):
             date = datetime.datetime.strptime(date, date_format)
         self.date = date
 
+    def __lt__(self, other):
+        """Compare self with other based on date
+
+        If self and other have identical dates, use superclass's
+        implementation to test titles and slugs.
+        """
+        if self.date != other.date:
+            return self.date < other.date
+        else:
+            return super().__lt__(other)
+
 
 def validate_slug(slug):
     """Test slug for validity and return a boolean
