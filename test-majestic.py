@@ -495,8 +495,8 @@ class TestSlugFunctions(unittest.TestCase):
         self.assertTrue(majestic.validate_slug(known_good_slug))
 
 
-class TestParseFile(unittest.TestCase):
-    """Test that parse_file correctly processes markdown pages and posts"""
+class TestFromFile(unittest.TestCase):
+    """Test that .from_file on Content classes correctly parses files"""
     def setUp(self):
         settings_path = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
         self.settings = majestic.load_settings(files=[settings_path],
@@ -550,8 +550,7 @@ class TestParseFile(unittest.TestCase):
             file_dict['body'] = body.strip('\n')
             file_dict['source_path'] = file
 
-            post = majestic.parse_file(file, class_=majestic.Post,
-                                       settings=self.settings)
+            post = majestic.Post.from_file(file, settings=self.settings)
             post_dict = post.meta.copy()
             post_dict['title'] = post.title
             post_dict['slug'] = post.slug
@@ -563,9 +562,8 @@ class TestParseFile(unittest.TestCase):
 
     def test_about_page(self):
         """Parsing basic page should work as with posts"""
-        page = majestic.parse_file(self.pages_path.joinpath('about.md'),
-                                   class_=majestic.Page,
-                                   settings=self.settings)
+        page = majestic.Page.from_file(self.pages_path.joinpath('about.md'),
+                                       settings=self.settings)
         self.assertEqual(page.title, 'About majestic')
         self.assertEqual(page.slug, 'about')
         self.assertEqual(
@@ -574,45 +572,42 @@ class TestParseFile(unittest.TestCase):
              'It is written in Python and was started by Rob Wells.'))
 
     def test_parse_known_bad_slug(self):
-        """parse_file detects and normalises invalid slugs
+        """.from_file detects and normalises invalid slugs
 
         When given a file containing an invalid value for the slug,
-        parse_file should return a content object where the slug
+        .from_file should return a content object where the slug
         has been normalised.
         """
         known_bad_file = self.posts_path.joinpath('test_invalid_slug.md')
         good_chars = set(string.ascii_lowercase + string.digits + '-')
 
-        post = majestic.parse_file(known_bad_file, class_=majestic.Post,
-                                   settings=self.settings)
+        post = majestic.Post.from_file(known_bad_file, settings=self.settings)
         self.assertLess(set(post.slug), good_chars)  # Subset test
 
     def test_parse_bad_percent_encoding(self):
-        """parse_file normalises slugs containing invalid percent encoding"""
+        """.from_file normalises slugs containing invalid percent encoding"""
         bad_percent_file = self.posts_path.joinpath('test_bad_percent.md')
         bad_percent_slug = 'this-is-not-100%-valid'
-        post = majestic.parse_file(bad_percent_file, class_=majestic.Post,
-                                   settings=self.settings)
+        post = majestic.Post.from_file(bad_percent_file,
+                                       settings=self.settings)
         self.assertNotEqual(post.slug, bad_percent_slug)
 
     def test_parse_known_good_slug(self):
-        """parse_file does not normalise known good slug"""
+        """.from_file does not normalise known good slug"""
         known_good_file = self.posts_path.joinpath('test_good_slug.md')
         known_good_slug = 'valid%20slug'
 
-        post = majestic.parse_file(known_good_file, class_=majestic.Post,
-                                   settings=self.settings)
+        post = majestic.Post.from_file(known_good_file, settings=self.settings)
         self.assertTrue(post.slug, known_good_slug)
 
     def test_explicit_draft(self):
-        """parse_file raises DraftError given a file with 'draft' in meta
+        """.from_file raises DraftError given a file with 'draft' in meta
 
         'draft' should appear (without quotes) on a line by itself
         """
         with self.assertRaises(majestic.DraftError):
-            majestic.parse_file(
+            majestic.Post.from_file(
                 file=self.posts_path.joinpath('test_explicit_draft.md'),
-                class_=majestic.Post,
                 settings=self.settings)
 
 
