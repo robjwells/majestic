@@ -205,6 +205,36 @@ class TestContent(unittest.TestCase):
             content.output_path
 
 
+class TestPage(unittest.TestCase):
+    """Test the Page content classes"""
+    def setUp(self):
+        """Set dummy values for use in testing"""
+        self.title = "Here’s a — test! — dummy title: (with lots o' symbols)"
+        self.date = datetime(2015, 8, 22, 9, 46)
+        self.slug = 'test-slug-with-no-relation-to-title'
+        self.meta = {'tags': ['a', 'b']}
+        self.body = (
+            # http://slipsum.com
+            "You see? It's curious. Ted did figure it out - time"
+            "travel. And when we get back, we gonna tell everyone. How"
+            "it's possible, how it's done, what the dangers are."
+            "\n\n"
+            "The lysine contingency - it's intended to prevent the"
+            "spread of the animals is case they ever got off the"
+            "island. Dr. Wu inserted a gene that makes a single faulty"
+            "enzyme in protein metabolism."
+            )
+        settings_path = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
+        self.settings = majestic.load_settings(files=[settings_path],
+                                               local=False)
+
+    def test_page_inheritance(self):
+        """Page instances are also an instance of Content"""
+        page = majestic.Page(title=self.title, body=self.body,
+                             settings=self.settings)
+        self.assertTrue(isinstance(page, majestic.Content))
+
+
 @unittest.SkipTest
 class TestParseFile(unittest.TestCase):
     """Test that parse_file correctly processes markdown pages and posts"""

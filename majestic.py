@@ -102,6 +102,15 @@ class Content(object):
         raise NotImplementedError()
 
 
+class Page(Content):
+    """A Content subclass representing a static Page
+
+    Page is largely just a concrete version of Content, with the stub
+    methods implemented.
+    """
+    pass
+
+
 def validate_slug(slug):
     """Test slug for validity and return a boolean
 
