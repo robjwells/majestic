@@ -282,7 +282,7 @@ def parse_file(file, class_, settings):
     body = body.strip('\n')
     meta = [line.split(':', maxsplit=1) for line in meta.splitlines()]
     if ['draft'] in meta:
-        return None
+        raise DraftError('Marked draft in metadata header')
     meta = {k.lower().strip(): v.strip() for k, v in meta}
     meta['source_path'] = file
 

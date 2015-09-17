@@ -587,15 +587,15 @@ class TestParseFile(unittest.TestCase):
         self.assertTrue(post.slug, known_good_slug)
 
     def test_explicit_draft(self):
-        """parse_file returns None given a file with 'draft' in meta
+        """parse_file raises DraftError given a file with 'draft' in meta
 
-        'draft' should appear (without quotes) at the end on a line by itself
+        'draft' should appear (without quotes) on a line by itself
         """
-        result = majestic.parse_file(
-            file=self.posts_path.joinpath('test_explicit_draft.md'),
-            class_=majestic.Post,
-            settings=self.settings)
-        self.assertIsNone(result)
+        with self.assertRaises(majestic.DraftError):
+            majestic.parse_file(
+                file=self.posts_path.joinpath('test_explicit_draft.md'),
+                class_=majestic.Post,
+                settings=self.settings)
 
 
 if __name__ == '__main__':
