@@ -284,10 +284,6 @@ def parse_file(file, class_, settings):
     if ['draft'] in meta:
         return None
     meta = {k.lower().strip(): v.strip() for k, v in meta}
-
-    if not validate_slug(meta['slug']):
-        meta['slug'] = normalise_slug(meta['slug'])
-
     meta['source_path'] = file
 
     return class_(body=body, settings=settings, **meta)
