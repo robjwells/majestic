@@ -265,8 +265,8 @@ class TestPage(unittest.TestCase):
                              settings=self.settings)
         self.assertTrue(isinstance(page, majestic.Content))
 
-    def test_page_init_output_path_and_url(self):
-        """Page sets output_path and url on initialisation
+    def test_page_output_path_and_url(self):
+        """Page defines output_path and url properties
 
         Output path should be a pathlib.Path object, url a str
         """
