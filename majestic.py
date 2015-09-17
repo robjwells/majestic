@@ -2,6 +2,7 @@
 
 import configparser
 import datetime
+import markdown
 import os
 import pathlib
 import pytz
@@ -81,6 +82,7 @@ class Content(object):
         self.meta = kwargs
 
         # Placeholders
+        self._html = None
         self._output_path = None
         self._url = None
 
@@ -94,6 +96,26 @@ class Content(object):
             return self.title.lower() < other.title.lower()
         else:
             return self.slug.lower() < other.slug.lower()
+
+    @property
+    def html(self):
+        """Render self.body markdown text as HTML
+
+        Uses the extensions stored in the config file under [markdown] as
+        a whitespace-separated list under the 'extensions' property
+
+        'markdown.extensions.' is added to members of the extension list
+        that are missing it
+        """
+        if self._html is None:
+            extensions = self.settings['markdown']['extensions'].split()
+            prefix = 'markdown.extensions.'
+            for idx, ext in enumerate(extensions):
+                if not ext.startswith(prefix):
+                    extensions[idx] = prefix + ext
+            md = markdown.Markdown(extensions=extensions)
+            self._html = md.convert(self.body)
+        return self._html
 
     @property
     def output_path(self):
