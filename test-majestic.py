@@ -286,6 +286,50 @@ class TestPage(unittest.TestCase):
         self.assertEqual(expected_url, page.url)
 
 
+class TestPost(unittest.TestCase):
+    """Test the Post content class"""
+    def setUp(self):
+        """Set dummy values for use in testing"""
+        self.title = "Here’s a — test! — dummy title: (with lots o' symbols)"
+        self.date = datetime(2015, 8, 22, 9, 46)
+        self.date_string = '2015-08-22 09:46'
+        self.slug = 'test-slug-with-no-relation-to-title'
+        self.meta = {'tags': ['a', 'b']}
+        self.body = (
+            # http://slipsum.com
+            "You see? It's curious. Ted did figure it out - time"
+            "travel. And when we get back, we gonna tell everyone. How"
+            "it's possible, how it's done, what the dangers are."
+            "\n\n"
+            "The lysine contingency - it's intended to prevent the"
+            "spread of the animals is case they ever got off the"
+            "island. Dr. Wu inserted a gene that makes a single faulty"
+            "enzyme in protein metabolism."
+            )
+        settings_path = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
+        self.settings = majestic.load_settings(files=[settings_path],
+                                               local=False)
+
+    def test_post_inheritance(self):
+        """Post instances are also an instance of Content"""
+        post = majestic.Post(title=self.title, body=self.body,
+                             date=self.date, settings=self.settings)
+        self.assertTrue(isinstance(post, majestic.Content))
+
+    def test_post_init_date(self):
+        """Post stores provided date as self.date"""
+        post = majestic.Post(title=self.title, body=self.body,
+                             date=self.date, settings=self.settings)
+        self.assertEqual(self.date, post.date)
+
+    def test_post_init_date_string(self):
+        """If given a str for date, Post parses it into a datetime object"""
+        self.settings['dates']['date_format'] = '%Y-%m-%d %H:%M'
+        post = majestic.Post(title=self.title, body=self.body,
+                             date=self.date_string, settings=self.settings)
+        self.assertEqual(self.date, post.date)
+
+
 class TestSlugFunctions(unittest.TestCase):
     """Test validate_slug and normalise_slug
 
