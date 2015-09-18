@@ -199,14 +199,20 @@ class TestContent(unittest.TestCase):
         self.assertFalse(post_2 < post_1)
 
     def test_url_property_raises(self):
-        """Accessing content.url should raise NotImplementedError"""
+        """Accessing content.url should raise NotImplementedError
+
+        This is now achieved through calling .path_part, which raises
+        """
         content = majestic.Content(title=self.title, body=self.body,
                                    settings=self.settings)
         with self.assertRaises(NotImplementedError):
             content.url
 
     def test_output_path_attribute_raises(self):
-        """Accessing content.output_path should raise NotImplementedError"""
+        """Accessing content.output_path should raise NotImplementedError
+
+        This is now achieved through calling .path_part, which raises
+        """
         content = majestic.Content(title=self.title, body=self.body,
                                    settings=self.settings)
         with self.assertRaises(NotImplementedError):
