@@ -191,6 +191,11 @@ class Content(object):
             self._output_path = output_dir.joinpath(self._path_part)
         return self._output_path
 
+    @output_path.setter
+    def output_path(self, value):
+        """Override output_path by setting it directly"""
+        self._output_path = value
+
     @property
     def url(self):
         """Content's URL"""
@@ -198,6 +203,11 @@ class Content(object):
             site_url = self.settings['site']['url']
             self._url = urllib.parse.urljoin(site_url, self._path_part)
         return self._url
+
+    @url.setter
+    def url(self, value):
+        """Override url by setting it directly"""
+        self._url = value
 
 
 class Page(Content):

@@ -218,6 +218,22 @@ class TestContent(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             content.output_path
 
+    def test_set_url(self):
+        """Can override the url property by setting it"""
+        content = majestic.Content(title=self.title, body=self.body,
+                                   settings=self.settings)
+        url = 'http://example.com/my-test-url.html'
+        content.url = url
+        self.assertEqual(content.url, url)
+
+    def test_set_output_path(self):
+        """Can override the output_path property by setting it"""
+        content = majestic.Content(title=self.title, body=self.body,
+                                   settings=self.settings)
+        path = '/some/path/on/the/system'
+        content.output_path = path
+        self.assertEqual(content.output_path, path)
+
     def test_render_html(self):
         """Content.html returns the body converted to HTML"""
         content = majestic.Content(title=self.title, settings=self.settings,
