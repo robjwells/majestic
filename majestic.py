@@ -269,22 +269,20 @@ class Post(Content):
             self.source_path if self.source_path is not None else 'No path')
 
     @property
-    def output_path(self):
-        """Path to Post's output file"""
-        if not hasattr(self, '_output_path'):
-            output_dir = self.settings['paths']['output root']
-            path = self.settings['paths']['post output'].format(content=self)
-            self._output_path = pathlib.Path(output_dir).joinpath(path)
-        return self._output_path
+    def _path_part(self):
+        """Path part of Post's output_path and url as a str
 
-    @property
-    def url(self):
-        """Post's URL"""
-        if not hasattr(self, '_url'):
-            site_url = self.settings['site']['url']
-            path = self.settings['paths']['post output'].format(content=self)
-            self._url = urllib.parse.urljoin(site_url, path)
-        return self._url
+        Property fetches template from settings, formats and then stores
+        the result so it can be simply returned in the future.
+
+        Specifically:
+            http://example.com/path/part.html
+            output_root_dir/path/part.html
+        """
+        if not hasattr(self, '_path_part_str'):
+            template = self.settings['paths']['post output']
+            self._path_part_str = template.format(content=self)
+        return self._path_part_str
 
 
 def validate_slug(slug):
