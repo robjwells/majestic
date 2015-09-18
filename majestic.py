@@ -174,7 +174,8 @@ class Content(object):
         in directory paths and urls.
 
         Property should fetch template from settings, format and then
-        store the result so it can be simply returned in the future.
+        store the result at _path_part_str so it can simply be returned
+        in the future.
 
         Specifically:
             http://example.com/path/part.html
