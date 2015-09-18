@@ -285,6 +285,25 @@ class TestPage(unittest.TestCase):
         self.assertEqual(expected_output, page.output_path)
         self.assertEqual(expected_url, page.url)
 
+    def test_page_path_part(self):
+        """_path_part correctly formats and stores Page's path part
+
+        Path part here refers to the 'path' section of a URL, for example:
+            http://example.com/path/part.html
+        This is the same as the path underneath the output root directory:
+            /.../blog/output/path/part.html
+
+        Since both are identical it is sensible for the path to be created
+        in one place in the class and stored, with .output_path and .url
+        both looking in one place for them.
+        """
+        page = majestic.Page(title=self.title, body=self.body,
+                             settings=self.settings, slug='abc')
+
+        path_template = self.settings['paths']['page output']
+        path = path_template.format(content=page)
+        self.assertEqual(path, page._path_part)
+
 
 class TestPost(unittest.TestCase):
     """Test the Post content class"""

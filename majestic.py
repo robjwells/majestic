@@ -189,6 +189,22 @@ class Page(Content):
     methods implemented.
     """
     @property
+    def _path_part(self):
+        """Path part of Page's output_path and url as a str
+
+        Property fetches template from settings, formats and then stores
+        the result so it can be simply returned in the future.
+
+        Specifically:
+            http://example.com/path/part.html
+            output_root_dir/path/part.html
+        """
+        if not hasattr(self, '_path_part_str'):
+            template = self.settings['paths']['page output']
+            self._path_part_str = template.format(content=self)
+        return self._path_part_str
+
+    @property
     def output_path(self):
         """Path to Page's output file"""
         if not hasattr(self, '_output_path'):
