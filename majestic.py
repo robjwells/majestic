@@ -167,19 +167,36 @@ class Content(object):
                       **dict(meta))
 
     @property
-    def output_path(self):
-        """On subclasses, return the content's output path
+    def _path_part(self):
+        """Not Implemented
 
-        This raises NotImplementedError on the Content base class"""
+        On subclasses, return the content's path part as str for use
+        in directory paths and urls.
+
+        Property should fetch template from settings, format and then
+        store the result so it can be simply returned in the future.
+
+        Specifically:
+            http://example.com/path/part.html
+            output_root_dir/path/part.html
+        """
         raise NotImplementedError()
 
     @property
-    def url(self):
-        """On subclasses, return the content's URL
+    def output_path(self):
+        """Path to Content's output file"""
+        if not hasattr(self, '_output_path'):
+            output_dir = pathlib.Path(self.settings['paths']['output root'])
+            self._output_path = output_dir.joinpath(self._path_part)
+        return self._output_path
 
-        This raises NotImplementedError on the Content base class
-        """
-        raise NotImplementedError()
+    @property
+    def url(self):
+        """Content's URL"""
+        if not hasattr(self, '_url'):
+            site_url = self.settings['site']['url']
+            self._url = urllib.parse.urljoin(site_url, self._path_part)
+        return self._url
 
 
 class Page(Content):
@@ -203,24 +220,6 @@ class Page(Content):
             template = self.settings['paths']['page output']
             self._path_part_str = template.format(content=self)
         return self._path_part_str
-
-    @property
-    def output_path(self):
-        """Path to Page's output file"""
-        if not hasattr(self, '_output_path'):
-            output_dir = self.settings['paths']['output root']
-            path = self.settings['paths']['page output'].format(content=self)
-            self._output_path = pathlib.Path(output_dir).joinpath(path)
-        return self._output_path
-
-    @property
-    def url(self):
-        """Page's URL"""
-        if not hasattr(self, '_url'):
-            site_url = self.settings['site']['url']
-            path = self.settings['paths']['page output'].format(content=self)
-            self._url = urllib.parse.urljoin(site_url, path)
-        return self._url
 
 
 class Post(Content):
