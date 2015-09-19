@@ -774,14 +774,29 @@ class TestPaginateIndex(unittest.TestCase):
             self.assertEqual(page_number, index_dict['index_page_number'])
 
     def test_paginate_index_keys(self):
-        """dicts in paginate_index's returned list have correct keys"""
+        """dicts in paginate_index's returned list have correct keys
+
+        Only the second result is tested because it's the only one with
+        both a newer_index_url and an older_index_url.
+
+        It's OK for index dicts not to have those keys if 'newer_index_pages'
+        or 'older_index_pages' is False. Otherwise we'd be stuffing
+        None into those keys for no good reason.
+
+        Anyone requesting those keys in a template is going to get a
+        falsey value, so it doesn't matter there either.
+        """
         expected_keys = {'index_page_number', 'newer_index_pages',
                          'older_index_pages', 'output_path', 'url',
                          'posts', 'newer_index_url', 'older_index_url'}
         result = majestic.paginate_index(posts=self.posts,
                                          settings=self.settings)
-        for index_page in result:
-            self.assertEqual(expected_keys, set(index_page))
+
+        # Only test the second result because it's the only one with
+        # both a newer_index_url and an older_index_url.
+        # It's OK for index dicts not to have those keys if
+        # 'newer_index_pages' or 'older_index_pages' is False.
+        self.assertEqual(expected_keys, set(result[1]))
 
     def test_paginate_index_result(self):
         """paginate_index's result on known date gives expected result"""
