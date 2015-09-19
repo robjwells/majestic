@@ -496,5 +496,4 @@ def paginate_index(posts, settings):
         if index_dict['older_index_pages']:
             index_dict['older_index_url'] = index_dicts[idx + 1]['url']
 
-
     return sorted(index_dicts, key=lambda d: d['index_page_number'])
