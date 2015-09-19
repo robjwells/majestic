@@ -370,7 +370,7 @@ def jinja_environment(templates_dir, settings, jinja_options=None):
     """Create a Jinja2 Environment with a loader for templates_dir
 
     settings:   ConfigParser of the site's settings
-    options:    dictionary of custom options for the jinja2 Environment
+    options:    dictionary of custom options for the Jinja2 Environment
     """
     if jinja_options is None:
         jinja_options = {}
