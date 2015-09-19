@@ -427,8 +427,8 @@ def chunk(iterable, chunk_length):
 
     If the length of the iterable is not a multiple of the chunk length,
     the final chunk contains the remaining data but does not fill to
-    meet the chunk length (unlike itertools.zip_longest and the
-    grouper recipe in the itertools documentation).
+    meet the chunk length (unlike the grouper recipe in the
+    itertools documentation).
     """
     for idx in range(math.ceil(len(iterable) / chunk_length)):
         lower = idx * chunk_length
