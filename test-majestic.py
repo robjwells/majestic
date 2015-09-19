@@ -689,7 +689,7 @@ class TestTemplating(unittest.TestCase):
         env = majestic.jinja_environment(
             templates_dir=self.settings['paths']['templates root'],
             settings=self.settings,
-            options=opts)
+            jinja_options=opts)
         self.assertTrue(env.trim_blocks)
 
 
