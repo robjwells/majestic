@@ -1,20 +1,21 @@
 #!/usr/bin/env python
 
-import configparser
-import datetime
-import jinja2
+from configparser import ConfigParser
+from datetime import datetime
 import json
-import markdown
 import math
 import os
-import pathlib
-import pytz
+from pathlib import Path
 import re
 import string
-from unidecode import unidecode
-import urllib.parse
+from urllib.parse import urljoin
 
-MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent
+import jinja2
+import markdown
+import pytz
+from unidecode import unidecode
+
+MAJESTIC_DIR = Path(__file__).resolve().parent
 MAJESTIC_JINJA_OPTIONS = {
     'auto_reload': False,
     }
@@ -27,11 +28,11 @@ def load_settings(default=True, local=True, files=None):
     local:      load config file from current directory
     files:      [str] of filenames to load
     """
-    settings = configparser.ConfigParser(interpolation=None)
+    settings = ConfigParser(interpolation=None)
     if files is None:
         files = []
     if local:
-        local_cfg = pathlib.Path.cwd().joinpath('settings.cfg')
+        local_cfg = Path.cwd().joinpath('settings.cfg')
         files.insert(0, str(local_cfg))
     if default:
         default_cfg = MAJESTIC_DIR.joinpath('majestic.cfg')
@@ -53,7 +54,7 @@ def markdown_files(directory):
         * markdown
     """
     extensions = {'.md', '.mkd', '.mdown', '.mkdown', '.markdown'}
-    files = (pathlib.Path(os.path.join(dirpath, f))
+    files = (Path(os.path.join(dirpath, f))
              for dirpath, dirnames, filenames in os.walk(str(directory))
              for f in filenames
              if os.path.splitext(f)[1] in extensions)
@@ -193,7 +194,7 @@ class Content(object):
     def output_path(self):
         """Path to Content's output file"""
         if not hasattr(self, '_output_path'):
-            output_dir = pathlib.Path(self.settings['paths']['output root'])
+            output_dir = Path(self.settings['paths']['output root'])
             self._output_path = output_dir.joinpath(self._path_part)
         return self._output_path
 
@@ -207,7 +208,7 @@ class Content(object):
         """Content's URL"""
         if not hasattr(self, '_url'):
             site_url = self.settings['site']['url']
-            self._url = urllib.parse.urljoin(site_url, self._path_part)
+            self._url = urljoin(site_url, self._path_part)
         return self._url
 
     @url.setter
@@ -256,10 +257,10 @@ class Post(Content):
                          slug=slug, source_path=source_path, **kwargs)
         if isinstance(date, str):
             date_format = settings['dates']['format']
-            date = datetime.datetime.strptime(date, date_format)
+            date = datetime.strptime(date, date_format)
         tz = pytz.timezone(settings['dates']['timezone'])
         date = tz.localize(date)
-        if date > tz.localize(datetime.datetime.now()):
+        if date > tz.localize(datetime.now()):
             # Post date is in the future and considered a draft
             raise DraftError('Date is in the future')
         self.date = date
@@ -390,7 +391,7 @@ def jinja_environment(templates_dir, settings, jinja_options=None):
 def load_jinja_options(settings):
     """Return the custom settings in templates root/jinja.json as a dict"""
     jinja_opts_filename = 'jinja.json'
-    templates_root = pathlib.Path(settings['paths']['templates root'])
+    templates_root = Path(settings['paths']['templates root'])
     json_file = templates_root.joinpath(jinja_opts_filename)
     with json_file.open() as file:
         custom_options = json.load(file)
@@ -461,11 +462,11 @@ class Index(object):
         self.newer_index = newer_index
         self.older_index = older_index
 
-        output_root = pathlib.Path(settings['paths']['output root'])
+        output_root = Path(settings['paths']['output root'])
         if page_number > 1:
             template = settings['paths']['index pages path template']
             path_part = template.format(index=self)
-            self.url = urllib.parse.urljoin(settings['site']['url'], path_part)
+            self.url = urljoin(settings['site']['url'], path_part)
         else:
             path_part = 'index.html'
             self.url = settings['site']['url']
