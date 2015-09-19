@@ -746,7 +746,7 @@ class TestIndex(unittest.TestCase):
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
         self.settings['index']['posts per page'] = '2'
-        path_template = 'page-{index_page_number}.html'
+        path_template = 'page-{index.page_number}.html'
         self.settings['paths']['index pages path template'] = path_template
         self.settings['site']['url'] = 'http://example.com'
 
@@ -774,9 +774,8 @@ class TestIndex(unittest.TestCase):
 
     def test_Index_attrs(self):
         """Each Index returned by paginate_posts has the correct attributes"""
-        attr_list = ['index_page_number', 'newer_index_pages',
-                     'older_index_pages', 'output_path', 'url',
-                     'posts', 'newer_index_url', 'older_index_url']
+        attr_list = ['page_number', 'newer_index', 'older_index',
+                     'output_path', 'url', 'posts']
         result = majestic.Index.paginate_posts(posts=self.posts,
                                                settings=self.settings)
         for index in result:
@@ -790,8 +789,8 @@ class TestIndex(unittest.TestCase):
             majestic.Index(page_number=n, settings=self.settings, posts=[])
             for n in range(1, 3)
             ]
-        self.assertEqual('index.html', indexes[0].output_path)
-        self.assertEqual('page-2.html', indexes[1].output_path)
+        self.assertEqual(pathlib.Path('index.html'), indexes[0].output_path)
+        self.assertEqual(pathlib.Path('page-2.html'), indexes[1].output_path)
 
     def test_Index_url(self):
         """Index properly sets output path"""
@@ -801,8 +800,8 @@ class TestIndex(unittest.TestCase):
             majestic.Index(page_number=n, settings=self.settings, posts=[])
             for n in range(1, 3)
             ]
-        self.assertEqual(dummy_url, indexes[0].output_path)
-        self.assertEqual(dummy_url + '/page-2.html', indexes[1].output_path)
+        self.assertEqual(dummy_url, indexes[0].url)
+        self.assertEqual(dummy_url + '/page-2.html', indexes[1].url)
 
     @unittest.SkipTest
     def test_paginate_index_result(self):
