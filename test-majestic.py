@@ -707,6 +707,12 @@ class TestTemplating(unittest.TestCase):
         result = majestic.load_jinja_options(self.settings)
         self.assertEqual(expected, result)
 
+    def test_jinja_environment_rfc822_filter(self):
+        """jinja_environment adds rfc822_date as a custom filter"""
+        env = majestic.jinja_environment(
+            templates_dir=self.settings['paths']['templates root'],
+            settings=self.settings)
+        self.assertEqual(env.filters['rfc822_date'], majestic.rfc822_date)
 
 class TestRFC822Date(unittest.TestCase):
     """Test the rfc822_date function"""

@@ -379,7 +379,10 @@ def jinja_environment(templates_dir, settings, jinja_options=None):
 
     loader = jinja2.FileSystemLoader(str(templates_dir))
     env = jinja2.Environment(loader=loader, **opts)
-    env.globals['settings'] = settings
+
+    env.globals['settings'] = settings          # add settings as a global
+    env.filters['rfc822_date'] = rfc822_date    # add custom filter
+
     return env
 
 
