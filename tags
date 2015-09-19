@@ -4,21 +4,18 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
+ConfigParser	majestic.py	/^from configparser import ConfigParser$/;"	i
 Content	majestic.py	/^class Content(object):$/;"	c
 DraftError	majestic.py	/^class DraftError(Exception):$/;"	c
 Index	majestic.py	/^class Index(object):$/;"	c
-MAJESTIC_DIR	majestic.py	/^MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent$/;"	v
+MAJESTIC_DIR	majestic.py	/^MAJESTIC_DIR = Path(__file__).resolve().parent$/;"	v
 MAJESTIC_JINJA_OPTIONS	majestic.py	/^MAJESTIC_JINJA_OPTIONS = {$/;"	v
 Page	majestic.py	/^class Page(Content):$/;"	c
+Path	majestic.py	/^from pathlib import Path$/;"	i
 Post	majestic.py	/^class Post(Content):$/;"	c
-_path_part	majestic.py	/^    def _path_part(self):$/;"	m	class:Content
-_path_part	majestic.py	/^    def _path_part(self):$/;"	m	class:Page
-_path_part	majestic.py	/^    def _path_part(self):$/;"	m	class:Post
 chunk	majestic.py	/^def chunk(iterable, chunk_length):$/;"	f
-configparser	majestic.py	/^import configparser$/;"	i
-datetime	majestic.py	/^import datetime$/;"	i
+datetime	majestic.py	/^from datetime import datetime$/;"	i
 from_file	majestic.py	/^    def from_file(class_, file, settings):$/;"	m	class:Content
-html	majestic.py	/^    def html(self):$/;"	m	class:Content
 jinja2	majestic.py	/^import jinja2$/;"	i
 jinja_environment	majestic.py	/^def jinja_environment(templates_dir, settings, jinja_options=None):$/;"	f
 json	majestic.py	/^import json$/;"	i
@@ -29,17 +26,11 @@ markdown_files	majestic.py	/^def markdown_files(directory):$/;"	f
 math	majestic.py	/^import math$/;"	i
 normalise_slug	majestic.py	/^def normalise_slug(slug):$/;"	f
 os	majestic.py	/^import os$/;"	i
-output_path	majestic.py	/^    def output_path(self):$/;"	m	class:Content
-output_path	majestic.py	/^    def output_path(self, value):$/;"	m	class:Content
 paginate_posts	majestic.py	/^    def paginate_posts(class_, posts, settings):$/;"	m	class:Index
-parse	majestic.py	/^import urllib.parse$/;"	i
-pathlib	majestic.py	/^import pathlib$/;"	i
 pytz	majestic.py	/^import pytz$/;"	i
 re	majestic.py	/^import re$/;"	i
 rfc822_date	majestic.py	/^def rfc822_date(date):$/;"	f
 string	majestic.py	/^import string$/;"	i
 unidecode	majestic.py	/^from unidecode import unidecode$/;"	i
-url	majestic.py	/^    def url(self):$/;"	m	class:Content
-url	majestic.py	/^    def url(self, value):$/;"	m	class:Content
-urllib	majestic.py	/^import urllib.parse$/;"	i
+urljoin	majestic.py	/^from urllib.parse import urljoin$/;"	i
 validate_slug	majestic.py	/^def validate_slug(slug):$/;"	f
