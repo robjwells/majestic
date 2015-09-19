@@ -788,7 +788,7 @@ class TestPaginateIndex(unittest.TestCase):
              'newer_index_pages': False,
              'older_index_pages': True,
              'output_path': output_root.joinpath('index.html'),
-             'url': 'http://example.com/',
+             'url': self.settings['site']['url'],
              'posts': [self.posts[-1], self.posts[-2]]
              },
             {'index_page_number': 2,
