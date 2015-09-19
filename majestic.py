@@ -475,6 +475,13 @@ class Index(object):
         """Index compares by page_number"""
         return self.page_number < other.page_number
 
+    def __str__(self):
+        """Return str(self)"""
+        template = 'Index page {page_number}, {num_posts} posts ({url})'
+        return template.format(page_number=self.page_number,
+                               num_posts=len(self.posts),
+                               url=self.url)
+
 
 def paginate_index(posts, settings):
     """Split up posts for multiple index pages
