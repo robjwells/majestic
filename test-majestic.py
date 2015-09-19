@@ -1,4 +1,5 @@
 from datetime import datetime
+import jinja2
 import os
 import pathlib
 import pytz
@@ -650,6 +651,46 @@ class TestFromFile(unittest.TestCase):
             majestic.Post.from_file(
                 file=self.posts_path.joinpath('test_explicit_draft.md'),
                 settings=self.settings)
+
+
+class TestTemplating(unittest.TestCase):
+    """Test functions concerned with loading and rendering templates"""
+    def setUp(self):
+        settings_path = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
+        self.settings = majestic.load_settings(files=[settings_path],
+                                               local=False)
+        loader = jinja2.FileSystemLoader(
+            self.settings['paths']['templates root'])
+        self.jinja_env = jinja2.Environment(loader=loader)
+
+    def test_jinja_environment_basic(self):
+        """jinja_environment returns Environment with expected templates"""
+        env = majestic.jinja_environment(
+            templates_dir=self.settings['paths']['templates root'],
+            settings=self.settings)
+        self.assertEqual(self.jinja_env.list_templates(), env.list_templates())
+
+    def test_jinja_environment_defaults(self):
+        """jinja_environment results contains expected default options
+
+        In particular:
+            environment.auto_reload should be False
+            environment.globals should contain 'settings'
+        """
+        env = majestic.jinja_environment(
+            templates_dir=self.settings['paths']['templates root'],
+            settings=self.settings)
+        self.assertFalse(env.auto_reload)
+        self.assertTrue('settings' in env.globals)
+
+    def test_jinja_environment_custom_options(self):
+        """jinja_environment properly applies custom jinja options"""
+        opts = {'trim_blocks': True}
+        env = majestic.jinja_environment(
+            templates_dir=self.settings['paths']['templates root'],
+            settings=self.settings,
+            options=opts)
+        self.assertTrue(env.trim_blocks)
 
 
 if __name__ == '__main__':
