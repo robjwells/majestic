@@ -443,7 +443,9 @@ def paginate_index(posts, settings):
     one per index page, of the type:
         {'index_page_number': 1 to len(pages),
          'newer_index_pages': bool,
+         'newer_index_url': str,
          'older_index_pages': bool,
+         'older_index_url': str,
          'output_path': pathlib.Path,
          'url': str,
          'posts': [Post]

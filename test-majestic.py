@@ -732,7 +732,9 @@ class TestPaginateIndex(unittest.TestCase):
     one per index page, of the type:
         {'index_page_number': 1 to len(pages),
          'newer_index_pages': bool,
+         'newer_index_url': str,
          'older_index_pages': bool,
+         'older_index_url': str,
          'output_path': pathlib.Path,
          'url': str,
          'posts': [Post]
@@ -774,7 +776,8 @@ class TestPaginateIndex(unittest.TestCase):
     def test_paginate_index_keys(self):
         """dicts in paginate_index's returned list have correct keys"""
         expected_keys = {'index_page_number', 'newer_index_pages',
-                         'older_index_pages', 'output_path', 'url', 'posts'}
+                         'older_index_pages', 'output_path', 'url',
+                         'posts', 'newer_index_url', 'older_index_url'}
         result = majestic.paginate_index(posts=self.posts,
                                          settings=self.settings)
         for index_page in result:
@@ -787,19 +790,23 @@ class TestPaginateIndex(unittest.TestCase):
             {'index_page_number': 1,
              'newer_index_pages': False,
              'older_index_pages': True,
+             'older_index_url': 'http://example.com/page-2.html',
              'output_path': output_root.joinpath('index.html'),
              'url': self.settings['site']['url'],
              'posts': [self.posts[-1], self.posts[-2]]
              },
             {'index_page_number': 2,
              'newer_index_pages': True,
+             'newer_index_url': self.settings['site']['url'],
              'older_index_pages': True,
+             'older_index_url': 'http://example.com/page-3.html',
              'output_path': output_root.joinpath('page-2.html'),
              'url': 'http://example.com/page-2.html',
              'posts': [self.posts[-3], self.posts[-4]]
              },
             {'index_page_number': 3,
              'newer_index_pages': True,
+             'newer_index_url': 'http://example.com/page-2.html',
              'older_index_pages': False,
              'output_path': output_root.joinpath('page-3.html'),
              'url': 'http://example.com/page-3.html',
