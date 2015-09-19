@@ -708,5 +708,15 @@ class TestTemplating(unittest.TestCase):
         self.assertEqual(expected, result)
 
 
+class TestRFC822Date(unittest.TestCase):
+    """Test the rfc822_date function"""
+    def test_rfc822_date_basic(self):
+        """Given an aware datetime, return the rfc822-format date"""
+        date = pytz.utc.localize(datetime(2015, 9, 19, 14, 43))
+        expected = 'Sat, 19 Sep 2015 14:43:00 +0000'
+        result = majestic.rfc822_date(date)
+        self.assertEqual(expected, result)
+
+
 if __name__ == '__main__':
     unittest.main()
