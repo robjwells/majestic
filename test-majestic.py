@@ -736,7 +736,7 @@ class TestIndex(unittest.TestCase):
         url:            url of the index (str)
         posts:          [Post] to be rendered on the index page
 
-    The index page with index_page_number 1 is always index.html.
+    An Index created with page_number 1 is always index.html.
 
     It should also have a .paginate_posts class method that returns
     a list of Index objects.
