@@ -811,5 +811,32 @@ class TestPaginateIndex(unittest.TestCase):
         self.assertEqual(expected, result)
 
 
+class TestChunk(unittest.TestCase):
+    """Test the chunk function
+
+    Chunk yields the members of its iterable argument in chunks
+    of a given length.
+
+    If the length of the iterable is not a multiple of the chunk length,
+    the final chunk contains the remaining data but does not fill to
+    meet the chunk length (unlike the grouper recipe in the
+    itertools documentation).
+    """
+    def setUp(self):
+        self.data = 'ABCDEFGHIJ'
+
+    def test_chunk_5(self):
+        """Take chunks of 5 elements from self.data"""
+        expected = ['ABCDE', 'FGHIJ']
+        result = majestic.chunk(self.data, 5)
+        self.assertEqual(expected, list(result))
+
+    def test_chunk_3(self):
+        """Take chunks of 3 elements from self.data"""
+        expected = ['ABC', 'DEF', 'GHI', 'J']
+        result = majestic.chunk(self.data, 3)
+        self.assertEqual(expected, list(result))
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -5,6 +5,7 @@ import datetime
 import jinja2
 import json
 import markdown
+import math
 import os
 import pathlib
 import pytz
@@ -419,6 +420,20 @@ def rfc822_date(date):
     month = month_names[date.month - 1]
     template = '{weekday}, {d:%d} {month} {d:%Y %H:%M:%S %z}'
     return template.format(weekday=weekday, month=month, d=date)
+
+
+def chunk(iterable, chunk_length):
+    """Yield the members of its iterable chunk_length at a time
+
+    If the length of the iterable is not a multiple of the chunk length,
+    the final chunk contains the remaining data but does not fill to
+    meet the chunk length (unlike itertools.zip_longest and the
+    grouper recipe in the itertools documentation).
+    """
+    for idx in range(math.ceil(len(iterable) / chunk_length)):
+        lower = idx * chunk_length
+        upper = lower + chunk_length
+        yield iterable[lower:upper]
 
 
 def paginate_index(posts, settings):
