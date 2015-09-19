@@ -489,4 +489,12 @@ def paginate_index(posts, settings):
             'posts': post_list
             })
 
+    for idx, index_dict in enumerate(index_dicts):
+        # Add urls to newer/older index pages to each index dict
+        if index_dict['newer_index_pages']:
+            index_dict['newer_index_url'] = index_dicts[idx - 1]['url']
+        if index_dict['older_index_pages']:
+            index_dict['older_index_url'] = index_dicts[idx + 1]['url']
+
+
     return sorted(index_dicts, key=lambda d: d['index_page_number'])
