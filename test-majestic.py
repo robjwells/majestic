@@ -714,6 +714,7 @@ class TestTemplating(unittest.TestCase):
             settings=self.settings)
         self.assertEqual(env.filters['rfc822_date'], majestic.rfc822_date)
 
+
 class TestRFC822Date(unittest.TestCase):
     """Test the rfc822_date function"""
     def test_rfc822_date_basic(self):
