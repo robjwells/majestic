@@ -451,4 +451,40 @@ def paginate_index(posts, settings):
     The index page with index_page_number 1 is always index.html.
     The list is sorted by index_page_number.
     """
-    pass
+    template = settings['paths']['index pages path template']
+    posts_per_page = settings.getint('index', 'posts per page')
+
+    output_root_path = pathlib.Path(settings['paths']['output root'])
+    site_url = settings['site']['url']
+
+    posts_newest_first = sorted(posts, reverse=True)
+    chunked = list(chunk(posts_newest_first, chunk_length=posts_per_page))
+
+    index_dicts = []
+    for idx, post_list in enumerate(chunked, start=1):
+        if idx == 1:                # First index page
+            newer = False
+            path_part = 'index.html'
+            url = site_url
+        else:
+            newer = True
+            path_part = template.format(index_page_number=idx)
+            url = urllib.parse.urljoin(site_url, path_part)
+
+        if idx == len(chunked):     # Last index page
+            older = False
+        else:
+            older = True
+
+        output_path = output_root_path.joinpath(path_part)
+
+        index_dicts.append({
+            'index_page_number': idx,
+            'newer_index_pages': newer,
+            'older_index_pages': older,
+            'output_path': output_path,
+            'url': url,
+            'posts': post_list
+            })
+
+    return sorted(index_dicts, key=lambda d: d['index_page_number'])
