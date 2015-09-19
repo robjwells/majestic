@@ -436,6 +436,43 @@ def chunk(iterable, chunk_length):
         yield iterable[lower:upper]
 
 
+class Index(object):
+    """Index represents a blog index page
+
+    It has the following attributes:
+        page_number:    1 to len(index_pages)
+        newer_index:    Index containing more recent posts or None
+        older_index:    Index containing less recent posts or None
+        output_path:    path the index should be written to (pathlib.Path)
+        url:            url of the index (str)
+        posts:          [Post] to be rendered on the index page
+
+    An Index created with page_number 1 is always index.html.
+
+    The class method .paginate_posts creates a list of Index objects out
+    of a list of posts.
+    """
+    def __init__(self, page_number, posts, settings,
+                 newer_index=None, older_index=None):
+        """Initialise the Index and computer output_path and url"""
+        self.page_number = page_number
+        self.posts = posts
+        self.settings = settings
+        self.newer_index = newer_index
+        self.older_index = older_index
+
+        output_root = pathlib.Path(settings['paths']['output root'])
+        if page_number > 1:
+            template = settings['paths']['index pages path template']
+            path_part = template.format(index=self)
+            self.url = urllib.parse.urljoin(settings['site']['url'], path_part)
+        else:
+            path_part = 'index.html'
+            self.url = settings['site']['url']
+        self.output_path = output_root.joinpath(path_part)
+
+
+
 def paginate_index(posts, settings):
     """Split up posts for multiple index pages
 
