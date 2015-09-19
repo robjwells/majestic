@@ -13,6 +13,7 @@ Post	majestic.py	/^class Post(Content):$/;"	c
 _path_part	majestic.py	/^    def _path_part(self):$/;"	m	class:Content
 _path_part	majestic.py	/^    def _path_part(self):$/;"	m	class:Page
 _path_part	majestic.py	/^    def _path_part(self):$/;"	m	class:Post
+chunk	majestic.py	/^def chunk(iterable, chunk_length):$/;"	f
 configparser	majestic.py	/^import configparser$/;"	i
 datetime	majestic.py	/^import datetime$/;"	i
 from_file	majestic.py	/^    def from_file(class_, file, settings):$/;"	m	class:Content
@@ -24,10 +25,12 @@ load_jinja_options	majestic.py	/^def load_jinja_options(settings):$/;"	f
 load_settings	majestic.py	/^def load_settings(default=True, local=True, files=None):$/;"	f
 markdown	majestic.py	/^import markdown$/;"	i
 markdown_files	majestic.py	/^def markdown_files(directory):$/;"	f
+math	majestic.py	/^import math$/;"	i
 normalise_slug	majestic.py	/^def normalise_slug(slug):$/;"	f
 os	majestic.py	/^import os$/;"	i
 output_path	majestic.py	/^    def output_path(self):$/;"	m	class:Content
 output_path	majestic.py	/^    def output_path(self, value):$/;"	m	class:Content
+paginate_index	majestic.py	/^def paginate_index(posts, settings):$/;"	f
 parse	majestic.py	/^import urllib.parse$/;"	i
 pathlib	majestic.py	/^import pathlib$/;"	i
 pytz	majestic.py	/^import pytz$/;"	i
