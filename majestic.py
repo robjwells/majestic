@@ -471,6 +471,9 @@ class Index(object):
             self.url = settings['site']['url']
         self.output_path = output_root.joinpath(path_part)
 
+    def __lt__(self, other):
+        """Index compares by page_number"""
+        return self.page_number < other.page_number
 
 
 def paginate_index(posts, settings):

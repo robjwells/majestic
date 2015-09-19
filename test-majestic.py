@@ -803,6 +803,14 @@ class TestIndex(unittest.TestCase):
         self.assertEqual(dummy_url, indexes[0].url)
         self.assertEqual(dummy_url + '/page-2.html', indexes[1].url)
 
+    def test_Index_compare(self):
+        """Index objects compare by page number"""
+        index_a = majestic.Index(page_number=1, settings=self.settings,
+                                 posts=[])
+        index_b = majestic.Index(page_number=2, settings=self.settings,
+                                 posts=[])
+        self.assertLess(index_a, index_b)
+
     @unittest.SkipTest
     def test_paginate_index_result(self):
         """paginate_index's result on known date gives expected result"""
