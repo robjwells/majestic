@@ -2,6 +2,7 @@
 
 import configparser
 import datetime
+import jinja2
 import markdown
 import os
 import pathlib
@@ -12,7 +13,9 @@ from unidecode import unidecode
 import urllib.parse
 
 MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent
-
+MAJESTIC_JINJA_OPTIONS = {
+    'auto_reload': False,
+    }
 
 def load_settings(default=True, local=True, files=None):
     """Load config from standard locations and specified files
@@ -359,3 +362,20 @@ def normalise_slug(slug):
         raise ValueError('Slug is the empty string')
 
     return new_slug
+
+
+def jinja_environment(templates_dir, settings, jinja_options=None):
+    """Create a Jinja2 Environment with a loader for templates_dir
+
+    settings:   ConfigParser of the site's settings
+    options:    dictionary of custom options for the jinja2 Environment
+    """
+    if jinja_options is None:
+        jinja_options = {}
+    opts = MAJESTIC_JINJA_OPTIONS.copy()
+    opts.update(jinja_options)
+
+    loader = jinja2.FileSystemLoader(str(templates_dir))
+    env = jinja2.Environment(loader=loader, **opts)
+    env.globals['settings'] = settings
+    return env
