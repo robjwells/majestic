@@ -1,5 +1,6 @@
 from datetime import datetime
 import jinja2
+import json
 import os
 import pathlib
 import pytz
@@ -656,6 +657,7 @@ class TestFromFile(unittest.TestCase):
 class TestTemplating(unittest.TestCase):
     """Test functions concerned with loading and rendering templates"""
     def setUp(self):
+        os.chdir(str(TEST_BLOG_DIR))
         settings_path = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
@@ -691,6 +693,19 @@ class TestTemplating(unittest.TestCase):
             settings=self.settings,
             jinja_options=opts)
         self.assertTrue(env.trim_blocks)
+
+    def test_load_jinja_options(self):
+        """load_jinja_options parses the jinja.json file and returns a dict
+
+        It should create the path to jinja.json from the templates root
+        in the settings object.
+        """
+        templates_root = pathlib.Path(self.settings['paths']['templates root'])
+        json_file = templates_root.joinpath('jinja.json')
+        with json_file.open() as f:
+            expected = json.load(f)
+        result = majestic.load_jinja_options(self.settings)
+        self.assertEqual(expected, result)
 
 
 if __name__ == '__main__':

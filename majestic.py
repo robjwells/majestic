@@ -3,6 +3,7 @@
 import configparser
 import datetime
 import jinja2
+import json
 import markdown
 import os
 import pathlib
@@ -16,6 +17,7 @@ MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent
 MAJESTIC_JINJA_OPTIONS = {
     'auto_reload': False,
     }
+
 
 def load_settings(default=True, local=True, files=None):
     """Load config from standard locations and specified files
@@ -379,3 +381,12 @@ def jinja_environment(templates_dir, settings, jinja_options=None):
     env = jinja2.Environment(loader=loader, **opts)
     env.globals['settings'] = settings
     return env
+
+def load_jinja_options(settings):
+    """Return the custom settings in templates root/jinja.json as a dict"""
+    jinja_opts_filename = 'jinja.json'
+    templates_root = pathlib.Path(settings['paths']['templates root'])
+    json_file = templates_root.joinpath(jinja_opts_filename)
+    with json_file.open() as file:
+        custom_options = json.load(file)
+    return custom_options
