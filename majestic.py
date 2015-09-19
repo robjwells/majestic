@@ -374,13 +374,14 @@ def jinja_environment(templates_dir, settings, jinja_options=None):
     """
     if jinja_options is None:
         jinja_options = {}
-    opts = MAJESTIC_JINJA_OPTIONS.copy()
-    opts.update(jinja_options)
+    opts = MAJESTIC_JINJA_OPTIONS.copy()    # get default options
+    opts.update(jinja_options)              # update defaults with user options
 
     loader = jinja2.FileSystemLoader(str(templates_dir))
     env = jinja2.Environment(loader=loader, **opts)
     env.globals['settings'] = settings
     return env
+
 
 def load_jinja_options(settings):
     """Return the custom settings in templates root/jinja.json as a dict"""
