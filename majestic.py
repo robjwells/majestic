@@ -228,7 +228,7 @@ class Page(Content):
             output_root_dir/path/part.html
         """
         if not hasattr(self, '_path_part_str'):
-            template = self.settings['paths']['page output']
+            template = self.settings['paths']['page path template']
             self._path_part_str = template.format(content=self)
         return self._path_part_str
 
@@ -249,7 +249,7 @@ class Post(Content):
         super().__init__(title=title, body=body, settings=settings,
                          slug=slug, source_path=source_path, **kwargs)
         if isinstance(date, str):
-            date_format = settings['dates']['date format']
+            date_format = settings['dates']['format']
             date = datetime.datetime.strptime(date, date_format)
         tz = pytz.timezone(settings['dates']['timezone'])
         date = tz.localize(date)
@@ -291,7 +291,7 @@ class Post(Content):
             output_root_dir/path/part.html
         """
         if not hasattr(self, '_path_part_str'):
-            template = self.settings['paths']['post output']
+            template = self.settings['paths']['post path template']
             self._path_part_str = template.format(content=self)
         return self._path_part_str
 

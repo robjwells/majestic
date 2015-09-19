@@ -295,7 +295,7 @@ class TestPage(unittest.TestCase):
         page = majestic.Page(title=self.title, body=self.body,
                              settings=self.settings, slug='abc')
 
-        path_template = self.settings['paths']['page output']
+        path_template = self.settings['paths']['page path template']
         path = path_template.format(content=page)
 
         output_dir = self.settings['paths']['output root']
@@ -322,7 +322,7 @@ class TestPage(unittest.TestCase):
         page = majestic.Page(title=self.title, body=self.body,
                              settings=self.settings, slug='abc')
 
-        path_template = self.settings['paths']['page output']
+        path_template = self.settings['paths']['page path template']
         path = path_template.format(content=page)
         self.assertEqual(path, page._path_part)
 
@@ -370,7 +370,7 @@ class TestPost(unittest.TestCase):
 
     def test_post_init_date_string(self):
         """If given a str for date, Post parses it into a datetime object"""
-        self.settings['dates']['date_format'] = '%Y-%m-%d %H:%M'
+        self.settings['dates']['format'] = '%Y-%m-%d %H:%M'
         post = majestic.Post(title=self.title, body=self.body,
                              date=self.date_string, settings=self.settings)
         self.assertEqual(self.aware_date, post.date)
@@ -418,7 +418,7 @@ class TestPost(unittest.TestCase):
         post = majestic.Post(title=self.title, body=self.body,
                              settings=self.settings, date=self.naive_date)
 
-        path_template = self.settings['paths']['post output']
+        path_template = self.settings['paths']['post path template']
         path = path_template.format(content=post)
 
         output_dir = self.settings['paths']['output root']
@@ -579,7 +579,7 @@ class TestFromFile(unittest.TestCase):
 
         The body should be stripped of leading and trailing newlines only.
         """
-        date_format = self.settings.get('dates', 'date format')
+        date_format = self.settings['dates']['format']
 
         for file in self.lib_posts:
             with file.open() as f:
