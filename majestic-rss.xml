@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+    <channel>
+        <title><![CDATA[{{ settings['site']['title'] }}]]></title>
+        <link>{{ settings['site']['url'] }}</link>
+        <description><![CDATA[{{ settings['site']['description'] }}]]></description>
+        {% if settings['site']['language'] %}<language>{{ settings['site']['language'] }}</language>{% endif %}
+        <lastBuildDate>{{ build_date|rfc822_date }}</lastBuildDate>
+        <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+        <generator>{{ generator }}</generator>
+        {% for post in posts %}
+        <item>
+            <title><![CDATA[{{ post.title }}]]></title>
+            <link>{{ post.url }}</link>
+            <description><![CDATA[{{ post.html }}]]></description>
+            <pubDate>{{ post.date|rfc822_date }}</pubDate>
+            <guid>{{ post.url }}</guid>
+        </item>
+        {% endfor %}
+    </channel>
+</rss>
