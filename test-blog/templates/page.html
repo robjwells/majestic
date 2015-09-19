@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>{{ settings['site']['title']|escape }}</title>
+</head>
+
+<body>
+<h1>{{ content.title|escape }}</h1>
+<p><a href="{{ content.url }}">Permalink</a></p>
+{{ content.body }}
+</body>
+
+</html>
