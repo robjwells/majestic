@@ -6,6 +6,7 @@
 !_TAG_PROGRAM_VERSION	5.8	//
 Content	majestic.py	/^class Content(object):$/;"	c
 DraftError	majestic.py	/^class DraftError(Exception):$/;"	c
+Index	majestic.py	/^class Index(object):$/;"	c
 MAJESTIC_DIR	majestic.py	/^MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent$/;"	v
 MAJESTIC_JINJA_OPTIONS	majestic.py	/^MAJESTIC_JINJA_OPTIONS = {$/;"	v
 Page	majestic.py	/^class Page(Content):$/;"	c
@@ -30,7 +31,7 @@ normalise_slug	majestic.py	/^def normalise_slug(slug):$/;"	f
 os	majestic.py	/^import os$/;"	i
 output_path	majestic.py	/^    def output_path(self):$/;"	m	class:Content
 output_path	majestic.py	/^    def output_path(self, value):$/;"	m	class:Content
-paginate_index	majestic.py	/^def paginate_index(posts, settings):$/;"	f
+paginate_posts	majestic.py	/^    def paginate_posts(class_, posts, settings):$/;"	m	class:Index
 parse	majestic.py	/^import urllib.parse$/;"	i
 pathlib	majestic.py	/^import pathlib$/;"	i
 pytz	majestic.py	/^import pytz$/;"	i
