@@ -482,6 +482,27 @@ class Index(object):
                                num_posts=len(self.posts),
                                url=self.url)
 
+    @classmethod
+    def paginate_posts(class_, posts, settings):
+        """Split up posts across a list of Index pages
+
+        The returned list is ordered by index page number.
+        """
+        posts_per_page = settings.getint('index', 'posts per page')
+        posts_newest_first = sorted(posts, reverse=True)
+        chunked = chunk(posts_newest_first, chunk_length=posts_per_page)
+
+        index_list = [Index(page_number=n, settings=settings, posts=post_list)
+                      for n, post_list in enumerate(chunked, start=1)]
+
+        for n, index_object in enumerate(index_list):
+            if n != 0:                      # First index has the newest posts
+                index_object.newer_index = index_list[n - 1]
+            if n + 1 < len(index_list):     # Last index has the oldest posts
+                index_object.older_index = index_list[n + 1]
+
+        return index_list
+
 
 def paginate_index(posts, settings):
     """Split up posts for multiple index pages
