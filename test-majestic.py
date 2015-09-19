@@ -725,22 +725,21 @@ class TestRFC822Date(unittest.TestCase):
         self.assertEqual(expected, result)
 
 
-class TestPaginateIndex(unittest.TestCase):
-    """Test the paginate_index function
+class TestIndex(unittest.TestCase):
+    """Test the Index class
 
-    The function's return value should be a list of dictionaries,
-    one per index page, of the type:
-        {'index_page_number': 1 to len(pages),
-         'newer_index_pages': bool,
-         'newer_index_url': str,
-         'older_index_pages': bool,
-         'older_index_url': str,
-         'output_path': pathlib.Path,
-         'url': str,
-         'posts': [Post]
-        }
+    The Index class largely just holds data:
+        page_number:    1 to len(index_pages)
+        newer_index:    Index containing more recent posts or None
+        older_index:    Index containing less recent posts or None
+        output_path:    path the index should be written to (pathlib.Path)
+        url:            url of the index (str)
+        posts:          [Post] to be rendered on the index page
+
     The index page with index_page_number 1 is always index.html.
-    The list is sorted by index_page_number.
+
+    It should also have a .paginate_posts class method that returns
+    a list of Index objects.
     """
     def setUp(self):
         settings_path = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
@@ -759,45 +758,53 @@ class TestPaginateIndex(unittest.TestCase):
             for t, b, d in zip(titles, bodies, dates)
             ]
 
-    def test_paginate_index_len(self):
-        """paginate_index gives each index page the right number of pages"""
-        result = majestic.paginate_index(posts=self.posts,
-                                         settings=self.settings)
-        for idx, num_posts in enumerate([2, 2, 1]):
-            self.assertEqual(num_posts, len(result[idx]['posts']))
+    def test_Index_paginate_posts_per_index(self):
+        """paginate_posts gives each Index the right number of posts"""
+        result = majestic.Index.paginate_posts(posts=self.posts,
+                                               settings=self.settings)
+        for expected_count, index in zip([2, 2, 1], result):
+            self.assertEqual(expected_count, len(index.posts))
 
-    def test_paginate_index_order(self):
-        """paginate_index returns indexes and pages in the right order"""
-        result = majestic.paginate_index(posts=self.posts,
-                                         settings=self.settings)
-        for page_number, index_dict in enumerate(result, start=1):
-            self.assertEqual(page_number, index_dict['index_page_number'])
+    def test_Index_paginate_order(self):
+        """paginate_posts returns Index objects ordered first to last"""
+        result = majestic.Index.paginate_posts(posts=self.posts,
+                                               settings=self.settings)
+        for expected_number, index in enumerate(result, start=1):
+            self.assertEqual(expected_number, index.page_number)
 
-    def test_paginate_index_keys(self):
-        """dicts in paginate_index's returned list have correct keys
+    def test_Index_attrs(self):
+        """Each Index returned by paginate_posts has the correct attributes"""
+        attr_list = ['index_page_number', 'newer_index_pages',
+                     'older_index_pages', 'output_path', 'url',
+                     'posts', 'newer_index_url', 'older_index_url']
+        result = majestic.Index.paginate_posts(posts=self.posts,
+                                               settings=self.settings)
+        for index in result:
+            for attribute in attr_list:
+                self.assertTrue(hasattr(index, attribute))
 
-        Only the second result is tested because it's the only one with
-        both a newer_index_url and an older_index_url.
+    def test_Index_output_path(self):
+        """Index properly sets output path"""
+        self.settings['paths']['output root'] = ''
+        indexes = [
+            majestic.Index(page_number=n, settings=self.settings, posts=[])
+            for n in range(1, 3)
+            ]
+        self.assertEqual('index.html', indexes[0].output_path)
+        self.assertEqual('page-2.html', indexes[1].output_path)
 
-        It's OK for index dicts not to have those keys if 'newer_index_pages'
-        or 'older_index_pages' is False. Otherwise we'd be stuffing
-        None into those keys for no good reason.
+    def test_Index_url(self):
+        """Index properly sets output path"""
+        dummy_url = 'http://example.com'
+        self.settings['site']['url'] = dummy_url
+        indexes = [
+            majestic.Index(page_number=n, settings=self.settings, posts=[])
+            for n in range(1, 3)
+            ]
+        self.assertEqual(dummy_url, indexes[0].output_path)
+        self.assertEqual(dummy_url + '/page-2.html', indexes[1].output_path)
 
-        Anyone requesting those keys in a template is going to get a
-        falsey value, so it doesn't matter there either.
-        """
-        expected_keys = {'index_page_number', 'newer_index_pages',
-                         'older_index_pages', 'output_path', 'url',
-                         'posts', 'newer_index_url', 'older_index_url'}
-        result = majestic.paginate_index(posts=self.posts,
-                                         settings=self.settings)
-
-        # Only test the second result because it's the only one with
-        # both a newer_index_url and an older_index_url.
-        # It's OK for index dicts not to have those keys if
-        # 'newer_index_pages' or 'older_index_pages' is False.
-        self.assertEqual(expected_keys, set(result[1]))
-
+    @unittest.SkipTest
     def test_paginate_index_result(self):
         """paginate_index's result on known date gives expected result"""
         output_root = pathlib.Path(self.settings['paths']['output root'])
