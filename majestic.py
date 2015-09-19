@@ -419,3 +419,21 @@ def rfc822_date(date):
     month = month_names[date.month - 1]
     template = '{weekday}, {d:%d} {month} {d:%Y %H:%M:%S %z}'
     return template.format(weekday=weekday, month=month, d=date)
+
+
+def paginate_index(posts, settings):
+    """Split up posts for multiple index pages
+
+    The function's return value should be a list of dictionaries,
+    one per index page, of the type:
+        {'index_page_number': 1 to len(pages),
+         'newer_index_pages': bool,
+         'older_index_pages': bool,
+         'output_path': pathlib.Path,
+         'url': str,
+         'posts': [Post]
+        }
+    The index page with index_page_number 1 is always index.html.
+    The list is sorted by index_page_number.
+    """
+    pass

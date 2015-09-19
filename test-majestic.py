@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import jinja2
 import json
 import os
@@ -722,6 +722,92 @@ class TestRFC822Date(unittest.TestCase):
         date = pytz.utc.localize(datetime(2015, 9, 19, 14, 43))
         expected = 'Sat, 19 Sep 2015 14:43:00 +0000'
         result = majestic.rfc822_date(date)
+        self.assertEqual(expected, result)
+
+
+class TestPaginateIndex(unittest.TestCase):
+    """Test the paginate_index function
+
+    The function's return value should be a list of dictionaries,
+    one per index page, of the type:
+        {'index_page_number': 1 to len(pages),
+         'newer_index_pages': bool,
+         'older_index_pages': bool,
+         'output_path': pathlib.Path,
+         'url': str,
+         'posts': [Post]
+        }
+    The index page with index_page_number 1 is always index.html.
+    The list is sorted by index_page_number.
+    """
+    def setUp(self):
+        settings_path = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
+        self.settings = majestic.load_settings(files=[settings_path],
+                                               local=False)
+        self.settings['index']['posts per page'] = '2'
+        path_template = 'page-{index_page_number}.html'
+        self.settings['paths']['index pages path template'] = path_template
+        self.settings['site']['url'] = 'http://example.com'
+
+        self.dates = [datetime(2015, 1, 1) + timedelta(i) for i in range(5)]
+        self.titles = ['A', 'B', 'C', 'D', 'E']
+        self.bodies = ['A', 'B', 'C', 'D', 'E']
+        self.posts = [
+            majestic.Post(title=t, body=b, date=d, settings=self.settings)
+            for t in self.titles for b in self.bodies for d in self.dates
+            ]
+
+    def test_paginate_index_len(self):
+        """paginate_index gives each index page the right number of pages"""
+        result = majestic.paginate_index(posts=self.posts,
+                                         settings=self.settings)
+        for idx, num_posts in enumerate([2, 2, 1]):
+            self.assertEqual(num_posts, len(result[idx]['posts']))
+
+    def test_paginate_index_order(self):
+        """paginate_index returns indexes and pages in the right order"""
+        result = majestic.paginate_index(posts=self.posts,
+                                         settings=self.settings)
+        for page_number, index_dict in enumerate(result, start=1):
+            self.assertEqual(page_number, index_dict['index_page_number'])
+
+    def test_paginate_index_keys(self):
+        """dicts in paginate_index's returned list have correct keys"""
+        expected_keys = {'index_page_number', 'newer_index_pages',
+                         'older_index_pages', 'output_path', 'url', 'posts'}
+        result = majestic.paginate_index(posts=self.posts,
+                                         settings=self.settings)
+        for index_page in result:
+            self.assertEqual(expected_keys, set(index_page))
+
+    def test_paginate_index_result(self):
+        """paginate_index's result on known date gives expected result"""
+        output_root = pathlib.Path(self.settings['paths']['output root'])
+        expected = [
+            {'index_page_number': 1,
+             'newer_index_pages': False,
+             'older_index_pages': True,
+             'output_path': output_root.joinpath('index.html'),
+             'url': 'http://example.com/',
+             'posts': [self.posts[-1], self.posts[-2]]
+             },
+            {'index_page_number': 2,
+             'newer_index_pages': True,
+             'older_index_pages': True,
+             'output_path': output_root.joinpath('page-2.html'),
+             'url': 'http://example.com/page-2.html',
+             'posts': [self.posts[-3], self.posts[-4]]
+             },
+            {'index_page_number': 3,
+             'newer_index_pages': True,
+             'older_index_pages': False,
+             'output_path': output_root.joinpath('page-3.html'),
+             'url': 'http://example.com/page-3.html',
+             'posts': [self.posts[0]]
+             }
+        ]
+        result = majestic.paginate_index(posts=self.posts,
+                                         settings=self.settings)
         self.assertEqual(expected, result)
 
 
