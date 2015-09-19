@@ -749,12 +749,12 @@ class TestPaginateIndex(unittest.TestCase):
         self.settings['paths']['index pages path template'] = path_template
         self.settings['site']['url'] = 'http://example.com'
 
-        self.dates = [datetime(2015, 1, 1) + timedelta(i) for i in range(5)]
-        self.titles = ['A', 'B', 'C', 'D', 'E']
-        self.bodies = ['A', 'B', 'C', 'D', 'E']
+        dates = [datetime(2015, 1, 1) + timedelta(i) for i in range(5)]
+        titles = ['A', 'B', 'C', 'D', 'E']
+        bodies = ['A', 'B', 'C', 'D', 'E']
         self.posts = [
             majestic.Post(title=t, body=b, date=d, settings=self.settings)
-            for t in self.titles for b in self.bodies for d in self.dates
+            for t, b, d in zip(titles, bodies, dates)
             ]
 
     def test_paginate_index_len(self):
