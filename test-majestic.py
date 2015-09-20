@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import jinja2
 import json
 import os
-import pathlib
+from pathlib import Path
 import pytz
 import string
 import tempfile
@@ -10,7 +10,7 @@ import unittest
 
 import majestic
 
-MAJESTIC_DIR = pathlib.Path(__file__).resolve().parent
+MAJESTIC_DIR = Path(__file__).resolve().parent
 TEST_BLOG_DIR = MAJESTIC_DIR.joinpath('test-blog')
 
 # Timing report code
@@ -96,7 +96,7 @@ class TestLoadContentFiles(unittest.TestCase):
             for f in files:
                 if os.path.splitext(f)[1] in extensions:
                     test_files.append(os.path.join(path, f))
-        test_files = list(map(pathlib.Path, test_files))
+        test_files = list(map(Path, test_files))
         returned_files = list(majestic.markdown_files(posts_dir))
         test_files.sort()
         returned_files.sort()
@@ -104,14 +104,14 @@ class TestLoadContentFiles(unittest.TestCase):
 
     def test_markdown_files_empty_dir(self):
         """result is empty when given empty dir"""
-        temp_dir = pathlib.Path(tempfile.mkdtemp())
+        temp_dir = Path(tempfile.mkdtemp())
         files = majestic.markdown_files(temp_dir)
         self.assertFalse(list(files))
         temp_dir.rmdir()
 
     def test_markdown_files_nonempty_dir_no_md(self):
         """result is empty when given nonempty dir containing no md files"""
-        temp_dir = pathlib.Path(tempfile.mkdtemp())
+        temp_dir = Path(tempfile.mkdtemp())
         for x in range(20):
             temp_dir.touch(x)
         files = majestic.markdown_files(temp_dir)
@@ -329,7 +329,7 @@ class TestPage(unittest.TestCase):
         output_dir = self.settings['paths']['output root']
         site_url = self.settings['site']['url']
 
-        expected_output = pathlib.Path(output_dir).joinpath(path)
+        expected_output = Path(output_dir).joinpath(path)
         expected_url = site_url + '/' + path
 
         self.assertEqual(expected_output, page.output_path)
@@ -452,7 +452,7 @@ class TestPost(unittest.TestCase):
         output_dir = self.settings['paths']['output root']
         site_url = self.settings['site']['url']
 
-        expected_output = pathlib.Path(output_dir).joinpath(path)
+        expected_output = Path(output_dir).joinpath(path)
         expected_url = site_url + '/' + path
 
         self.assertEqual(expected_output, post.output_path)
@@ -726,7 +726,7 @@ class TestTemplating(unittest.TestCase):
         It should create the path to jinja.json from the templates root
         in the settings object.
         """
-        templates_root = pathlib.Path(self.settings['paths']['templates root'])
+        templates_root = Path(self.settings['paths']['templates root'])
         json_file = templates_root.joinpath('jinja.json')
         with json_file.open() as f:
             expected = json.load(f)
@@ -815,8 +815,8 @@ class TestIndex(unittest.TestCase):
             majestic.Index(page_number=n, settings=self.settings, posts=[])
             for n in range(1, 3)
             ]
-        self.assertEqual(pathlib.Path('index.html'), indexes[0].output_path)
-        self.assertEqual(pathlib.Path('page-2.html'), indexes[1].output_path)
+        self.assertEqual(Path('index.html'), indexes[0].output_path)
+        self.assertEqual(Path('page-2.html'), indexes[1].output_path)
 
     def test_Index_url(self):
         """Index properly sets output path"""
@@ -840,7 +840,7 @@ class TestIndex(unittest.TestCase):
     @unittest.SkipTest
     def test_paginate_index_result(self):
         """paginate_index's result on known date gives expected result"""
-        output_root = pathlib.Path(self.settings['paths']['output root'])
+        output_root = Path(self.settings['paths']['output root'])
         expected = [
             {'index_page_number': 1,
              'newer_index_pages': False,
