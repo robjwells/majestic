@@ -838,6 +838,16 @@ class TestIndex(unittest.TestCase):
                                  posts=[])
         self.assertLess(index_a, index_b)
 
+    @unittest.skip('stub')
+    def test_Index_iter(self):
+        """ """
+        pass
+
+    @unittest.skip('stub')
+    def test_Index_eq(self):
+        """ """
+        pass
+
     @unittest.skip('needs updating')
     def test_paginate_index_result(self):
         """paginate_index's result on known date gives expected result"""
