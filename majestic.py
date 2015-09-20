@@ -484,7 +484,7 @@ class Index(object):
 
     @classmethod
     def paginate_posts(class_, posts, settings):
-        """Split up posts across a list of Index pages
+        """Split up posts across a list of index pages
 
         The returned list is ordered by index page number.
         """
@@ -492,7 +492,7 @@ class Index(object):
         posts_newest_first = sorted(posts, reverse=True)
         chunked = chunk(posts_newest_first, chunk_length=posts_per_page)
 
-        index_list = [Index(page_number=n, settings=settings, posts=post_list)
+        index_list = [class_(page_number=n, settings=settings, posts=post_list)
                       for n, post_list in enumerate(chunked, start=1)]
 
         for n, index_object in enumerate(index_list):
