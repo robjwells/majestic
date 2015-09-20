@@ -838,7 +838,7 @@ class TestIndex(unittest.TestCase):
                                  posts=[])
         self.assertLess(index_a, index_b)
 
-    @unittest.SkipTest
+    @unittest.skip('needs updating')
     def test_paginate_index_result(self):
         """paginate_index's result on known date gives expected result"""
         output_root = Path(self.settings['paths']['output root'])
