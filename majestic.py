@@ -42,8 +42,6 @@ def load_settings(default=True, local=True, files=None):
 def markdown_files(directory):
     """Return a generator of the markdown files found by walking directory
 
-    directory:  a pathlib.Path
-
     Accepted extenions for markdown files:
         * md
         * mkd
