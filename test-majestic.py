@@ -1,12 +1,13 @@
 from datetime import datetime, timedelta
-import jinja2
 import json
 import os
 from pathlib import Path
-import pytz
 import string
 import tempfile
 import unittest
+
+import jinja2
+import pytz
 
 import majestic
 
