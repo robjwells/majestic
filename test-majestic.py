@@ -140,7 +140,7 @@ class TestContent(unittest.TestCase):
             "island. Dr. Wu inserted a gene that makes a single faulty"
             "enzyme in protein metabolism."
             )
-        settings_path = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
+        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
 
@@ -305,7 +305,7 @@ class TestPage(unittest.TestCase):
             "island. Dr. Wu inserted a gene that makes a single faulty"
             "enzyme in protein metabolism."
             )
-        settings_path = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
+        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
 
@@ -373,7 +373,7 @@ class TestPost(unittest.TestCase):
             "island. Dr. Wu inserted a gene that makes a single faulty"
             "enzyme in protein metabolism."
             )
-        settings_path = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
+        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
 
@@ -567,7 +567,7 @@ class TestSlugFunctions(unittest.TestCase):
 class TestFromFile(unittest.TestCase):
     """Test that .from_file on Content classes correctly parses files"""
     def setUp(self):
-        settings_path = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
+        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
 
@@ -684,7 +684,7 @@ class TestTemplating(unittest.TestCase):
     """Test functions concerned with loading and rendering templates"""
     def setUp(self):
         os.chdir(str(TEST_BLOG_DIR))
-        settings_path = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
+        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
         loader = jinja2.FileSystemLoader(
@@ -768,7 +768,7 @@ class TestIndex(unittest.TestCase):
     a list of Index objects.
     """
     def setUp(self):
-        settings_path = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
+        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
         self.settings['index']['posts per page'] = '2'
