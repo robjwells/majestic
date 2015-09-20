@@ -24,20 +24,18 @@ MAJESTIC_JINJA_OPTIONS = {
 def load_settings(default=True, local=True, files=None):
     """Load config from standard locations and specified files
 
-    default:    load default config file
-    local:      load config file from current directory
-    files:      [str] of filenames to load
+    default:    bool, load default config file
+    local:      bool, load config file from current directory
+    files:      list of filenames to load
     """
-    settings = ConfigParser(interpolation=None)
     if files is None:
         files = []
     if local:
-        local_cfg = Path.cwd().joinpath('settings.cfg')
-        files.insert(0, str(local_cfg))
+        files.insert(0, Path.cwd().joinpath('settings.cfg'))
     if default:
-        default_cfg = MAJESTIC_DIR.joinpath('majestic.cfg')
-        files.insert(0, str(default_cfg))
-    settings.read(files)
+        files.insert(0, MAJESTIC_DIR.joinpath('majestic.cfg'))
+    settings = ConfigParser(interpolation=None)
+    settings.read(map(str, files))
     return settings
 
 
