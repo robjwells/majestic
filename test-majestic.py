@@ -38,9 +38,22 @@ class TestLoadSettings(unittest.TestCase):
         settings = majestic.load_settings(default=True, local=False)
         self.assertTrue(settings.getboolean('testing', 'default cfg loaded'))
 
-    def test_load_specific_only(self):
-        """When given filenames, load only those files"""
+    def test_load_specific_only_str(self):
+        """When given filenames (as str), load only those files"""
         test_settings_fn = str(TEST_BLOG_DIR.joinpath('settings.cfg'))
+        settings = majestic.load_settings(default=False, local=False,
+                                          files=[test_settings_fn])
+        self.assertTrue(settings.getboolean('testing', 'test-blog cfg loaded'))
+
+    def test_load_specific_only_Path(self):
+        """When given filenames (as pathlib.Path), load only those files
+
+        Tests that load_settings correctly handles paths given as
+        pathlib.Path instead of str (as os functions expect).
+        The burden of conversion should fall on the function
+        itself, not its callers.
+        """
+        test_settings_fn = TEST_BLOG_DIR.joinpath('settings.cfg')
         settings = majestic.load_settings(default=False, local=False,
                                           files=[test_settings_fn])
         self.assertTrue(settings.getboolean('testing', 'test-blog cfg loaded'))
