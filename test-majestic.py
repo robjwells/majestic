@@ -848,7 +848,7 @@ class TestIndex(unittest.TestCase):
         """ """
         pass
 
-    @unittest.skip('needs updating')
+    @unittest.skip('needs updating to test Index class')
     def test_paginate_index_result(self):
         """paginate_index's result on known date gives expected result"""
         output_root = Path(self.settings['paths']['output root'])
