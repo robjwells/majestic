@@ -454,12 +454,12 @@ class Index(object):
     """Index represents a blog index page
 
     It has the following attributes:
-        page_number:    1 to len(index_pages)
-        newer_index:    Index containing more recent posts or None
-        older_index:    Index containing less recent posts or None
-        output_path:    path the index should be written to (pathlib.Path)
-        url:            url of the index (str)
-        posts:          [Post] to be rendered on the index page
+        page_number:        1 to len(index_pages)
+        newer_index_url:    url to an index with more recent posts or None
+        older_index_url:    url to an index with less recent posts or None
+        output_path:        path the index should be written to (pathlib.Path)
+        url:                url of the index (str)
+        posts:              [Post] to be rendered on the index page
 
     An Index created with page_number 1 is always index.html.
 
@@ -467,13 +467,13 @@ class Index(object):
     of a list of posts.
     """
     def __init__(self, page_number, posts, settings,
-                 newer_index=None, older_index=None):
+                 newer_index_url=None, older_index_url=None):
         """Initialise the Index and computer output_path and url"""
         self.page_number = page_number
         self.posts = sorted(posts, reverse=True)    # sort newest first
         self.settings = settings
-        self.newer_index = newer_index
-        self.older_index = older_index
+        self.newer_index_url = newer_index
+        self.older_index_url = older_index
 
         output_root = Path(settings['paths']['output root'])
         if page_number > 1:
@@ -491,7 +491,8 @@ class Index(object):
 
     def __eq__(self, other):
         """Compare self with other based on content attributes"""
-        attrs = ['page_number', 'posts', 'output_path', 'url']
+        attrs = ['page_number', 'posts', 'output_path', 'url',
+                 'newer_index_url', 'older_index_url']
         return all(getattr(self, a) == getattr(other, a) for a in attrs)
 
     def __lt__(self, other):

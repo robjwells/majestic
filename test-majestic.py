@@ -804,7 +804,7 @@ class TestIndex(unittest.TestCase):
     The Index class largely just holds data:
         page_number:        1 to len(index_pages)
         newer_index_url:    url to an index with more recent posts or None
-        older_index_url:        url to an index with less recent posts or None
+        older_index_url:    url to an index with less recent posts or None
         output_path:        path the index should be written to (pathlib.Path)
         url:                url of the index (str)
         posts:              [Post] to be rendered on the index page
