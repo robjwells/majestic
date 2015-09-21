@@ -370,11 +370,11 @@ class TestPage(unittest.TestCase):
         exactly the same method.)
         """
         page_a = majestic.Page(title=self.title, body=self.body,
-                                     settings=self.settings)
+                               settings=self.settings)
         page_b = majestic.Page(title=self.title, body=self.body,
-                                     settings=self.settings)
+                               settings=self.settings)
         page_c = majestic.Page(title='different', body=self.body,
-                                     settings=self.settings)
+                               settings=self.settings)
         self.assertEqual(page_a, page_b)
         self.assertNotEqual(page_a, page_c)
 
