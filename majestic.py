@@ -491,8 +491,7 @@ class Index(object):
 
     def __eq__(self, other):
         """Compare self with other based on content attributes"""
-        attrs = ['page_number', 'posts', 'settings', 'output_path',
-                 'url', 'newer_index', 'older_index']
+        attrs = ['page_number', 'posts', 'settings', 'output_path', 'url']
         return all(getattr(self, a) == getattr(other, a) for a in attrs)
 
     def __lt__(self, other):
