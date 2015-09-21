@@ -913,7 +913,7 @@ class TestIndex(unittest.TestCase):
         self.assertEqual(expected, [p for p in index])
 
     def test_Index_paginate_posts_result(self):
-        """paginate_index's result on known date gives expected result"""
+        """Result of paginate_posts on known date gives expected result"""
         output_root = Path(self.settings['paths']['output root'])
         expected = [
             majestic.Index(page_number=1, settings=self.settings,
