@@ -228,6 +228,14 @@ class Content(object):
         self.source_path = source_path
         self.meta = kwargs
 
+    def __eq__(self, other):
+        """Compare self with other based on content attributes"""
+        if not isinstance(other, self.__class__):
+            return NotImplemented
+        attrs = ['title', 'slug', 'body', 'source_path', 'meta',
+                 'output_path', 'url']
+        return all(getattr(self, a) == getattr(other, a) for a in attrs)
+
     def __lt__(self, other):
         """Compare self with other based on title and slug
 
@@ -394,6 +402,16 @@ class Post(Content):
             raise DraftError('Date is in the future')
         self.date = date
 
+    def __eq__(self, other):
+        """Compare self with other based on content attributes
+
+        Here only the dates are compared, and the rest is
+        delegated to the superclass's implementation
+        """
+        if not isinstance(other, self.__class__):
+            return NotImplemented
+        return self.date == other.date and super().__eq__(other)
+
     def __lt__(self, other):
         """Compare self with other based on date
 
@@ -470,6 +488,12 @@ class Index(object):
     def __iter__(self):
         """Iterate over self.posts"""
         return (post for post in self.posts)
+
+    def __eq__(self, other):
+        """Compare self with other based on content attributes"""
+        attrs = ['page_number', 'posts', 'settings', 'output_path',
+                 'url', 'newer_index', 'older_index']
+        return all(getattr(self, a) == getattr(other, a) for a in attrs)
 
     def __lt__(self, other):
         """Index compares by page_number"""
