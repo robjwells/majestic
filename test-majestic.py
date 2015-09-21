@@ -373,7 +373,10 @@ class TestPage(unittest.TestCase):
                                      settings=self.settings)
         page_b = majestic.Page(title=self.title, body=self.body,
                                      settings=self.settings)
+        page_c = majestic.Page(title='different', body=self.body,
+                                     settings=self.settings)
         self.assertEqual(page_a, page_b)
+        self.assertNotEqual(page_a, page_c)
 
 
 class TestPost(unittest.TestCase):
@@ -431,12 +434,27 @@ class TestPost(unittest.TestCase):
         self.assertEqual(post.date, self.aware_date)
 
     def test_Post_eq(self):
-        """Two distinct Posts with same attrs compare equal"""
+        """Two distinct Posts with same attrs compare equal
+
+        And also that two Posts with differing dates compare unequal:
+        to check that Post is not just relying on its superclass's
+        implementation.
+
+        The overriding of the post path template is so that all the
+        posts have the same output_path/url and we can be sure that
+        the date itself is being compared.
+        """
+        new_path = '{content.date.year}/{content.slug}'
+        self.settings['paths']['post path template'] = new_path
         post_a = majestic.Post(title=self.title, body=self.body,
                                settings=self.settings, date=self.naive_date)
         post_b = majestic.Post(title=self.title, body=self.body,
                                settings=self.settings, date=self.naive_date)
+        post_c = majestic.Post(title=self.title, body=self.body,
+                               settings=self.settings,
+                               date=datetime(2015, 1, 1))
         self.assertEqual(post_a, post_b)
+        self.assertNotEqual(post_a, post_c)
 
     def test_post_compare_lt_dates(self):
         """Posts with different dates compare properly"""
@@ -878,7 +896,10 @@ class TestIndex(unittest.TestCase):
                                  posts=self.posts)
         index_b = majestic.Index(page_number=1, settings=self.settings,
                                  posts=self.posts)
+        index_c = majestic.Index(page_number=2, settings=self.settings,
+                                 posts=self.posts)
         self.assertEqual(index_a, index_b)
+        self.assertNotEqual(index_a, index_c)
 
     def test_Index_iter(self):
         """Index should support iteration over its posts
