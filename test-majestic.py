@@ -856,38 +856,24 @@ class TestIndex(unittest.TestCase):
         self.assertEqual(expected, [p for p in index])
 
     @unittest.skip('needs updating to test Index class')
-    def test_paginate_index_result(self):
+    def test_Index_paginate_posts_result(self):
         """paginate_index's result on known date gives expected result"""
         output_root = Path(self.settings['paths']['output root'])
         expected = [
-            {'index_page_number': 1,
-             'newer_index_pages': False,
-             'older_index_pages': True,
-             'older_index_url': 'http://example.com/page-2.html',
-             'output_path': output_root.joinpath('index.html'),
-             'url': self.settings['site']['url'],
-             'posts': [self.posts[-1], self.posts[-2]]
-             },
-            {'index_page_number': 2,
-             'newer_index_pages': True,
-             'newer_index_url': self.settings['site']['url'],
-             'older_index_pages': True,
-             'older_index_url': 'http://example.com/page-3.html',
-             'output_path': output_root.joinpath('page-2.html'),
-             'url': 'http://example.com/page-2.html',
-             'posts': [self.posts[-3], self.posts[-4]]
-             },
-            {'index_page_number': 3,
-             'newer_index_pages': True,
-             'newer_index_url': 'http://example.com/page-2.html',
-             'older_index_pages': False,
-             'output_path': output_root.joinpath('page-3.html'),
-             'url': 'http://example.com/page-3.html',
-             'posts': [self.posts[0]]
-             }
-        ]
-        result = majestic.paginate_index(posts=self.posts,
-                                         settings=self.settings)
+            majestic.Index(page_number=1, settings=self.settings,
+                           posts=self.posts[-2:]),
+            majestic.Index(page_number=2, settings=self.settings,
+                           posts=self.posts[-4:-2]),
+            majestic.Index(page_number=3, settings=self.settings,
+                           posts=self.posts[:-4])
+            ]
+        expected[0].older_index = expected[1]
+        expected[1].older_index = expected[2]
+        expected[1].newer_index = expected[0]
+        expected[2].newer_index = expected[1]
+
+        result = majestic.Index.paginate_posts(
+            posts=self.posts, settings=self.settings)
         self.assertEqual(expected, result)
 
 
