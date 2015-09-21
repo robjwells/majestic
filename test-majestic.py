@@ -912,7 +912,6 @@ class TestIndex(unittest.TestCase):
                                posts=self.posts)
         self.assertEqual(expected, [p for p in index])
 
-    @unittest.skip('needs updating to test Index class')
     def test_Index_paginate_posts_result(self):
         """paginate_index's result on known date gives expected result"""
         output_root = Path(self.settings['paths']['output root'])
