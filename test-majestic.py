@@ -195,6 +195,14 @@ class TestContent(unittest.TestCase):
                                    settings=self.settings, slug=invalid_slug)
         self.assertEqual(content.slug, expected)
 
+    def test_Content_eq(self):
+        """Two distinct Content objects with same attrs compare equal"""
+        content_a = majestic.Content(title=self.title, body=self.body,
+                                     settings=self.settings)
+        content_b = majestic.Content(title=self.title, body=self.body,
+                                     settings=self.settings)
+        self.assertEqual(content_a, content_b)
+
     def test_content_lt_title(self):
         """Content with different titles compare properly"""
         post_1 = majestic.Content(title='title a',
@@ -409,6 +417,14 @@ class TestPost(unittest.TestCase):
         post = majestic.Post(title=self.title, body=self.body,
                              date=self.naive_date, settings=self.settings)
         self.assertEqual(post.date, self.aware_date)
+
+    def test_Post_eq(self):
+        """Two distinct Posts with same attrs compare equal"""
+        post_a = majestic.Post(title=self.title, body=self.body,
+                               settings=self.settings, date=self.naive_date)
+        post_b = majestic.Post(title=self.title, body=self.body,
+                               settings=self.settings, date=self.naive_date)
+        self.assertEqual(post_a, post_b)
 
     def test_post_compare_lt_dates(self):
         """Posts with different dates compare properly"""
@@ -843,6 +859,14 @@ class TestIndex(unittest.TestCase):
         index = majestic.Index(page_number=1, settings=self.settings,
                                posts=self.posts)
         self.assertEqual(sorted(self.posts, reverse=True), index.posts)
+
+    def test_Index_eq(self):
+        """Two distinct Index objects with same attrs compare equal"""
+        index_a = majestic.Index(page_number=1, settings=self.settings,
+                                 posts=self.posts)
+        index_b = majestic.Index(page_number=1, settings=self.settings,
+                                 posts=self.posts)
+        self.assertEqual(index_a, index_b)
 
     def test_Index_iter(self):
         """Index should support iteration over its posts
