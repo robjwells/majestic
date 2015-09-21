@@ -472,8 +472,8 @@ class Index(object):
         self.page_number = page_number
         self.posts = sorted(posts, reverse=True)    # sort newest first
         self.settings = settings
-        self.newer_index_url = newer_index
-        self.older_index_url = older_index
+        self.newer_index_url = newer_index_url
+        self.older_index_url = older_index_url
 
         output_root = Path(settings['paths']['output root'])
         if page_number > 1:
@@ -521,8 +521,8 @@ class Index(object):
 
         for n, index_object in enumerate(index_list):
             if n != 0:                      # First index has the newest posts
-                index_object.newer_index = index_list[n - 1]
+                index_object.newer_index_url = index_list[n - 1].url
             if n + 1 < len(index_list):     # Last index has the oldest posts
-                index_object.older_index = index_list[n + 1]
+                index_object.older_index_url = index_list[n + 1].url
 
         return index_list
