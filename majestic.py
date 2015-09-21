@@ -21,6 +21,50 @@ MAJESTIC_JINJA_OPTIONS = {
     }
 
 
+def chunk(iterable, chunk_length):
+    """Yield the members of its iterable chunk_length at a time
+
+    If the length of the iterable is not a multiple of the chunk length,
+    the final chunk contains the remaining data but does not fill to
+    meet the chunk length (unlike the grouper recipe in the
+    itertools documentation).
+    """
+    for idx in range(math.ceil(len(iterable) / chunk_length)):
+        lower = idx * chunk_length
+        upper = lower + chunk_length
+        yield iterable[lower:upper]
+
+
+def jinja_environment(templates_dir, settings, jinja_options=None):
+    """Create a Jinja2 Environment with a loader for templates_dir
+
+    settings:   ConfigParser of the site's settings
+    options:    dictionary of custom options for the Jinja2 Environment
+    """
+    if jinja_options is None:
+        jinja_options = {}
+    opts = MAJESTIC_JINJA_OPTIONS.copy()    # get default options
+    opts.update(jinja_options)              # update defaults with user options
+
+    loader = jinja2.FileSystemLoader(str(templates_dir))
+    env = jinja2.Environment(loader=loader, **opts)
+
+    env.globals['settings'] = settings          # add settings as a global
+    env.filters['rfc822_date'] = rfc822_date    # add custom filter
+
+    return env
+
+
+def load_jinja_options(settings):
+    """Return the custom settings in templates root/jinja.json as a dict"""
+    jinja_opts_filename = 'jinja.json'
+    templates_root = Path(settings['paths']['templates root'])
+    json_file = templates_root.joinpath(jinja_opts_filename)
+    with json_file.open() as file:
+        custom_options = json.load(file)
+    return custom_options
+
+
 def load_settings(default=True, local=True, files=None):
     """Load config from standard locations and specified files
 
@@ -54,6 +98,96 @@ def markdown_files(directory):
              for dirpath, dirnames, filenames in os.walk(str(directory))
              for f in filenames if Path(f).suffix in extensions)
     return files
+
+
+def rfc822_date(date):
+    """Return date in RFC822 format
+
+    For reference, the format (in CLDR notation) is:
+        EEE, dd MMM yyyy HH:mm:ss Z
+    With the caveat that the weekday (EEE) and month (MMM) are always
+    in English.
+
+    Example:
+        Sat, 19 Sep 2015 14:53:07 +0100
+
+    For what it's worth, this doesn't strictly use the RFC822 date
+    format, which is obsolete. (The current RFC of this type is 5322.)
+    This should not be a problem — 822 calls for a two-digit year, and
+    even the RSS 2.0 spec sample files (from 2003) use four digits.
+    """
+    weekday_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    weekday = weekday_names[date.weekday()]
+    month = month_names[date.month - 1]
+    template = '{weekday}, {d:%d} {month} {d:%Y %H:%M:%S %z}'
+    return template.format(weekday=weekday, month=month, d=date)
+
+
+def validate_slug(slug):
+    """Test slug for validity and return a boolean
+
+    Slugs containing the following characters are deemed to be
+    invalid (note the quoted space at the beginning):
+
+    " " : / ? # [ ] @ ! $ & ' ( ) * + , ; =
+
+    (This is the reserved set according to IETF RFC 3986, with the
+    addition of the space character.)
+
+    Slugs containing a percent character that is not followed by
+    two hex digits are also deemed to be invalid.
+    """
+    bad_chars = set(" :/?#[]@!$&'()*+,;=")
+    hex_set = set(string.hexdigits)
+
+    is_empty_string = len(slug) == 0
+    contains_bad_chars = bool(set(slug) & bad_chars)
+
+    contains_bad_percent = False
+    for match in re.finditer(r'%(.{,2})', slug):
+        encoded = match.group(1)
+        if len(encoded) < 2 or not set(encoded).issubset(hex_set):
+            contains_bad_percent = True
+    return not (is_empty_string or contains_bad_chars or contains_bad_percent)
+
+
+def normalise_slug(slug):
+    """Rewrite slug to contain only valid characters
+
+    Valid characters are deemed to be:
+
+    a-z 0-9 -
+
+    Any other characters (including percent encoded characters)
+    are removed from the output. Note that this function is more
+    strict with the characters it emits than validate_slug is
+    with the characters that it accepts.
+
+    Spaces are changed to hyphens.
+
+    This function borrows heavily from Dr Drang's post ASCIIfying:
+    http://www.leancrew.com/all-this/2014/10/asciifying/
+    """
+    separators = re.compile(r'[—–/:;,.~_]')
+    percent_enc = re.compile(r'%[0-9a-f]{2}')
+    not_valid = re.compile(r'[^- a-z0-9]')  # Spaces handled separately
+    hyphens = re.compile(r'-+')
+
+    new_slug = slug.lower()
+    new_slug = separators.sub('-', new_slug)
+    new_slug = percent_enc.sub('-', new_slug)
+    new_slug = unidecode(new_slug)
+    new_slug = not_valid.sub('', new_slug)
+    new_slug = new_slug.replace(' ', '-')
+    new_slug = hyphens.sub('-', new_slug)
+    new_slug = new_slug.strip('-')
+
+    if not new_slug:
+        raise ValueError('Slug is the empty string')
+
+    return new_slug
 
 
 class DraftError(Exception):
@@ -296,140 +430,6 @@ class Post(Content):
             template = self.settings['paths']['post path template']
             self._path_part_str = template.format(content=self)
         return self._path_part_str
-
-
-def validate_slug(slug):
-    """Test slug for validity and return a boolean
-
-    Slugs containing the following characters are deemed to be
-    invalid (note the quoted space at the beginning):
-
-    " " : / ? # [ ] @ ! $ & ' ( ) * + , ; =
-
-    (This is the reserved set according to IETF RFC 3986, with the
-    addition of the space character.)
-
-    Slugs containing a percent character that is not followed by
-    two hex digits are also deemed to be invalid.
-    """
-    bad_chars = set(" :/?#[]@!$&'()*+,;=")
-    hex_set = set(string.hexdigits)
-
-    is_empty_string = len(slug) == 0
-    contains_bad_chars = bool(set(slug) & bad_chars)
-
-    contains_bad_percent = False
-    for match in re.finditer(r'%(.{,2})', slug):
-        encoded = match.group(1)
-        if len(encoded) < 2 or not set(encoded).issubset(hex_set):
-            contains_bad_percent = True
-    return not (is_empty_string or contains_bad_chars or contains_bad_percent)
-
-
-def normalise_slug(slug):
-    """Rewrite slug to contain only valid characters
-
-    Valid characters are deemed to be:
-
-    a-z 0-9 -
-
-    Any other characters (including percent encoded characters)
-    are removed from the output. Note that this function is more
-    strict with the characters it emits than validate_slug is
-    with the characters that it accepts.
-
-    Spaces are changed to hyphens.
-
-    This function borrows heavily from Dr Drang's post ASCIIfying:
-    http://www.leancrew.com/all-this/2014/10/asciifying/
-    """
-    separators = re.compile(r'[—–/:;,.~_]')
-    percent_enc = re.compile(r'%[0-9a-f]{2}')
-    not_valid = re.compile(r'[^- a-z0-9]')  # Spaces handled separately
-    hyphens = re.compile(r'-+')
-
-    new_slug = slug.lower()
-    new_slug = separators.sub('-', new_slug)
-    new_slug = percent_enc.sub('-', new_slug)
-    new_slug = unidecode(new_slug)
-    new_slug = not_valid.sub('', new_slug)
-    new_slug = new_slug.replace(' ', '-')
-    new_slug = hyphens.sub('-', new_slug)
-    new_slug = new_slug.strip('-')
-
-    if not new_slug:
-        raise ValueError('Slug is the empty string')
-
-    return new_slug
-
-
-def jinja_environment(templates_dir, settings, jinja_options=None):
-    """Create a Jinja2 Environment with a loader for templates_dir
-
-    settings:   ConfigParser of the site's settings
-    options:    dictionary of custom options for the Jinja2 Environment
-    """
-    if jinja_options is None:
-        jinja_options = {}
-    opts = MAJESTIC_JINJA_OPTIONS.copy()    # get default options
-    opts.update(jinja_options)              # update defaults with user options
-
-    loader = jinja2.FileSystemLoader(str(templates_dir))
-    env = jinja2.Environment(loader=loader, **opts)
-
-    env.globals['settings'] = settings          # add settings as a global
-    env.filters['rfc822_date'] = rfc822_date    # add custom filter
-
-    return env
-
-
-def load_jinja_options(settings):
-    """Return the custom settings in templates root/jinja.json as a dict"""
-    jinja_opts_filename = 'jinja.json'
-    templates_root = Path(settings['paths']['templates root'])
-    json_file = templates_root.joinpath(jinja_opts_filename)
-    with json_file.open() as file:
-        custom_options = json.load(file)
-    return custom_options
-
-
-def rfc822_date(date):
-    """Return date in RFC822 format
-
-    For reference, the format (in CLDR notation) is:
-        EEE, dd MMM yyyy HH:mm:ss Z
-    With the caveat that the weekday (EEE) and month (MMM) are always
-    in English.
-
-    Example:
-        Sat, 19 Sep 2015 14:53:07 +0100
-
-    For what it's worth, this doesn't strictly use the RFC822 date
-    format, which is obsolete. (The current RFC of this type is 5322.)
-    This should not be a problem — 822 calls for a two-digit year, and
-    even the RSS 2.0 spec sample files (from 2003) use four digits.
-    """
-    weekday_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    weekday = weekday_names[date.weekday()]
-    month = month_names[date.month - 1]
-    template = '{weekday}, {d:%d} {month} {d:%Y %H:%M:%S %z}'
-    return template.format(weekday=weekday, month=month, d=date)
-
-
-def chunk(iterable, chunk_length):
-    """Yield the members of its iterable chunk_length at a time
-
-    If the length of the iterable is not a multiple of the chunk length,
-    the final chunk contains the remaining data but does not fill to
-    meet the chunk length (unlike the grouper recipe in the
-    itertools documentation).
-    """
-    for idx in range(math.ceil(len(iterable) / chunk_length)):
-        lower = idx * chunk_length
-        upper = lower + chunk_length
-        yield iterable[lower:upper]
 
 
 class Index(object):
