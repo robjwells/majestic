@@ -923,10 +923,6 @@ class TestIndex(unittest.TestCase):
             majestic.Index(page_number=3, settings=self.settings,
                            posts=self.posts[:-4])
             ]
-        expected[0].older_index = expected[1]
-        expected[1].older_index = expected[2]
-        expected[1].newer_index = expected[0]
-        expected[2].newer_index = expected[1]
 
         result = majestic.Index.paginate_posts(
             posts=self.posts, settings=self.settings)
