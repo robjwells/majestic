@@ -838,10 +838,11 @@ class TestIndex(unittest.TestCase):
                                  posts=[])
         self.assertLess(index_a, index_b)
 
-    @unittest.skip('stub')
-    def test_Index_iter(self):
-        """ """
-        pass
+    def test_Index_posts_sorted(self):
+        """Index sorts posts by newest before storing them"""
+        index = majestic.Index(page_number=1, settings=self.settings,
+                               posts=self.posts)
+        self.assertEqual(sorted(self.posts, reverse=True), index.posts)
 
 
     @unittest.skip('needs updating to test Index class')

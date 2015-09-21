@@ -452,7 +452,7 @@ class Index(object):
                  newer_index=None, older_index=None):
         """Initialise the Index and computer output_path and url"""
         self.page_number = page_number
-        self.posts = posts
+        self.posts = sorted(posts, reverse=True)    # sort newest first
         self.settings = settings
         self.newer_index = newer_index
         self.older_index = older_index
