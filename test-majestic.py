@@ -195,14 +195,6 @@ class TestContent(unittest.TestCase):
                                    settings=self.settings, slug=invalid_slug)
         self.assertEqual(content.slug, expected)
 
-    def test_Content_eq(self):
-        """Two distinct Content objects with same attrs compare equal"""
-        content_a = majestic.Content(title=self.title, body=self.body,
-                                     settings=self.settings)
-        content_b = majestic.Content(title=self.title, body=self.body,
-                                     settings=self.settings)
-        self.assertEqual(content_a, content_b)
-
     def test_content_lt_title(self):
         """Content with different titles compare properly"""
         post_1 = majestic.Content(title='title a',
@@ -362,6 +354,26 @@ class TestPage(unittest.TestCase):
         path_template = self.settings['paths']['page path template']
         path = path_template.format(content=page)
         self.assertEqual(path, page._path_part)
+
+    def test_Page_eq(self):
+        """Two distinct Page objects with same attrs compare equal
+
+        Page doesn't have its own __eq__ implementation as it's just
+        a concrete version of Content, but Page does properly handle
+        calls to self.output_path and self.url, while Content raises
+        NotImplementedError (correctly).
+
+        Since Content is not meant to be instantiated, it's fair to
+        test the superclass's implementation of __eq__ through a
+        subclass. (And __eq__ belongs on the superclass because
+        otherwise both Page and Post would have to implement almost
+        exactly the same method.)
+        """
+        page_a = majestic.Page(title=self.title, body=self.body,
+                                     settings=self.settings)
+        page_b = majestic.Page(title=self.title, body=self.body,
+                                     settings=self.settings)
+        self.assertEqual(page_a, page_b)
 
 
 class TestPost(unittest.TestCase):
