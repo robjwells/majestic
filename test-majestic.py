@@ -843,10 +843,6 @@ class TestIndex(unittest.TestCase):
         """ """
         pass
 
-    @unittest.skip('stub')
-    def test_Index_eq(self):
-        """ """
-        pass
 
     @unittest.skip('needs updating to test Index class')
     def test_paginate_index_result(self):
