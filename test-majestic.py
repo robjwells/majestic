@@ -802,12 +802,12 @@ class TestIndex(unittest.TestCase):
     """Test the Index class
 
     The Index class largely just holds data:
-        page_number:    1 to len(index_pages)
-        newer_index:    Index containing more recent posts or None
-        older_index:    Index containing less recent posts or None
-        output_path:    path the index should be written to (pathlib.Path)
-        url:            url of the index (str)
-        posts:          [Post] to be rendered on the index page
+        page_number:        1 to len(index_pages)
+        newer_index_url:    url to an index with more recent posts or None
+        older_index_url:        url to an index with less recent posts or None
+        output_path:        path the index should be written to (pathlib.Path)
+        url:                url of the index (str)
+        posts:              [Post] to be rendered on the index page
 
     An Index created with page_number 1 is always index.html.
 
@@ -847,7 +847,7 @@ class TestIndex(unittest.TestCase):
 
     def test_Index_attrs(self):
         """Each Index returned by paginate_posts has the correct attributes"""
-        attr_list = ['page_number', 'newer_index', 'older_index',
+        attr_list = ['page_number', 'newer_index_url', 'older_index_url',
                      'output_path', 'url', 'posts']
         result = majestic.Index.paginate_posts(posts=self.posts,
                                                settings=self.settings)
@@ -923,6 +923,11 @@ class TestIndex(unittest.TestCase):
             majestic.Index(page_number=3, settings=self.settings,
                            posts=self.posts[:-4])
             ]
+
+        expected[0].older_index_url = expected[1].url
+        expected[1].older_index_url = expected[2].url
+        expected[2].newer_index_url = expected[1].url
+        expected[1].newer_index_url = expected[0].url
 
         result = majestic.Index.paginate_posts(
             posts=self.posts, settings=self.settings)
