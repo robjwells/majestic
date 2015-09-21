@@ -844,6 +844,16 @@ class TestIndex(unittest.TestCase):
                                posts=self.posts)
         self.assertEqual(sorted(self.posts, reverse=True), index.posts)
 
+    def test_Index_iter(self):
+        """Index should support iteration over its posts
+
+        Looping over an Index should be equivalent to looping
+        its posts list attribute.
+        """
+        expected = sorted(self.posts, reverse=True)
+        index = majestic.Index(page_number=1, settings=self.settings,
+                               posts=self.posts)
+        self.assertEqual(expected, [p for p in index])
 
     @unittest.skip('needs updating to test Index class')
     def test_paginate_index_result(self):
