@@ -708,7 +708,7 @@ class TestTemplating(unittest.TestCase):
     def test_jinja_environment_basic(self):
         """jinja_environment returns Environment with expected templates"""
         env = majestic.jinja_environment(
-            templates_dir=self.settings['paths']['templates root'],
+            user_templates=self.settings['paths']['templates root'],
             settings=self.settings)
         self.assertEqual(self.jinja_env.list_templates(), env.list_templates())
 
@@ -720,7 +720,7 @@ class TestTemplating(unittest.TestCase):
             environment.globals should contain 'settings'
         """
         env = majestic.jinja_environment(
-            templates_dir=self.settings['paths']['templates root'],
+            user_templates=self.settings['paths']['templates root'],
             settings=self.settings)
         self.assertFalse(env.auto_reload)
         self.assertTrue('settings' in env.globals)
@@ -729,7 +729,7 @@ class TestTemplating(unittest.TestCase):
         """jinja_environment properly applies custom jinja options"""
         opts = {'trim_blocks': True}
         env = majestic.jinja_environment(
-            templates_dir=self.settings['paths']['templates root'],
+            user_templates=self.settings['paths']['templates root'],
             settings=self.settings,
             jinja_options=opts)
         self.assertTrue(env.trim_blocks)
@@ -743,7 +743,7 @@ class TestTemplating(unittest.TestCase):
         search path passed to the jinja loader.
         """
         env = majestic.jinja_environment(
-            templates_dir=self.settings['paths']['templates root'],
+            user_templates=self.settings['paths']['templates root'],
             settings=self.settings)
         self.assertIn(str(MAJESTIC_DIR.joinpath('default_templates')),
                       env.loader.searchpath)
@@ -764,7 +764,7 @@ class TestTemplating(unittest.TestCase):
     def test_jinja_environment_rfc822_filter(self):
         """jinja_environment adds rfc822_date as a custom filter"""
         env = majestic.jinja_environment(
-            templates_dir=self.settings['paths']['templates root'],
+            user_templates=self.settings['paths']['templates root'],
             settings=self.settings)
         self.assertEqual(env.filters['rfc822_date'], majestic.rfc822_date)
 
@@ -980,7 +980,7 @@ class TestBlogObject(unittest.TestCase):
         self.settings['paths']['templates root'] = str(self.templates_root)
 
         self.env = majestic.jinja_environment(
-            templates_dir=self.templates_root,
+            user_templates=self.templates_root,
             settings=None)  # Not needed
 
     def test_BlogObject_no_arguments(self):

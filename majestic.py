@@ -35,10 +35,10 @@ def chunk(iterable, chunk_length):
         yield iterable[lower:upper]
 
 
-def jinja_environment(templates_dir, settings, jinja_options=None):
+def jinja_environment(user_templates, settings, jinja_options=None):
     """Create a Jinja2 Environment with a loader for templates_dir
 
-    templates_dir:     path to user templates directory
+    user_templates:    path to user templates directory
     settings:          ConfigParser of the site's settings
     options:           dictionary of custom options for the Jinja2 Environment
 
@@ -52,7 +52,7 @@ def jinja_environment(templates_dir, settings, jinja_options=None):
 
     default_templates = MAJESTIC_DIR.joinpath('default_templates')
     loader = jinja2.FileSystemLoader(
-        map(str, [templates_dir, default_templates]))
+        map(str, [user_templates, default_templates]))
     env = jinja2.Environment(loader=loader, **opts)
 
     env.globals['settings'] = settings          # add settings as a global
