@@ -786,10 +786,15 @@ class TestRFC822Date(unittest.TestCase):
         Check that the function is not cheating by using
         strftime for the whole date string.
         """
+        starting_locale = locale.getlocale()
         locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
+
         date = pytz.utc.localize(datetime(2015, 9, 19, 14, 43))
         expected = 'Sat, 19 Sep 2015 14:43:00 +0000'
         result = majestic.rfc822_date(date)
+
+        locale.setlocale(locale.LC_ALL, starting_locale)       # Restore locale
+
         self.assertEqual(expected, result)
 
 
