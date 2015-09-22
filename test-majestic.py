@@ -961,5 +961,99 @@ class TestChunk(unittest.TestCase):
         self.assertEqual(expected, list(result))
 
 
+class TestBlogObject(unittest.TestCase):
+    """Test the BlogObject base class
+
+    Superclass for all classes that ultimately represent and will
+    produce a file on disk for consumption on the web. (That's all
+    html files and the RSS and sitemap XML files.)
+
+    It should provide implementations for all common web/disk-related
+    properties and methods:
+        * URL
+        * Output path
+        * Rendering self to a file
+
+    It should require classes to do only the minimum needed support them,
+    in particular defining string keys to retrieve the following from
+    the settings object:
+        * the path template string
+        * the jinja template filename
+
+    The BlogObject class should itself raise NotImplementedError when
+    the properties for those keys are accessed, making clear the need
+    for concrete subclasses to define them. (Exempt from this are
+    abstract classes that aren't intended to be written to disk, so
+    Content does not define them but Content's subclasses must.)
+
+    It is ultimately content agnostic. In a language with protocols this
+    would probably be a protocol with default implementations.
+    """
+    def test_BlogObject_no_arguments(self):
+        """BlogObject should not require arguments to init
+
+        The intention is that BlogObject only contains default method
+        implementations to be inherited and has no content of its own.
+        """
+        bo = majestic.BlogObject()      # This should not raise
+
+    def test_BlogObject_properties_exist(self):
+        """BlogObject defines expected properties and methods
+
+        Expected:
+            * _path_template_key
+            * _template_file_key
+            * _path_part
+            * output_path
+            * url
+            * render_to_disk
+        """
+        attrs = ['_path_template_key', '_template_file_key', '_path_part',
+                 'output_path', 'url', 'render_to_disk']
+        bo = majestic.BlogObject()
+        for a in attrs:
+            self.assertTrue(hasattr(bo, a))
+
+    def test_BlogObject_key_props_raise(self):
+        """BlogObject key properties should raise NotImplementedError
+
+        key properties in question:
+            * _path_template_key
+            * _template_file_key
+
+        The intention being that subclasses will define class variables
+        that contain the strings needed to index into the settings.
+
+        For example:
+            class A(BlogObject):
+                _path_template_key = 'a path template'
+                _template_file_key = 'a template filename'
+        """
+        bo = majestic.BlogObject()
+        for attr in ['_path_template_key', '_template_file_key']:
+            self.assertRaises(getattr(bo, attr))
+
+    def test_BlogObject_computed_props_raise(self):
+        """Computed properties that depend on unimplemented ones raise
+
+        computed properties in question:
+            * output_path
+            * url
+
+        To prevent repetition, these properties should depend on a single
+        _path_part property/method that computes the path part of the url
+        (http://siteurl.com/[path/part.html]) and the part of the file
+        path below the output root (blog dir/output root/[path/part.html]).
+
+        In turn this should depend on the class setting the _path_template_key
+        class variable. Since only subclasses set this, BlogObject should
+        raise NotImplementedError (see test_BlogObject_key_props_raise)
+        when these properties are accessed.
+        """
+        bo = majestic.BlogObject()
+        for prop in ['url', 'output_path']:
+            self.assertRaises(getattr(bo, prop))
+
+
 if __name__ == '__main__':
     unittest.main()
