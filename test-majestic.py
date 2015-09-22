@@ -699,8 +699,10 @@ class TestTemplating(unittest.TestCase):
         settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
-        loader = jinja2.FileSystemLoader(
-            self.settings['paths']['templates root'])
+        loader = jinja2.FileSystemLoader([
+            self.settings['paths']['templates root'],           # user
+            str(MAJESTIC_DIR.joinpath('default_templates'))     # defaults
+            ])
         self.jinja_env = jinja2.Environment(loader=loader)
 
     def test_jinja_environment_basic(self):
