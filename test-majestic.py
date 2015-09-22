@@ -227,42 +227,6 @@ class TestContent(unittest.TestCase):
         self.assertTrue(post_1 < post_2)
         self.assertFalse(post_2 < post_1)
 
-    def test_url_property_raises(self):
-        """Accessing content.url should raise NotImplementedError
-
-        This is now achieved through calling .path_part, which raises
-        """
-        content = majestic.Content(title=self.title, body=self.body,
-                                   settings=self.settings)
-        with self.assertRaises(NotImplementedError):
-            content.url
-
-    def test_output_path_attribute_raises(self):
-        """Accessing content.output_path should raise NotImplementedError
-
-        This is now achieved through calling .path_part, which raises
-        """
-        content = majestic.Content(title=self.title, body=self.body,
-                                   settings=self.settings)
-        with self.assertRaises(NotImplementedError):
-            content.output_path
-
-    def test_set_url(self):
-        """Can override the url property by setting it"""
-        content = majestic.Content(title=self.title, body=self.body,
-                                   settings=self.settings)
-        url = 'http://example.com/my-test-url.html'
-        content.url = url
-        self.assertEqual(content.url, url)
-
-    def test_set_output_path(self):
-        """Can override the output_path property by setting it"""
-        content = majestic.Content(title=self.title, body=self.body,
-                                   settings=self.settings)
-        path = '/some/path/on/the/system'
-        content.output_path = path
-        self.assertEqual(content.output_path, path)
-
     def test_render_html(self):
         """Content.html returns the body converted to HTML"""
         content = majestic.Content(title=self.title, settings=self.settings,
@@ -1053,6 +1017,28 @@ class TestBlogObject(unittest.TestCase):
         bo = majestic.BlogObject()
         for prop in ['url', 'output_path']:
             self.assertRaises(getattr(bo, prop))
+
+    def test_BlogObject_set_url(self):
+        """Can override the url property by setting it
+
+        This tests the url setter and ensures that BlogObject is
+        actually setting and checking the underlying variable and
+        not just raising NotImplementError regardless.
+        """
+        bo = majestic.BlogObject()
+        bo.url = 'http://example.com/my-test-url.html'
+        self.assertEqual(bo.url, url)
+
+    def test_BlogObject_set_output_path(self):
+        """Can override the output_path property by setting it
+
+        This tests the output_path setter and ensures that BlogObject
+        is actually setting and checking the underlying variable and
+        not just raising NotImplementError regardless.
+        """
+        bo = majestic.BlogObject()
+        bo.output_path = '/some/path/on/the/system'
+        self.assertEqual(bo.output_path, path)
 
 
 if __name__ == '__main__':
