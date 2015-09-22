@@ -783,7 +783,7 @@ class TestIndex(unittest.TestCase):
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
         self.settings['index']['posts per page'] = '2'
-        path_template = 'page-{index.page_number}.html'
+        path_template = 'page-{content.page_number}.html'
         self.settings['paths']['index pages path template'] = path_template
         self.settings['site']['url'] = 'http://example.com'
 
