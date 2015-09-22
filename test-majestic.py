@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import json
 import os
 from pathlib import Path
+import random
 import string
 import tempfile
 import unittest
@@ -1150,6 +1151,58 @@ class TestBlogObject(unittest.TestCase):
         self.assertEqual(self.render_tests_read_and_delete_file(name),
                          '42')
 
+
+class TestRSSFeed(unittest.TestCase):
+    """Test the RSSFeed class"""
+    def setUp(self):
+        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        self.settings = majestic.load_settings(files=[settings_path],
+                                               local=False)
+        self.number_of_posts = 5
+        self.settings['rss']['number of posts'] = str(self.number_of_posts)
+
+        starting_date = datetime(2015, 9, 22, 19)
+        self.posts = [
+            majestic.Post(title='post {}'.format(i), body='Here’s some text!',
+                          date=starting_date - timedelta(i),
+                          settings=self.settings)
+            for i in range(40)
+            ]
+        self.posts = random.shuffle(self.posts)      # Ensure not sorted
+
+    def test_RSSFeed_init_limit_posts(self):
+        """RSSFeed sets self.posts to subset of posts arg on init
+
+        The number of posts in RSSFeed.posts should equal self.number_of_posts.
+        """
+        feed = majestic.RSSFeed(posts=self.posts, settings=self.settings)
+        self.assertEqual(len(feed.posts), self.number_of_posts)
+
+    def test_RSSFeed_init_posts_sorted(self):
+        """RSSFeed sets self.posts to sorted subset of posts arg on init
+
+        RSSFeed.posts should be sorted by date, newest first.
+        """
+        feed = majestic.RSSFeed(posts=self.posts, settings=self.settings)
+        sorted_posts = sorted(self.posts[:self.number_of_posts], reverse=True)
+        self.assertEqual(feed.posts, sorted_posts)
+
+    @unittest.skip('stub')
+    def test_RSSFeed_init_overrides_template_setting(self):
+        """RSSFeed should ensure settings contains a path to an RSS template
+
+        Users do not have to supply an RSS template, unlike the other
+        templates. In which case settings['templates']['rss'] is unset.
+        RSSFeed's init should check this and substitute in the name
+        for the default RSS feed template.
+        """
+        pass
+
+    def test_RSSFeed_sets_key_variables(self):
+        """RSSFeed should set key variables required by BlogObject"""
+        feed = majestic.RSSFeed(posts=self.posts, settings=self.settings)
+        self.assertEqual(feed._path_template_key, 'rss path template')
+        self.assertEqual(feed._template_file_key, 'rss')
 
 if __name__ == '__main__':
     unittest.main()
