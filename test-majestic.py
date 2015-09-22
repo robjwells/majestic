@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import json
+import locale
 import os
 from pathlib import Path
 import random
@@ -773,6 +774,19 @@ class TestRFC822Date(unittest.TestCase):
     """Test the rfc822_date function"""
     def test_rfc822_date_basic(self):
         """Given an aware datetime, return the rfc822-format date"""
+        date = pytz.utc.localize(datetime(2015, 9, 19, 14, 43))
+        expected = 'Sat, 19 Sep 2015 14:43:00 +0000'
+        result = majestic.rfc822_date(date)
+        self.assertEqual(expected, result)
+
+    def test_rfc822_date_locale(self):
+        """Return rfc822-format date in non-English locale
+
+        RFC 822 dates include weekdays and months in English.
+        Check that the function is not cheating by using
+        strftime for the whole date string.
+        """
+        locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
         date = pytz.utc.localize(datetime(2015, 9, 19, 14, 43))
         expected = 'Sat, 19 Sep 2015 14:43:00 +0000'
         result = majestic.rfc822_date(date)
