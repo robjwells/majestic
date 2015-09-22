@@ -1026,7 +1026,8 @@ class TestBlogObject(unittest.TestCase):
         not just raising NotImplementError regardless.
         """
         bo = majestic.BlogObject()
-        bo.url = 'http://example.com/my-test-url.html'
+        url = 'http://example.com/my-test-url.html'
+        bo.url = url
         self.assertEqual(bo.url, url)
 
     def test_BlogObject_set_output_path(self):
@@ -1037,7 +1038,8 @@ class TestBlogObject(unittest.TestCase):
         not just raising NotImplementError regardless.
         """
         bo = majestic.BlogObject()
-        bo.output_path = '/some/path/on/the/system'
+        path = '/some/path/on/the/system'
+        bo.output_path = path
         self.assertEqual(bo.output_path, path)
 
 
