@@ -296,7 +296,7 @@ class BlogObject(object):
             file.write(rendered_html)
 
 
-class Content(object):
+class Content(BlogObject):
     """Base class for content"""
     def __init__(self, *, title, body, settings,
                  slug=None, source_path=None, **kwargs):
@@ -406,75 +406,22 @@ class Content(object):
         return class_(body=body, settings=settings, source_path=file,
                       **dict(meta))
 
-    @property
-    def _path_part(self):
-        """Not Implemented
-
-        On subclasses, return the content's path part as str for use
-        in directory paths and urls.
-
-        Property should fetch template from settings, format and then
-        store the result at _path_part_str so it can simply be returned
-        in the future.
-
-        Specifically:
-            http://example.com/path/part.html
-            output_root_dir/path/part.html
-        """
-        raise NotImplementedError()
-
-    @property
-    def output_path(self):
-        """Path to Content's output file"""
-        if not hasattr(self, '_output_path'):
-            output_dir = Path(self.settings['paths']['output root'])
-            self._output_path = output_dir.joinpath(self._path_part)
-        return self._output_path
-
-    @output_path.setter
-    def output_path(self, value):
-        """Override output_path by setting it directly"""
-        self._output_path = value
-
-    @property
-    def url(self):
-        """Content's URL"""
-        if not hasattr(self, '_url'):
-            site_url = self.settings['site']['url']
-            self._url = urljoin(site_url, self._path_part)
-        return self._url
-
-    @url.setter
-    def url(self, value):
-        """Override url by setting it directly"""
-        self._url = value
-
 
 class Page(Content):
     """A Content subclass representing a static page
 
-    Page is largely just a concrete version of Content, with the stub
-    methods implemented.
+    Page is just a concrete version of Content, with the BlogObject
+    key variables defined.
     """
-    @property
-    def _path_part(self):
-        """Path part of Page's output_path and url as a str
-
-        Property fetches template from settings, formats and then stores
-        the result so it can be simply returned in the future.
-
-        Specifically:
-            http://example.com/path/part.html
-            output_root_dir/path/part.html
-        """
-        if not hasattr(self, '_path_part_str'):
-            template = self.settings['paths']['page path template']
-            self._path_part_str = template.format(content=self)
-        return self._path_part_str
+    _path_template_key = 'page path template'
+    _template_file_key = 'page'
 
 
 class Post(Content):
     """A Content subclass representing a blog post"""
+    _path_template_key = 'post path template'
+    _template_file_key = 'post'
+
     def __init__(self, *, title, body, date, settings,
                  slug=None, source_path=None, **kwargs):
         """Initialise Post
@@ -528,22 +475,6 @@ class Post(Content):
         return '{0:%Y-%m-%d} {1}: {2}'.format(
             self.date, self.title,
             self.source_path if self.source_path is not None else 'No path')
-
-    @property
-    def _path_part(self):
-        """Path part of Post's output_path and url as a str
-
-        Property fetches template from settings, formats and then stores
-        the result so it can be simply returned in the future.
-
-        Specifically:
-            http://example.com/path/part.html
-            output_root_dir/path/part.html
-        """
-        if not hasattr(self, '_path_part_str'):
-            template = self.settings['paths']['post path template']
-            self._path_part_str = template.format(content=self)
-        return self._path_part_str
 
 
 class Index(object):
