@@ -258,6 +258,22 @@ class BlogObject(object):
             self._path_part_str = template.format(content=self)
         return self._path_part_str
 
+    @property
+    def output_path(self):
+        """Return path at which object should be written"""
+        if not hasattr(self, '_output_path'):
+            output_dir = Path(self.settings['paths']['output root'])
+            self._output_path = output_dir.joinpath(self._path_part)
+        return self._output_path
+
+    @property
+    def url(self):
+        """Return url at which object will be available on the web"""
+        if not hasattr(self, '_url'):
+            site_url = self.settings['site']['url']
+            self._url = urljoin(site_url, self._path_part)
+        return self._url
+
 
 class Content(object):
     """Base class for content"""
