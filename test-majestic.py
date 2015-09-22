@@ -1059,28 +1059,56 @@ class TestBlogObject(unittest.TestCase):
         bo.output_path = path
         self.assertEqual(bo.output_path, path)
 
+    def render_tests_setup_helper(self, test_file_name):
+        """Return a properly overriden and set up BlogObject for file tests
+
+        test_file_name serves as the name of the template file to load
+        as well as the file in the test-output directory to write to.
+
+        BlogObject has its key class variables, which would normally raise
+        on instances, overriden to use this name, allowing the tests to
+        proceed without having to use a concrete subclass.
+
+        BlogObject by design cannot normally be written to a file. But to
+        avoid having to test a concrete subclass, which may have its own
+        problems, we monkey around with BlogObject to allow us to test it.
+        """
+
+        # Override BlogObject variables
+        majestic.BlogObject._template_file_key = test_file_name
+        bo = majestic.BlogObject()
+        bo._path_part_str = test_file_name
+
+        # Override settings
+        self.settings['templates'][test_file_name] = test_file_name
+        self.settings['paths'][test_file_name] = test_file_name
+        bo.settings = self.settings
+
+        return bo
+
+    def render_tests_read_and_delete_file(self, filename):
+        """Read and delete file 'name' in the test-output dir
+
+        Teardown helper for render_to_disk tests.
+        """
+        file = self.test_output_dir.joinpath(filename)
+        with file.open() as f:
+            content = f.read()
+        file.unlink()
+        return content
+
     def test_BlogObject_render_basic(self):
         """render_to_disk chooses template and writes to correct location"""
         name = 'basic'
-        majestic.BlogObject._template_file_key = name
-        bo = majestic.BlogObject()
-        bo._path_part_str = name
-
-        # Put settings in place
-        self.settings['templates'][name] = name
-        self.settings['paths'][name] = name
-        bo.settings = self.settings
+        bo = self.render_tests_setup_helper(name)
 
         # Set up env and write out
         env = majestic.jinja_environment(templates_dir=self.templates_root,
                                          settings=None)  # Not needed
         bo.render_to_disk(env)
 
-        file = self.test_output_dir.joinpath(name)
-        with file.open() as f:
-            self.assertEqual(f.read(),
-                             'This is the template for the basic test.')
-        file.unlink()
+        self.assertEqual(self.render_tests_read_and_delete_file(name),
+                         'This is the template for the basic test.')
 
 
 if __name__ == '__main__':
