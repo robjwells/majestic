@@ -1013,8 +1013,17 @@ class TestBlogObject(unittest.TestCase):
         class variable. Since only subclasses set this, BlogObject should
         raise NotImplementedError (see test_BlogObject_key_props_raise)
         when these properties are accessed.
+
+        The BlogObject is given a self.settings attribute in order to
+        suppress unrelated to exceptions. (Subclasses are required to
+        have self.settings.)
         """
         bo = majestic.BlogObject()
+
+        settings = majestic.load_settings(
+            files=[TEST_BLOG_DIR.joinpath('settings.cfg')], local=False)
+        bo.settings = settings          # Suppress exceptions about settings
+
         for prop in ['url', 'output_path']:
             with self.assertRaises(NotImplementedError):
                 getattr(bo, prop)
