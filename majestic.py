@@ -218,7 +218,7 @@ class BlogObject(object):
         * _template_file_key
 
     These are used in the inherited properties and method to retrieve
-    options from an object's self.settings and are the way that
+    options from an object's self._settings and are the way that
     subclasses customise their output file path, url and set their
     related jinja template.
     """
@@ -254,7 +254,7 @@ class BlogObject(object):
             output_root_dir/[path/part.html]
         """
         if not hasattr(self, '_path_part'):
-            template = self.settings['paths'][self._path_template_key]
+            template = self._settings['paths'][self._path_template_key]
             self._path_part = template.format(content=self)
         return self._path_part
 
@@ -267,7 +267,7 @@ class BlogObject(object):
     def output_path(self):
         """Return path at which object should be written"""
         if not hasattr(self, '_output_path'):
-            output_dir = Path(self.settings['paths']['output root'])
+            output_dir = Path(self._settings['paths']['output root'])
             self._output_path = output_dir.joinpath(self.path_part)
         return self._output_path
 
@@ -280,7 +280,7 @@ class BlogObject(object):
     def url(self):
         """Return url at which object will be available on the web"""
         if not hasattr(self, '_url'):
-            site_url = self.settings['site']['url']
+            site_url = self._settings['site']['url']
             self._url = urljoin(site_url, self.path_part)
         return self._url
 
@@ -320,7 +320,7 @@ class Content(BlogObject):
         """
         self.title = title
         self.body = body
-        self.settings = settings
+        self._settings = settings
         if slug is None:
             slug = normalise_slug(title)
         elif not validate_slug(slug):
@@ -372,7 +372,7 @@ class Content(BlogObject):
             prefix = 'markdown.extensions.'
             extensions = [
                 ext if ext.startswith(prefix) else prefix + ext
-                for ext in self.settings['markdown']['extensions'].split()
+                for ext in self._settings['markdown']['extensions'].split()
                 ]
             md = markdown.Markdown(extensions=extensions)
             self._html = md.convert(self.body)
@@ -507,7 +507,7 @@ class Index(BlogObject):
         """Initialise the Index and computer output_path and url"""
         self.page_number = page_number
         self.posts = sorted(posts, reverse=True)    # sort newest first
-        self.settings = settings
+        self._settings = settings
         self.newer_index_url = newer_index_url
         self.older_index_url = older_index_url
 

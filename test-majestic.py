@@ -158,7 +158,7 @@ class TestContent(unittest.TestCase):
         content = majestic.Content(title=self.title, body=self.body,
                                    settings=self.settings)
         self.assertEqual([self.title, self.body, self.settings],
-                         [content.title, content.body, content.settings])
+                         [content.title, content.body, content._settings])
 
     def test_content_init_meta(self):
         """Content stores extra kwargs as the .meta attribute"""
@@ -1033,7 +1033,7 @@ class TestBlogObject(unittest.TestCase):
 
         settings = majestic.load_settings(
             files=[TEST_BLOG_DIR.joinpath('settings.cfg')], local=False)
-        bo.settings = settings          # Suppress exceptions about settings
+        bo._settings = settings     # Suppress exceptions about settings
 
         for prop in ['url', 'output_path']:
             with self.assertRaises(NotImplementedError):
@@ -1102,7 +1102,7 @@ class TestBlogObject(unittest.TestCase):
         # Override settings
         self.settings['templates'][test_file_name] = test_file_name
         self.settings['paths'][test_file_name] = test_file_name
-        bo.settings = self.settings
+        bo._settings = self.settings
 
         return bo
 
