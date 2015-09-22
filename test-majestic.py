@@ -732,6 +732,20 @@ class TestTemplating(unittest.TestCase):
             jinja_options=opts)
         self.assertTrue(env.trim_blocks)
 
+    def test_jinja_environment_default_templates(self):
+        """jinja_environment includes default templates in search path
+
+        majestic supplies some default templates that the user is not
+        expected to create. These are stored in the majestic directory
+        and the folder containing them should be included in the
+        search path passed to the jinja loader.
+        """
+        env = majestic.jinja_environment(
+            templates_dir=self.settings['paths']['templates root'],
+            settings=self.settings)
+        self.assertIn(str(MAJESTIC_DIR.joinpath('default_templates')),
+                      env.loader.searchpath)
+
     def test_load_jinja_options(self):
         """load_jinja_options parses the jinja.json file and returns a dict
 
