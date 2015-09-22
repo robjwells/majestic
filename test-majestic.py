@@ -1110,6 +1110,21 @@ class TestBlogObject(unittest.TestCase):
         self.assertEqual(self.render_tests_read_and_delete_file(name),
                          'This is the template for the basic test.')
 
+    def test_BlogObject_render_kwargs(self):
+        """render_to_disk passes keyword arguments to the render function"""
+        name = 'kwargs'
+        bo = self.render_tests_setup_helper(name)
+
+        # Set up env and write out
+        env = majestic.jinja_environment(templates_dir=self.templates_root,
+                                         settings=None)  # Not needed
+        bo.render_to_disk(env,
+                          some_kwarg='abc',
+                          another_kwarg=[1, 2, 3])
+
+        self.assertEqual(self.render_tests_read_and_delete_file(name),
+                         'abc\n[1, 2, 3]')
+
 
 if __name__ == '__main__':
     unittest.main()
