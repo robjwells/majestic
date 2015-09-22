@@ -995,7 +995,8 @@ class TestBlogObject(unittest.TestCase):
         """
         bo = majestic.BlogObject()
         for attr in ['_path_template_key', '_template_file_key']:
-            self.assertRaises(getattr(bo, attr))
+            with self.assertRaises(NotImplementedError):
+                getattr(bo, attr)
 
     def test_BlogObject_computed_props_raise(self):
         """Computed properties that depend on unimplemented ones raise
@@ -1016,7 +1017,8 @@ class TestBlogObject(unittest.TestCase):
         """
         bo = majestic.BlogObject()
         for prop in ['url', 'output_path']:
-            self.assertRaises(getattr(bo, prop))
+            with self.assertRaises(NotImplementedError):
+                getattr(bo, prop)
 
     def test_BlogObject_set_url(self):
         """Can override the url property by setting it
