@@ -1039,6 +1039,22 @@ class TestBlogObject(unittest.TestCase):
             with self.assertRaises(NotImplementedError):
                 getattr(bo, prop)
 
+    def test_BlogObject_set_path_part(self):
+        """Can override the _path_part property by setting it
+
+        Directly setting _path_part makes it easier to directly
+        override both the output_path and url properties, as
+        they both retrieve the path part from that attribute.
+
+        As _path_part stores the constructed string at ._path_part_str,
+        users could override that but that should be an implementation
+        detail.
+        """
+        bo = majestic.BlogObject()
+        path_part = 'index.html'
+        bo._path_part = path_part
+        self.assertEqual(bo._path_part, path_part)
+
     def test_BlogObject_set_url(self):
         """Can override the url property by setting it
 
