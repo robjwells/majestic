@@ -284,6 +284,11 @@ class BlogObject(object):
         """Override url by setting it directly"""
         self._url = value
 
+    def render_to_disk(self):
+        """Render self with a jinja template and write to a file"""
+        pass
+
+
 class Content(object):
     """Base class for content"""
     def __init__(self, *, title, body, settings,
