@@ -972,8 +972,7 @@ class TestBlogObject(unittest.TestCase):
             * url
             * render_to_disk
         """
-        attrs = ['_path_template_key', '_template_file_key', '_path_part',
-                 'output_path', 'url', 'render_to_disk']
+        attrs = ['_path_part', 'output_path', 'url', 'render_to_disk']
         bo = majestic.BlogObject()
         for a in attrs:
             self.assertTrue(hasattr(bo, a))
