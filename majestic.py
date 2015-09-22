@@ -222,7 +222,25 @@ class BlogObject(object):
     subclasses customise their output file path, url and set their
     related jinja template.
     """
-    pass
+    @property
+    def _path_template_key(self):
+        """Key to retrieve the class's path template from settings
+
+        Subclasses should implement this as a simple class variable.
+        The implementation on BlogObject raises NotImplementedError.
+        """
+        message = 'Subclasses must define _path_template_key class variable'
+        raise NotImplementedError(message)
+
+    @property
+    def _template_file_key(self):
+        """Key to retrieve the class's template filename from settings
+
+        Subclasses should implement this as a simple class variable.
+        The implementation on BlogObject raises NotImplementedError.
+        """
+        message = 'Subclasses must define _template_file_key class variable'
+        raise NotImplementedError(message)
 
 
 class Content(object):
