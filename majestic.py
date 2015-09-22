@@ -200,6 +200,31 @@ class DraftError(Exception):
     pass
 
 
+class BlogObject(object):
+    """Abstract base class for objects representing html/xml files
+
+    Provides default implementations of common properties and a
+    method for rendering the object on a template and writing
+    it to disk.
+
+    Public properties defined here:
+        * URL
+        * Output path
+        * Rendering self to a file
+
+    Concrete subclasses are required to define the following class
+    variables:
+        * _path_template_key
+        * _template_file_key
+
+    These are used in the inherited properties and method to retrieve
+    options from an object's self.settings and are the way that
+    subclasses customise their output file path, url and set their
+    related jinja template.
+    """
+    pass
+
+
 class Content(object):
     """Base class for content"""
     def __init__(self, *, title, body, settings,
