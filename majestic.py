@@ -284,9 +284,16 @@ class BlogObject(object):
         """Override url by setting it directly"""
         self._url = value
 
-    def render_to_disk(self):
+    def render_to_disk(self, environment, **kwargs):
         """Render self with a jinja template and write to a file"""
-        pass
+        template = environment.get_template(self._template_file_key)
+        rendered_html = template.render(content=self, **kwargs)
+        try:
+            self.output_path.parent.mkdir(parents=True)
+        except FileExistsError:
+            pass
+        with self.output_path.open(mode='w') as file:
+            file.write(rendered_html)
 
 
 class Content(object):
