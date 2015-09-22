@@ -953,6 +953,15 @@ class TestBlogObject(unittest.TestCase):
     It is ultimately content agnostic. In a language with protocols this
     would probably be a protocol with default implementations.
     """
+    def setUp(self):
+        self.settings = majestic.load_settings(local=False)
+
+        self.test_output_dir = MAJESTIC_DIR.joinpath('output-root')
+        self.settings['paths']['output root'] = str(self.test_output_dir)
+
+        self.templates_root = MAJESTIC_DIR.joinpath('test-templates')
+        self.settings['paths']['templates root'] = str(self.templates_root)
+
     def test_BlogObject_no_arguments(self):
         """BlogObject should not require arguments to init
 
@@ -1049,6 +1058,29 @@ class TestBlogObject(unittest.TestCase):
         path = '/some/path/on/the/system'
         bo.output_path = path
         self.assertEqual(bo.output_path, path)
+
+    def test_BlogObject_render_basic(self):
+        """render_to_disk chooses template and writes to correct location"""
+        name = 'basic'
+        majestic.BlogObject._template_file_key = name
+        bo = majestic.BlogObject()
+        bo._path_part_str = name
+
+        # Put settings in place
+        self.settings['templates'][name] = name
+        self.settings['paths'][name] = name
+        bo.settings = self.settings
+
+        # Set up env and write out
+        env = majestic.jinja_environment(templates_dir=self.templates_root,
+                                         settings=None)  # Not needed
+        bo.render_to_disk(env)
+
+        file = self.test_output_dir.joinpath(name)
+        with file.open() as f:
+            self.assertEqual(f.read(),
+                             'This is the template for the basic test.')
+        file.unlink()
 
 
 if __name__ == '__main__':
