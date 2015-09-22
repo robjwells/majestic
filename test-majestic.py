@@ -1203,17 +1203,6 @@ class TestRSSFeed(unittest.TestCase):
         sorted_posts = sorted(self.posts[:self.number_of_posts], reverse=True)
         self.assertEqual(feed.posts, sorted_posts)
 
-    @unittest.skip('stub')
-    def test_RSSFeed_init_overrides_template_setting(self):
-        """RSSFeed should ensure settings contains a path to an RSS template
-
-        Users do not have to supply an RSS template, unlike the other
-        templates. In which case settings['templates']['rss'] is unset.
-        RSSFeed's init should check this and substitute in the name
-        for the default RSS feed template.
-        """
-        pass
-
     def test_RSSFeed_sets_key_variables(self):
         """RSSFeed should set key variables required by BlogObject"""
         feed = majestic.RSSFeed(posts=self.posts, settings=self.settings)
