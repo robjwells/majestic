@@ -482,7 +482,7 @@ class Post(Content):
             self.source_path if self.source_path is not None else 'No path')
 
 
-class Index(object):
+class Index(BlogObject):
     """Index represents a blog index page
 
     It has the following attributes:
@@ -493,11 +493,15 @@ class Index(object):
         url:                url of the index (str)
         posts:              [Post] to be rendered on the index page
 
-    An Index created with page_number 1 is always index.html.
+    An Index created with page_number 1 is always saved to a file named
+    index.html and its url is the site's url.
 
     The class method .paginate_posts creates a list of Index objects out
     of a list of posts.
     """
+    _path_template_key = 'index pages path template'
+    _template_file_key = 'index'
+
     def __init__(self, page_number, posts, settings,
                  newer_index_url=None, older_index_url=None):
         """Initialise the Index and computer output_path and url"""
@@ -507,15 +511,9 @@ class Index(object):
         self.newer_index_url = newer_index_url
         self.older_index_url = older_index_url
 
-        output_root = Path(settings['paths']['output root'])
-        if page_number > 1:
-            template = settings['paths']['index pages path template']
-            path_part = template.format(index=self)
-            self.url = urljoin(settings['site']['url'], path_part)
-        else:
-            path_part = 'index.html'
-            self.url = settings['site']['url']
-        self.output_path = output_root.joinpath(path_part)
+        if page_number == 1:
+            self.path_part = 'index.html'           # Override for output path
+            self.url = settings['site']['url']      # Set as plain url
 
     def __iter__(self):
         """Iterate over self.posts"""
