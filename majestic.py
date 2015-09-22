@@ -242,6 +242,22 @@ class BlogObject(object):
         message = 'Subclasses must define _template_file_key class variable'
         raise NotImplementedError(message)
 
+    @property
+    def _path_part(self):
+        """Path part of output_path and url as a str
+
+        Property fetches template from settings, formats and then stores
+        the result so it can be simply returned in the future.
+
+        By path part, this is what's meant:
+            http://example.com/[path/part.html]
+            output_root_dir/[path/part.html]
+        """
+        if not hasattr(self, '_path_part_str'):
+            template = self.settings['paths'][self._path_template_key]
+            self._path_part_str = template.format(content=self)
+        return self._path_part_str
+
 
 class Content(object):
     """Base class for content"""
