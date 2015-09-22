@@ -962,6 +962,10 @@ class TestBlogObject(unittest.TestCase):
         self.templates_root = MAJESTIC_DIR.joinpath('test-templates')
         self.settings['paths']['templates root'] = str(self.templates_root)
 
+        self.env = majestic.jinja_environment(
+            templates_dir=self.templates_root,
+            settings=None)  # Not needed
+
     def test_BlogObject_no_arguments(self):
         """BlogObject should not require arguments to init
 
@@ -1102,10 +1106,7 @@ class TestBlogObject(unittest.TestCase):
         name = 'basic'
         bo = self.render_tests_setup_helper(name)
 
-        # Set up env and write out
-        env = majestic.jinja_environment(templates_dir=self.templates_root,
-                                         settings=None)  # Not needed
-        bo.render_to_disk(env)
+        bo.render_to_disk(self.env)
 
         self.assertEqual(self.render_tests_read_and_delete_file(name),
                          'This is the template for the basic test.')
@@ -1115,10 +1116,7 @@ class TestBlogObject(unittest.TestCase):
         name = 'kwargs'
         bo = self.render_tests_setup_helper(name)
 
-        # Set up env and write out
-        env = majestic.jinja_environment(templates_dir=self.templates_root,
-                                         settings=None)  # Not needed
-        bo.render_to_disk(env,
+        bo.render_to_disk(self.env,
                           some_kwarg='abc',
                           another_kwarg=[1, 2, 3])
 
@@ -1131,10 +1129,7 @@ class TestBlogObject(unittest.TestCase):
         bo = self.render_tests_setup_helper(name)
         bo.some_attribute = 42
 
-        # Set up env and write out
-        env = majestic.jinja_environment(templates_dir=self.templates_root,
-                                         settings=None)  # Not needed
-        bo.render_to_disk(env)
+        bo.render_to_disk(self.env)
 
         self.assertEqual(self.render_tests_read_and_delete_file(name),
                          '42')
