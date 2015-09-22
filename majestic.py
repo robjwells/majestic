@@ -258,6 +258,11 @@ class BlogObject(object):
             self._path_part_str = template.format(content=self)
         return self._path_part_str
 
+    @_path_part.setter
+    def _path_part(self, value):
+        """Override _path_part by setting it directly"""
+        self._path_part_str = value
+
     @property
     def output_path(self):
         """Return path at which object should be written"""
