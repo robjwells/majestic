@@ -38,15 +38,21 @@ def chunk(iterable, chunk_length):
 def jinja_environment(templates_dir, settings, jinja_options=None):
     """Create a Jinja2 Environment with a loader for templates_dir
 
-    settings:   ConfigParser of the site's settings
-    options:    dictionary of custom options for the Jinja2 Environment
+    templates_dir:     path to user templates directory
+    settings:          ConfigParser of the site's settings
+    options:           dictionary of custom options for the Jinja2 Environment
+
+    The majestic default templates directory is also included in
+    the returned Environment's template search path.
     """
     if jinja_options is None:
         jinja_options = {}
     opts = MAJESTIC_JINJA_OPTIONS.copy()    # get default options
     opts.update(jinja_options)              # update defaults with user options
 
-    loader = jinja2.FileSystemLoader(str(templates_dir))
+    default_templates = MAJESTIC_DIR.joinpath('default_templates')
+    loader = jinja2.FileSystemLoader(
+        map(str, [templates_dir, default_templates]))
     env = jinja2.Environment(loader=loader, **opts)
 
     env.globals['settings'] = settings          # add settings as a global
