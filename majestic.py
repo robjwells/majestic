@@ -266,6 +266,11 @@ class BlogObject(object):
             self._output_path = output_dir.joinpath(self._path_part)
         return self._output_path
 
+    @output_path.setter
+    def output_path(self, value):
+        """Override output_path by setting it directly"""
+        self._output_path = value
+
     @property
     def url(self):
         """Return url at which object will be available on the web"""
@@ -274,6 +279,10 @@ class BlogObject(object):
             self._url = urljoin(site_url, self._path_part)
         return self._url
 
+    @url.setter
+    def url(self, value):
+        """Override url by setting it directly"""
+        self._url = value
 
 class Content(object):
     """Base class for content"""
