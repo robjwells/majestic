@@ -301,7 +301,7 @@ class TestPage(unittest.TestCase):
         self.assertEqual(expected_url, page.url)
 
     def test_page_path_part(self):
-        """_path_part correctly formats and stores Page's path part
+        """path_part correctly formats and stores Page's path part
 
         Path part here refers to the 'path' section of a URL, for example:
             http://example.com/path/part.html
@@ -317,7 +317,7 @@ class TestPage(unittest.TestCase):
 
         path_template = self.settings['paths']['page path template']
         path = path_template.format(content=page)
-        self.assertEqual(path, page._path_part)
+        self.assertEqual(path, page.path_part)
 
     def test_Page_eq(self):
         """Two distinct Page objects with same attrs compare equal
@@ -978,12 +978,12 @@ class TestBlogObject(unittest.TestCase):
         """BlogObject defines expected properties and methods
 
         Expected:
-            * _path_part
+            * path_part
             * output_path
             * url
             * render_to_disk
         """
-        attrs = ['_path_part', 'output_path', 'url', 'render_to_disk']
+        attrs = ['path_part', 'output_path', 'url', 'render_to_disk']
         bo = majestic.BlogObject()
         for a in attrs:
             self.assertIn(a, dir(bo))
@@ -1016,7 +1016,7 @@ class TestBlogObject(unittest.TestCase):
             * url
 
         To prevent repetition, these properties should depend on a single
-        _path_part property/method that computes the path part of the url
+        path_part property/method that computes the path part of the url
         (http://siteurl.com/[path/part.html]) and the part of the file
         path below the output root (blog dir/output root/[path/part.html]).
 
@@ -1040,20 +1040,20 @@ class TestBlogObject(unittest.TestCase):
                 getattr(bo, prop)
 
     def test_BlogObject_set_path_part(self):
-        """Can override the _path_part property by setting it
+        """Can override the path_part property by setting it
 
-        Directly setting _path_part makes it easier to directly
+        Directly setting path_part makes it easier to directly
         override both the output_path and url properties, as
         they both retrieve the path part from that attribute.
 
-        As _path_part stores the constructed string at ._path_part_str,
+        As path_part stores the constructed string at _path_part,
         users could override that but that should be an implementation
         detail.
         """
         bo = majestic.BlogObject()
         path_part = 'index.html'
-        bo._path_part = path_part
-        self.assertEqual(bo._path_part, path_part)
+        bo.path_part = path_part
+        self.assertEqual(bo.path_part, path_part)
 
     def test_BlogObject_set_url(self):
         """Can override the url property by setting it
@@ -1097,7 +1097,7 @@ class TestBlogObject(unittest.TestCase):
         # Override BlogObject variables
         majestic.BlogObject._template_file_key = test_file_name
         bo = majestic.BlogObject()
-        bo._path_part_str = test_file_name
+        bo.path_part = test_file_name
 
         # Override settings
         self.settings['templates'][test_file_name] = test_file_name

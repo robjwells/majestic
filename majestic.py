@@ -243,7 +243,7 @@ class BlogObject(object):
         raise NotImplementedError(message)
 
     @property
-    def _path_part(self):
+    def path_part(self):
         """Path part of output_path and url as a str
 
         Property fetches template from settings, formats and then stores
@@ -253,22 +253,22 @@ class BlogObject(object):
             http://example.com/[path/part.html]
             output_root_dir/[path/part.html]
         """
-        if not hasattr(self, '_path_part_str'):
+        if not hasattr(self, '_path_part'):
             template = self.settings['paths'][self._path_template_key]
-            self._path_part_str = template.format(content=self)
-        return self._path_part_str
+            self._path_part = template.format(content=self)
+        return self._path_part
 
-    @_path_part.setter
-    def _path_part(self, value):
-        """Override _path_part by setting it directly"""
-        self._path_part_str = value
+    @path_part.setter
+    def path_part(self, value):
+        """Override path_part by setting it directly"""
+        self._path_part = value
 
     @property
     def output_path(self):
         """Return path at which object should be written"""
         if not hasattr(self, '_output_path'):
             output_dir = Path(self.settings['paths']['output root'])
-            self._output_path = output_dir.joinpath(self._path_part)
+            self._output_path = output_dir.joinpath(self.path_part)
         return self._output_path
 
     @output_path.setter
@@ -281,7 +281,7 @@ class BlogObject(object):
         """Return url at which object will be available on the web"""
         if not hasattr(self, '_url'):
             site_url = self.settings['site']['url']
-            self._url = urljoin(site_url, self._path_part)
+            self._url = urljoin(site_url, self.path_part)
         return self._url
 
     @url.setter
