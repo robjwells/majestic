@@ -1219,7 +1219,7 @@ class TestRSSFeed(unittest.TestCase):
         RSSFeed.posts should be sorted by date, newest first.
         """
         feed = majestic.RSSFeed(posts=self.posts, settings=self.settings)
-        sorted_posts = sorted(self.posts[:self.number_of_posts], reverse=True)
+        sorted_posts = sorted(self.posts, reverse=True)[:self.number_of_posts]
         self.assertEqual(feed.posts, sorted_posts)
 
     def test_RSSFeed_sets_key_variables(self):
