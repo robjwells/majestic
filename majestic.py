@@ -52,7 +52,7 @@ def jinja_environment(user_templates, settings, jinja_options=None):
 
     default_templates = MAJESTIC_DIR.joinpath('default_templates')
     loader = jinja2.FileSystemLoader(
-        map(str, [user_templates, default_templates]))
+        map(str, [user_templates, default_templates]))  # order is important
     env = jinja2.Environment(loader=loader, **opts)
 
     env.globals['settings'] = settings          # add settings as a global
