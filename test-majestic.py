@@ -1244,12 +1244,6 @@ class TestArchives(unittest.TestCase):
             ]
         random.shuffle(self.posts)      # Ensure not sorted
 
-    def test_Archives_init(self):
-        """Archives stores posts and settings object on init"""
-        arch = Archives(posts=self.posts, settings=self.settings)
-        self.assertEqual(self.settings, arch._settings)
-        self.assertEqual(self.posts, arch.posts)
-
     def test_Archives_init_posts_sorted(self):
         """Archives sorts posts before storing on self
 
@@ -1261,9 +1255,9 @@ class TestArchives(unittest.TestCase):
 
     def test_Archives_sets_key_variables(self):
         """Archives should set key variables required by BlogObject"""
-        arch = majestic.Archives(settings=self.settings)
-        self.assertEqual(feed._path_template_key, 'archives path template')
-        self.assertEqual(feed._template_file_key, 'archives')
+        arch = majestic.Archives(posts=self.posts, settings=self.settings)
+        self.assertEqual(arch._path_template_key, 'archives path template')
+        self.assertEqual(arch._template_file_key, 'archives')
 
 
 if __name__ == '__main__':
