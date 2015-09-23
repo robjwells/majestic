@@ -562,3 +562,20 @@ class Index(BlogObject):
                 index_object.older_index_url = index_list[n + 1].url
 
         return index_list
+
+
+class RSSFeed(BlogObject):
+    """An RSS feed for a blog"""
+    _path_template_key = 'rss path template'
+    _template_file_key = 'rss'
+
+    def __init__(self, posts, settings):
+        """Initialise RSSFeed with a list of posts and the site settings
+
+        posts can be any list of posts, and only the most recent n are
+        stored as a posts attribute on the object. The number chosen
+        is set in the settings file under [rss][number of posts].
+        """
+        self._settings = settings
+        post_limit = settings.getint('rss', 'number of posts')
+        self.posts = sorted(posts, reverse=True)[:post_limit]
