@@ -1203,7 +1203,7 @@ class TestRSSFeed(unittest.TestCase):
                           settings=self.settings)
             for i in range(40)
             ]
-        self.posts = random.shuffle(self.posts)      # Ensure not sorted
+        random.shuffle(self.posts)      # Ensure not sorted
 
     def test_RSSFeed_init_limit_posts(self):
         """RSSFeed sets self.posts to subset of posts arg on init
