@@ -1228,5 +1228,43 @@ class TestRSSFeed(unittest.TestCase):
         self.assertEqual(feed._path_template_key, 'rss path template')
         self.assertEqual(feed._template_file_key, 'rss')
 
+
+class TestArchives(unittest.TestCase):
+    """Test the Archives class"""
+    def setUp(self):
+        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        self.settings = majestic.load_settings(files=[settings_path],
+                                               local=False)
+        starting_date = datetime(2015, 9, 22, 19)
+        self.posts = [
+            majestic.Post(title='post {}'.format(i), body='Here’s some text!',
+                          date=starting_date - timedelta(i),
+                          settings=self.settings)
+            for i in range(40)
+            ]
+        random.shuffle(self.posts)      # Ensure not sorted
+
+    def test_Archives_init(self):
+        """Archives stores posts and settings object on init"""
+        arch = Archives(posts=self.posts, settings=self.settings)
+        self.assertEqual(self.settings, arch._settings)
+        self.assertEqual(self.posts, arch.posts)
+
+    def test_Archives_init_posts_sorted(self):
+        """Archives sorts posts before storing on self
+
+        Archives.posts should be sorted by date, newest first.
+        """
+        arch = majestic.Archives(posts=self.posts, settings=self.settings)
+        sorted_posts = sorted(self.posts, reverse=True)
+        self.assertEqual(arch.posts, sorted_posts)
+
+    def test_Archives_sets_key_variables(self):
+        """Archives should set key variables required by BlogObject"""
+        arch = majestic.Archives(settings=self.settings)
+        self.assertEqual(feed._path_template_key, 'archives path template')
+        self.assertEqual(feed._template_file_key, 'archives')
+
+
 if __name__ == '__main__':
     unittest.main()
