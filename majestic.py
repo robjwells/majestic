@@ -579,3 +579,17 @@ class RSSFeed(BlogObject):
         self._settings = settings
         post_limit = settings.getint('rss', 'number of posts')
         self.posts = sorted(posts, reverse=True)[:post_limit]
+
+
+class Archives(BlogObject):
+    """An archives page for a blog"""
+    _path_template_key = 'archives path template'
+    _template_file_key = 'archives'
+
+    def __init__(self, posts, settings):
+        """Initialise archives with a list of posts and the site settings
+
+        posts should be all of the blog's posts.
+        """
+        self._settings = settings
+        self.posts = sorted(posts, reverse=True)
