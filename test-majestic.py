@@ -1260,5 +1260,18 @@ class TestArchives(unittest.TestCase):
         self.assertEqual(arch._template_file_key, 'archives')
 
 
+@unittest.skip('stub')
+class TestPostsCollection(unittest.TestCase):
+    """Test the PostsCollection base class
+
+    Index, Archives and RSSFeed should inherit from this, and it should
+    provide for storing settings and a list of posts on self.
+
+    It should sort posts, newest-first.
+
+    It should also implement __iter__ on behalf of its subclasses.
+    """
+
+
 if __name__ == '__main__':
     unittest.main()
