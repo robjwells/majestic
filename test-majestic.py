@@ -1260,7 +1260,6 @@ class TestArchives(unittest.TestCase):
         self.assertEqual(arch._template_file_key, 'archives')
 
 
-@unittest.skip('stub')
 class TestPostsCollection(unittest.TestCase):
     """Test the PostsCollection base class
 
@@ -1271,6 +1270,32 @@ class TestPostsCollection(unittest.TestCase):
 
     It should also implement __iter__ on behalf of its subclasses.
     """
+    def setUp(self):
+        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        self.settings = majestic.load_settings(files=[settings_path],
+                                               local=False)
+        starting_date = datetime(2015, 9, 22, 19)
+        self.posts = [
+            majestic.Post(title='post {}'.format(i), body='Here’s some text!',
+                          date=starting_date - timedelta(i),
+                          settings=self.settings)
+            for i in range(40)
+            ]
+        random.shuffle(self.posts)      # Ensure not sorted
+
+    def test_PostsCollection_store_posts(self):
+        """PostsCollection stores a list of posts newest-first"""
+        coll = majestic.PostsCollection(posts=self.posts,
+                                        settings=self.settings)
+        self.assertEqual(sorted(self.posts, reverse=True), coll.posts)
+
+    def test_PostsCollection_iterator(self):
+        """PostsCollection can be iterated over"""
+        coll = majestic.PostsCollection(posts=self.posts,
+                                        settings=self.settings)
+        sorted_posts = sorted(self.posts, reverse=True)
+        for idx, post in enumerate(coll):
+            self.assertEqual(post, sorted_posts[idx])
 
 
 if __name__ == '__main__':

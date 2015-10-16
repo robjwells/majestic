@@ -488,6 +488,25 @@ class Post(Content):
             self.source_path if self.source_path is not None else 'No path')
 
 
+class PostsCollection(BlogObject):
+    """Base class for a collection of posts
+
+    This should be subclassed for objects that work on several posts,
+    such as for indexes and archives.
+
+    Apart from the settings object, it takes only one argument on
+    initialisation: a collection of post that is stored newest-first
+    (the collection is sorted in reverse order).
+    """
+    def __init__(self, posts, settings):
+        self.settings = settings
+        self.posts = sorted(posts, reverse=True)
+
+    def __iter__(self):
+        """Iterate over self.posts"""
+        return (post for post in self.posts)
+
+
 class Index(BlogObject):
     """Index represents a blog index page
 
