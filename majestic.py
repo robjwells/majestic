@@ -499,7 +499,7 @@ class PostsCollection(BlogObject):
     (the collection is sorted in reverse order).
     """
     def __init__(self, posts, settings):
-        self.settings = settings
+        self._settings = settings
         self.posts = sorted(posts, reverse=True)
 
     def __iter__(self):
