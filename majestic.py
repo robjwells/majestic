@@ -533,7 +533,6 @@ class Index(PostsCollection):
         super().__init__(posts=posts, settings=settings)
 
         self.page_number = page_number
-        self._settings = settings
         self.newer_index_url = newer_index_url
         self.older_index_url = older_index_url
 
