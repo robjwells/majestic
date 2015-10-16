@@ -507,7 +507,7 @@ class PostsCollection(BlogObject):
         return (post for post in self.posts)
 
 
-class Index(BlogObject):
+class Index(PostsCollection):
     """Index represents a blog index page
 
     It has the following attributes:
@@ -530,8 +530,9 @@ class Index(BlogObject):
     def __init__(self, page_number, posts, settings,
                  newer_index_url=None, older_index_url=None):
         """Initialise the Index and computer output_path and url"""
+        super().__init__(posts=posts, settings=settings)
+
         self.page_number = page_number
-        self.posts = sorted(posts, reverse=True)    # sort newest first
         self._settings = settings
         self.newer_index_url = newer_index_url
         self.older_index_url = older_index_url
@@ -583,7 +584,7 @@ class Index(BlogObject):
         return index_list
 
 
-class RSSFeed(BlogObject):
+class RSSFeed(PostsCollection):
     """An RSS feed for a blog"""
     _path_template_key = 'rss path template'
     _template_file_key = 'rss'
@@ -594,21 +595,20 @@ class RSSFeed(BlogObject):
         posts can be any list of posts, and only the most recent n are
         stored as a posts attribute on the object. The number chosen
         is set in the settings file under [rss][number of posts].
+
+        The superclass's __init__ isn't called because the posts list
+        has to be sorted before being limited, so there's no point
+        calling super().__init__ and doing unnecessary work.
         """
         self._settings = settings
         post_limit = settings.getint('rss', 'number of posts')
         self.posts = sorted(posts, reverse=True)[:post_limit]
 
 
-class Archives(BlogObject):
-    """An archives page for a blog"""
+class Archives(PostsCollection):
+    """An archives page for a blog
+
+    Should be initialised with all of the blog's posts.
+    """
     _path_template_key = 'archives path template'
     _template_file_key = 'archives'
-
-    def __init__(self, posts, settings):
-        """Initialise archives with a list of posts and the site settings
-
-        posts should be all of the blog's posts.
-        """
-        self._settings = settings
-        self.posts = sorted(posts, reverse=True)
