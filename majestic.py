@@ -297,7 +297,8 @@ class BlogObject(object):
 
     def render_to_disk(self, environment, **kwargs):
         """Render self with a jinja template and write to a file"""
-        template = environment.get_template(self._template_file_key)
+        template = environment.get_template(
+            self._settings['templates'][self._template_file_key])
         rendered_html = template.render(content=self, **kwargs)
         try:
             self.output_path.parent.mkdir(parents=True)
