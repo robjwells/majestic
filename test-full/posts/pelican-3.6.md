@@ -1,4 +1,4 @@
-title Pelican 3.6 released
+title: Pelican 3.6 released
 date: 2015-06-15
 slug: pelican-3.6-released
 
