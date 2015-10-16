@@ -1297,6 +1297,22 @@ class TestPostsCollection(unittest.TestCase):
         for idx, post in enumerate(coll):
             self.assertEqual(post, sorted_posts[idx])
 
+@unittest.skip('stub')
+class TestFull(unittest.TestCase):
+    """Test the processing of a full source directory"""
+    def setUp(self):
+        self.blogdir = MAJESTIC_DIR.joinpath('test-full')
+        os.chdir(str(self.blogdir))
+        self.settings = majestic.load_settings()
+        for file in self.blogdir.joinpath('output').iterdir():
+            file.unlink()
+
+    def test_process_blog_posts_only(self):
+        """process_blog correctly writes out the posts"""
+        # Having to leave this unwritten, but my thinking is
+        # to have a dictionary of expected paths and filenames
+        # and walk the output dir, comparing at each stage
+        pass
 
 if __name__ == '__main__':
     unittest.main()
