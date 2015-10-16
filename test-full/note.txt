@@ -1,0 +1,3 @@
+Content from the Pelican blog repository on GitHub (as of 2015-10-16).
+
+https://github.com/getpelican/pelican-blog

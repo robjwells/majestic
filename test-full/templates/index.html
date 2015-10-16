@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>{{ content.title }}</title>
+</head>
+
+<body>
+<h1>{{ settings.site.title }}</h1>
+
+{% for post in posts %}
+<article>
+  <h2>{{ content.title }}</h2>
+{{ content.body }}
+</article>
+{% endfor %}
+
+</body>
+
+</html>
