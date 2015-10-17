@@ -1313,7 +1313,11 @@ class TestPostsCollection(unittest.TestCase):
 
 @unittest.skip('stub')
 class TestFull(unittest.TestCase):
-    """Test the processing of a full source directory"""
+    """Test the processing of a full source directory
+
+    Each test checks for the presence of certain files in certain
+    locations in the output directory.
+    """
     def setUp(self):
         self.blogdir = MAJESTIC_DIR.joinpath('test-full')
         self.outputdir = self.blogdir.joinpath('output')
