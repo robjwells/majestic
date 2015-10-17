@@ -475,32 +475,34 @@ class TestPost(unittest.TestCase):
 class TestSlugFunctions(unittest.TestCase):
     """Test validate_slug and normalise_slug
 
-    Slugs containing the following characters are deemed to be
-    invalid (note the quoted space at the beginning):
+    Slugs containing any characters not considered 'unreserved'
+    by RFC 3986 are deemed to be invalid.
 
-    " " : / ? # [ ] @ ! $ & ' ( ) * + , ; =
+    The acceptable characters, aside from percent-encoded
+    characters, are:
+
+    a-z 0-9 . _ ~
+
+    Not that a-z only includes ASCII alphabetic characters (0x41-0x5A).
 
     Slugs containing a percent character that is not followed by
     two hex digits are also deemed to be invalid.
 
-    A normalised slug contains only the following characters:
+    A normalised slug contains only the following characters (the
+    unreserved set excluding the period, underscore and tilde):
 
     a-z 0-9 -
 
     A file's slug *is not* checked against the normalised characters.
-    It is only normalised if it contains one of the reserved
-    characters.
+    It is only normalised if it contains characters outside the
+    unreserved set.
 
-    The validator is liberal and the normaliser conservative. These
-    characters are not reserved in a URI (and so pass the validator)
-    but are not kept by the normaliser:
-
-    . _ ~
-
+    Relatively, the validator is liberal and the normaliser conservative.
     The normaliser also removes percent-encoded characters (%20).
 
-    Reserved and unreserved character are adapted from
-    IETF RFC 3986, Uniform Resource Identifier (URI): Generic Syntax
+    The unreserved characters are defined in IETF RFC 3986,
+    Uniform Resource Identifier (URI): Generic Syntax,
+    specifically section 2.3. Unreserved Characters.
     """
     def test_normalise_slug_known_bad(self):
         """normalise_slug correctly normalises known bad slug"""
@@ -575,6 +577,15 @@ class TestSlugFunctions(unittest.TestCase):
         """validate_slug returns True when slug contains all valid chars"""
         known_good_slug = "00-this-is_a~valid.slug"
         self.assertTrue(majestic.validate_slug(known_good_slug))
+
+    def test_validate_slug_nonascii(self):
+        """validate_slug returns False when slug contains non-ASCII chars
+
+        This is an important test because non-ASCII chars fall between
+        the characters in the reserved set and the unreserved set.
+        """
+        slug = 'lets-go-to-the-café'
+        self.assertFalse(majestic.validate_slug(slug))
 
 
 class TestFromFile(unittest.TestCase):
@@ -1297,6 +1308,7 @@ class TestPostsCollection(unittest.TestCase):
         for idx, post in enumerate(coll):
             self.assertEqual(post, sorted_posts[idx])
 
+
 @unittest.skip('stub')
 class TestFull(unittest.TestCase):
     """Test the processing of a full source directory"""
@@ -1313,6 +1325,7 @@ class TestFull(unittest.TestCase):
         # to have a dictionary of expected paths and filenames
         # and walk the output dir, comparing at each stage
         pass
+
 
 if __name__ == '__main__':
     unittest.main()
