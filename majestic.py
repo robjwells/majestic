@@ -134,22 +134,26 @@ def rfc822_date(date):
 def validate_slug(slug):
     """Test slug for validity and return a boolean
 
-    Slugs containing the following characters are deemed to be
-    invalid (note the quoted space at the beginning):
+    Slugs containing any characters other than those in the unreserved
+    set according to IETF RFC 3986 are deemed to be invalid. Other
+    than percent-encoded characters, the acceptable characters are:
 
-    " " : / ? # [ ] @ ! $ & ' ( ) * + , ; =
+    a-z A-Z 0-9 - . _ ~
 
-    (This is the reserved set according to IETF RFC 3986, with the
-    addition of the space character.)
+    Note that only ASCII alphabetic characters are allowed. (Covered by
+    the inclusive ranges 0x41-0x5A and 0x61-0x7A.)
 
     Slugs containing a percent character that is not followed by
     two hex digits are also deemed to be invalid.
+
+    The use of capital letters, periods, underscores and tildes in slugs
+    is acceptable but discouraged.
     """
-    bad_chars = set(" :/?#[]@!$&'()*+,;=")
+    good_chars = set(string.ascii_letters + string.digits + '-._~' + '%')
     hex_set = set(string.hexdigits)
 
     is_empty_string = len(slug) == 0
-    contains_bad_chars = bool(set(slug) & bad_chars)
+    contains_bad_chars = bool(set(slug) - good_chars)
 
     contains_bad_percent = False
     for match in re.finditer(r'%(.{,2})', slug):
