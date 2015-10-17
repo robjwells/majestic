@@ -84,7 +84,7 @@ def load_settings(default=True, local=True, files=None):
         files.insert(0, Path.cwd().joinpath('settings.cfg'))
     if default:
         files.insert(0, MAJESTIC_DIR.joinpath('majestic.cfg'))
-    settings = ConfigParser(interpolation=None)
+    settings = ConfigParser(interpolation=None, inline_comment_prefixes='#')
     settings.read(map(str, files))
     return settings
 
