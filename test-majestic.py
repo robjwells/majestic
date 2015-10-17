@@ -4,6 +4,7 @@ import locale
 import os
 from pathlib import Path
 import random
+import shutil
 import string
 import tempfile
 import unittest
@@ -1392,10 +1393,9 @@ class TestFull(unittest.TestCase):
                 },
             }
 
-#     def tearDown(self):
-#         """Clean up output files"""
-#         for file in self.blogdir.joinpath('output').iterdir():
-#             file.unlink()
+    def tearDown(self):
+        """Clean up output files"""
+        shutil.rmtree(str(self.outputdir))
 
     def test_process_blog_posts_only(self):
         """process_blog correctly writes out the posts"""
