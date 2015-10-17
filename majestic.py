@@ -616,3 +616,53 @@ class Archives(PostsCollection):
     """
     _path_template_key = 'archives path template'
     _template_file_key = 'archives'
+
+
+def process_blog(*, settings, posts=True, pages=True, index=True,
+                 archives=True, rss=True):
+    """Create output files from the blog's source
+
+    By default, create the entire blog. Certain parts can
+    be disabled by setting their corresponding parameter
+    to False.
+    """
+    content_dir = Path(settings['paths']['content root'])
+    posts_dir = content_dir.joinpath(settings['paths']['posts subdir'])
+    pages_dir = content_dir.joinpath(settings['paths']['pages subdir'])
+
+    if settings.getboolean('jinja', 'custom options'):
+        jinja_opts = load_jinja_options(settings)
+    else:
+        jinja_opts = None
+
+    env = jinja_environment(user_templates=settings['paths']['templates root'],
+                            settings=settings, jinja_options=jinja_opts)
+
+    post_filenames = markdown_files(posts_dir)
+    page_filenames = markdown_files(pages_dir)
+    posts_list = [Post.from_file(f, settings) for f in post_filenames]
+    pages_list = [Page.from_file(f, settings) for f in page_filenames]
+    posts_list.sort(reverse=True)
+    pages_list.sort()
+
+    objects_to_write = []
+
+    if posts:
+        objects_to_write.extend(posts_list)
+
+    if pages:
+        objects_to_write.extend(pages_list)
+
+    if index:
+        indexes = Index.paginate_posts(posts=posts_list, settings=settings)
+        objects_to_write.extend(indexes)
+
+    if archives:
+        objects_to_write.append(Archives(posts=posts_list, settings=settings))
+
+    if rss:
+        objects_to_write.append(RSSFeed(posts=posts_list, settings=settings))
+
+    for obj in objects_to_write:
+        obj.render_to_disk(environment=env, build_date=datetime.now(),
+                           all_posts=posts_list, all_pages=pages_list)
