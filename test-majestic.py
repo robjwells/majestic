@@ -481,15 +481,16 @@ class TestSlugFunctions(unittest.TestCase):
     The acceptable characters, aside from percent-encoded
     characters, are:
 
-    a-z 0-9 . _ ~
+    a-z A-Z 0-9 - . _ ~
 
-    Note that a-z only includes ASCII alphabetic characters (0x41-0x5A).
+    Note that only ASCII alphabetic characters (0x41-0x5A) are allowed.
 
     Slugs containing a percent character that is not followed by
     two hex digits are also deemed to be invalid.
 
     A normalised slug contains only the following characters (the
-    unreserved set excluding the period, underscore and tilde):
+    unreserved set excluding capital ASCII letters, the period,
+    underscore and tilde):
 
     a-z 0-9 -
 
