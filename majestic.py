@@ -291,7 +291,10 @@ class BlogObject(object):
         """Return url at which object will be available on the web"""
         if not hasattr(self, '_url'):
             site_url = self._settings['site']['url']
-            self._url = urljoin(site_url, self.path_part)
+            full = urljoin(site_url, self.path_part)
+            if full.endswith('index.html'):
+                full = full[:-len('index.html')]
+            self._url = full
         return self._url
 
     @url.setter

@@ -1117,6 +1117,21 @@ class TestBlogObject(unittest.TestCase):
         bo.url = url
         self.assertEqual(bo.url, url)
 
+    def test_BlogObject_url_trims_index(self):
+        """URL property trims index.html from path_part
+
+        This is necessary to have clean URLs internally if the path
+        template writes the file as index.html in a subdirectory.
+        """
+        bo = majestic.BlogObject()
+        base_url = 'http://example.com'
+        self.settings['site']['url'] = base_url
+        bo._settings = self.settings
+
+        path_part = 'some_dir/index.html'
+        bo.path_part = base_url + '/' + path_part
+        self.assertEqual(bo.url, base_url + '/some_dir/')
+
     def test_BlogObject_set_output_path(self):
         """Can override the output_path property by setting it
 
