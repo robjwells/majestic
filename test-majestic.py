@@ -1316,6 +1316,7 @@ class TestFull(unittest.TestCase):
     """Test the processing of a full source directory"""
     def setUp(self):
         self.blogdir = MAJESTIC_DIR.joinpath('test-full')
+        self.outputdir = self.blogdir.joinpath('output')
         os.chdir(str(self.blogdir))
         self.settings = majestic.load_settings()
         self.expected = {
@@ -1395,10 +1396,69 @@ class TestFull(unittest.TestCase):
 
     def test_process_blog_posts_only(self):
         """process_blog correctly writes out the posts"""
-        # Having to leave this unwritten, but my thinking is
-        # to have a dictionary of expected paths and filenames
-        # and walk the output dir, comparing at each stage
-        pass
+        majestic.process_blog(
+            settings=self.settings, posts=True,
+            pages=False, index=False, archives=False, rss=False)
+        os.chdir(str(self.outputdir))
+        for dirpath, dirnames, filenames in os.walk('.'):
+            self.assertTrue(dirpath in self.expected)
+            self.assertEqual(
+                set(self.expected[dirpath]['posts']),
+                set(f for f in filenames if not f.startswith('.')))
+
+    def test_process_blog_pages_only(self):
+        """process_blog correctly writes out the pages"""
+        majestic.process_blog(
+            settings=self.settings, pages=True,
+            posts=False, index=False, archives=False, rss=False)
+        os.chdir(str(self.outputdir))
+        files = [p.name for p in pathlib.Path('.').iterdir() if p.is_file()]
+        for page in self.expected['.']['pages']:
+            self.assertIn(page, files)
+
+    def test_process_blog_indexes_only(self):
+        """process_blog correctly writes out the indexes"""
+        majestic.process_blog(
+            settings=self.settings, index=True,
+            posts=False, pages=False, archives=False, rss=False)
+        os.chdir(str(self.outputdir))
+        files = [p.name for p in pathlib.Path('.').iterdir() if p.is_file()]
+        for index in self.expected['.']['index']:
+            self.assertIn(index, files)
+
+    def test_process_blog_archives_only(self):
+        """process_blog correctly writes out the archives"""
+        majestic.process_blog(
+            settings=self.settings, archives=True,
+            posts=False, pages=False, index=False, rss=False)
+        os.chdir(str(self.outputdir))
+        files = [p.name for p in pathlib.Path('.').iterdir() if p.is_file()]
+        for archives in self.expected['.']['archives']:
+            self.assertIn(archives, files)
+
+    def test_process_blog_rss_only(self):
+        """process_blog correctly writes out the rss feed"""
+        majestic.process_blog(
+            settings=self.settings, rss=True,
+            posts=False, pages=False, index=False, archives=False)
+        os.chdir(str(self.outputdir))
+        files = [p.name for p in pathlib.Path('.').iterdir() if p.is_file()]
+        for feed in self.expected['.']['rss']:
+            self.assertIn(feed, files)
+
+    def test_process_blog_all(self):
+        """process_blog correctly writes out all expected files"""
+        majestic.process_blog(settings=self.settings)
+        os.chdir(str(self.outputdir))
+        for dirpath, dirnames, filenames in os.walk('.'):
+            self.assertTrue(dirpath in self.expected)
+            self.assertEqual(
+                set(self.expected[dirpath]['dirs']))
+            for content in ['posts', 'pages', 'index', 'archives', 'rss']:
+                if content in self.expected[dirpath]:
+                    self.assertLess(  # subset test
+                        set(self.expected[dirpath][content]),
+                        set(filenames))
 
 
 if __name__ == '__main__':
