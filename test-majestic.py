@@ -880,15 +880,15 @@ class TestIndex(unittest.TestCase):
         self.assertEqual(Path('page-2.html'), indexes[1].output_path)
 
     def test_Index_url(self):
-        """Index properly sets output path"""
-        dummy_url = 'http://example.com'
-        self.settings['site']['url'] = dummy_url
+        """Index properly sets URL"""
+        base_url = 'http://example.com'
+        self.settings['site']['url'] = base_url
         indexes = [
             majestic.Index(page_number=n, settings=self.settings, posts=[])
             for n in range(1, 3)
             ]
-        self.assertEqual(dummy_url, indexes[0].url)
-        self.assertEqual(dummy_url + '/page-2.html', indexes[1].url)
+        self.assertEqual(base_url, indexes[0].url)
+        self.assertEqual(base_url + '/page-2.html', indexes[1].url)
 
     def test_Index_compare(self):
         """Index objects compare by page number"""
