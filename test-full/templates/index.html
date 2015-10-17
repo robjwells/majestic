@@ -9,10 +9,10 @@
 <body>
 <h1>{{ settings.site.title }}</h1>
 
-{% for post in posts %}
+{% for post in all_posts %}
 <article>
-  <h2>{{ content.title }}</h2>
-{{ content.body }}
+  <h2>{{ post.title }}</h2>
+{{ post.html }}
 </article>
 {% endfor %}
 
