@@ -1311,7 +1311,6 @@ class TestPostsCollection(unittest.TestCase):
             self.assertEqual(post, sorted_posts[idx])
 
 
-@unittest.skip('stub')
 class TestFull(unittest.TestCase):
     """Test the processing of a full source directory
 
