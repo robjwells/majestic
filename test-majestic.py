@@ -1388,7 +1388,7 @@ class TestFull(unittest.TestCase):
                 },
             './2015/06': {
                 'dirs': [],
-                'posts': ['pelican-3.5-released.html']
+                'posts': ['pelican-3.6-released.html']
                 },
             }
 
