@@ -1318,6 +1318,9 @@ class TestFull(unittest.TestCase):
         self.blogdir = MAJESTIC_DIR.joinpath('test-full')
         os.chdir(str(self.blogdir))
         self.settings = majestic.load_settings()
+
+    def tearDown(self):
+        """Clean up output files"""
         for file in self.blogdir.joinpath('output').iterdir():
             file.unlink()
 
