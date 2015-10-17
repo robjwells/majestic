@@ -1464,7 +1464,7 @@ class TestFull(unittest.TestCase):
                 set(dirnames))
             for content in ['posts', 'pages', 'index', 'archives', 'rss']:
                 if content in self.expected[dirpath]:
-                    self.assertLess(  # subset test
+                    self.assertLessEqual(  # subset test
                         set(self.expected[dirpath][content]),
                         set(filenames))
 
