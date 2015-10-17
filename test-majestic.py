@@ -1415,9 +1415,10 @@ class TestFull(unittest.TestCase):
             settings=self.settings, pages=True,
             posts=False, index=False, archives=False, rss=False)
         os.chdir(str(self.outputdir))
-        files = [p.name for p in Path('.').iterdir() if p.is_file()]
-        for page in self.expected['.']['pages']:
-            self.assertIn(page, files)
+        files_set = {p.name for p in Path('.').iterdir()
+                     if p.is_file()
+                     if not p.name.startswith('.')}
+        self.assertEqual(set(self.expected['.']['pages']), files_set)
 
     def test_process_blog_indexes_only(self):
         """process_blog correctly writes out the indexes"""
@@ -1425,9 +1426,10 @@ class TestFull(unittest.TestCase):
             settings=self.settings, index=True,
             posts=False, pages=False, archives=False, rss=False)
         os.chdir(str(self.outputdir))
-        files = [p.name for p in Path('.').iterdir() if p.is_file()]
-        for index in self.expected['.']['index']:
-            self.assertIn(index, files)
+        files_set = {p.name for p in Path('.').iterdir()
+                     if p.is_file()
+                     if not p.name.startswith('.')}
+        self.assertEqual(set(self.expected['.']['index']), files_set)
 
     def test_process_blog_archives_only(self):
         """process_blog correctly writes out the archives"""
@@ -1435,9 +1437,10 @@ class TestFull(unittest.TestCase):
             settings=self.settings, archives=True,
             posts=False, pages=False, index=False, rss=False)
         os.chdir(str(self.outputdir))
-        files = [p.name for p in Path('.').iterdir() if p.is_file()]
-        for archives in self.expected['.']['archives']:
-            self.assertIn(archives, files)
+        files_set = {p.name for p in Path('.').iterdir()
+                     if p.is_file()
+                     if not p.name.startswith('.')}
+        self.assertEqual(set(self.expected['.']['archives']), files_set)
 
     def test_process_blog_rss_only(self):
         """process_blog correctly writes out the rss feed"""
@@ -1445,9 +1448,10 @@ class TestFull(unittest.TestCase):
             settings=self.settings, rss=True,
             posts=False, pages=False, index=False, archives=False)
         os.chdir(str(self.outputdir))
-        files = [p.name for p in Path('.').iterdir() if p.is_file()]
-        for feed in self.expected['.']['rss']:
-            self.assertIn(feed, files)
+        files_set = {p.name for p in Path('.').iterdir()
+                     if p.is_file()
+                     if not p.name.startswith('.')}
+        self.assertEqual(set(self.expected['.']['rss']), files_set)
 
     def test_process_blog_all(self):
         """process_blog correctly writes out all expected files"""
