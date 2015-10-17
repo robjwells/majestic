@@ -1318,6 +1318,75 @@ class TestFull(unittest.TestCase):
         self.blogdir = MAJESTIC_DIR.joinpath('test-full')
         os.chdir(str(self.blogdir))
         self.settings = majestic.load_settings()
+        self.expected = {
+            '.': {
+                'dirs': ['2012', '2013', '2014', '2015'],
+                'posts': [],
+                'pages': ['info.html'],
+                'index': ['index.html',
+                          'page-2.html',
+                          'page-3.html'],
+                'archives': ['archives.html'],
+                'rss': ['rss.xml']
+                },
+            './2012': {
+                'dirs': ['07', '08', '12'],
+                'posts': []
+                },
+            './2012/07': {
+                'dirs': [],
+                'posts': ['pelican-now-has-a-blog-of-its-own.html']
+                },
+            './2012/08': {
+                'dirs': [],
+                'posts': ['pelican-3-0-released.html']
+                },
+            './2012/12': {
+                'dirs': [],
+                'posts': ['pelican-3-1-released.html']
+                },
+            './2013': {
+                'dirs': ['04', '07', '09'],
+                'posts': []
+                },
+            './2013/04': {
+                'dirs': [],
+                'posts': ['pelican-3.2-released.html',
+                          'pelicans-unified-codebase.html']
+                },
+            './2013/07': {
+                'dirs': [],
+                'posts': ['using-pelican-with-heroku.html']
+                },
+            './2013/09': {
+                'dirs': [],
+                'posts': ['pelican-3.3-released.html']
+                },
+            './2014': {
+                'dirs': ['02', '07', '11'],
+                'posts': []
+                },
+            './2014/02': {
+                'dirs': [],
+                'posts': ['i18n-subsites-plugin-released.html']
+                },
+            './2014/07': {
+                'dirs': [],
+                'posts': ['pelican-3.4-released.html']
+                },
+            './2014/11': {
+                'dirs': [],
+                'posts': ['pelican-3.5-released.html']
+                },
+            './2015': {
+                'dirs': ['06'],
+                'posts': []
+                },
+            './2015/06': {
+                'dirs': [],
+                'posts': ['pelican-3.5-released.html']
+                },
+            }
 
     def tearDown(self):
         """Clean up output files"""
