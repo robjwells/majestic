@@ -483,7 +483,8 @@ class TestSlugFunctions(unittest.TestCase):
 
     a-z A-Z 0-9 - . _ ~
 
-    Note that only ASCII alphabetic characters (0x41-0x5A) are allowed.
+    Note that only ASCII alphabetic characters are allowed. (Covered by
+    the inclusive ranges 0x41-0x5A and 0x61-0x7A.)
 
     Slugs containing a percent character that is not followed by
     two hex digits are also deemed to be invalid.
