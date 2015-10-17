@@ -1460,7 +1460,8 @@ class TestFull(unittest.TestCase):
         for dirpath, dirnames, filenames in os.walk('.'):
             self.assertTrue(dirpath in self.expected)
             self.assertEqual(
-                set(self.expected[dirpath]['dirs']))
+                set(self.expected[dirpath]['dirs']),
+                set(dirnames))
             for content in ['posts', 'pages', 'index', 'archives', 'rss']:
                 if content in self.expected[dirpath]:
                     self.assertLess(  # subset test
