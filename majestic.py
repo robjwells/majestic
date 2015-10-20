@@ -707,5 +707,6 @@ def process_blog(*, settings, write_only_new=True,
         objects_to_write.append(RSSFeed(posts=posts_list, settings=settings))
 
     for obj in objects_to_write:
-        obj.render_to_disk(environment=env, build_date=datetime.now(),
+        obj.render_to_disk(environment=env,
+                           build_date=datetime.now(tz=pytz.utc),
                            all_posts=posts_list, all_pages=pages_list)
