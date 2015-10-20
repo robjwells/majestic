@@ -1544,7 +1544,7 @@ class TestFull(unittest.TestCase):
                         set(self.expected[dirpath][content]),
                         set(filenames))
 
-    @unittest.skip('Slow - sleeps for a second')
+#     @unittest.skip('Slow - sleeps for two seconds')
     def test_process_blog_only_write_new(self):
         """process_blog writes only Content considered new
 
@@ -1558,7 +1558,7 @@ class TestFull(unittest.TestCase):
         majestic.process_blog(**kwargs)
         output = self.outputdir.joinpath(self.expected['.']['pages'][0])
         first_mtime = output.stat().st_mtime
-        time.sleep(1)
+        time.sleep(2)
         majestic.process_blog(**kwargs)
         second_mtime = output.stat().st_mtime
         self.assertEqual(first_mtime, second_mtime)
