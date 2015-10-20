@@ -318,19 +318,24 @@ class BlogObject(object):
 class Content(BlogObject):
     """Base class for content"""
     def __init__(self, *, title, body, settings,
-                 slug=None, source_path=None, **kwargs):
+                 slug=None, source_path=None, modification_date=None,
+                 **kwargs):
         """Initialise Content
 
-        title:          str
-        body:           str
-        settings:       ConfigParser
-        slug:           str (if not None)
-        source_path:    pathlib.Path (if not None)
+        title:                  str
+        body:                   str
+        settings:               ConfigParser
+        slug:                   str (if not None)
+        source_path:            pathlib.Path (if not None)
+        modification_date:      datetime.datetime (if not None)
 
         If slug is None, a slug is created from title.
 
         source_path can be None to allow programmatic Content creation
         kwargs used to create metadata container self.meta.
+
+        modification_date can be provided explicitly, otherwise it is
+        taken from the source file (or is None if neither are provided).
         """
         self.title = title
         self.body = body
@@ -341,6 +346,12 @@ class Content(BlogObject):
             slug = normalise_slug(slug)
         self.slug = slug
         self.source_path = source_path
+
+        if modification_date is None and source_path is not None:
+            mtime = source_path.stat().st_mtime
+            modification_date = datetime.fromtimestamp(mtime)
+        self.modification_date = modification_date
+
         self.meta = kwargs
 
     def __eq__(self, other):
