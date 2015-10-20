@@ -1544,7 +1544,7 @@ class TestFull(unittest.TestCase):
                         set(self.expected[dirpath][content]),
                         set(filenames))
 
-#     @unittest.skip('Slow - sleeps for two seconds')
+    @unittest.skip('Slow - sleeps for two seconds')
     def test_process_blog_only_write_new(self):
         """process_blog writes only Content considered new
 
