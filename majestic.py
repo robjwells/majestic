@@ -654,13 +654,17 @@ class Archives(PostsCollection):
     _template_file_key = 'archives'
 
 
-def process_blog(*, settings, posts=True, pages=True, index=True,
-                 archives=True, rss=True):
+def process_blog(*, settings, write_only_new=True,
+                 posts=True, pages=True, index=True, archives=True, rss=True):
     """Create output files from the blog's source
 
     By default, create the entire blog. Certain parts can
     be disabled by setting their corresponding parameter
     to False.
+
+    By default, only Pages and Posts that are considered new (by
+    checking content.is_new()) are written out. This can be overridden
+    by passing False to write_only_new.
     """
     content_dir = Path(settings['paths']['content root'])
     posts_dir = content_dir.joinpath(settings['paths']['posts subdir'])
@@ -683,11 +687,14 @@ def process_blog(*, settings, posts=True, pages=True, index=True,
 
     objects_to_write = []
 
+    content_objects = []
     if posts:
-        objects_to_write.extend(posts_list)
-
+        content_objects.extend(posts_list)
     if pages:
-        objects_to_write.extend(pages_list)
+        content_objects.extend(pages_list)
+    if write_only_new:
+        content_objects = [c for c in content_objects if c.is_new()]
+    objects_to_write.extend(content_objects)
 
     if index:
         indexes = Index.paginate_posts(posts=posts_list, settings=settings)
