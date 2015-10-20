@@ -7,6 +7,7 @@ import random
 import shutil
 import string
 import tempfile
+import time
 import unittest
 
 import jinja2
@@ -1542,6 +1543,25 @@ class TestFull(unittest.TestCase):
                     self.assertLessEqual(  # subset test
                         set(self.expected[dirpath][content]),
                         set(filenames))
+
+    @unittest.skip('Slow - sleeps for a second')
+    def test_process_blog_only_write_new(self):
+        """process_blog writes only Content considered new
+
+        Content subclasses (Pages and Posts) should have their
+        .is_new() method checked before writing them out.
+
+        This test only testa single Page for simplicity.
+        """
+        kwargs = dict(settings=self.settings, pages=True,
+                      posts=False, index=False, archives=False, rss=False)
+        majestic.process_blog(**kwargs)
+        output = self.outputdir.joinpath(self.expected['.']['pages'][0])
+        first_mtime = output.stat().st_mtime
+        time.sleep(1)
+        majestic.process_blog(**kwargs)
+        second_mtime = output.stat().st_mtime
+        self.assertEqual(first_mtime, second_mtime)
 
 
 if __name__ == '__main__':
