@@ -1388,6 +1388,20 @@ class TestPostsCollection(unittest.TestCase):
             self.assertEqual(post, sorted_posts[idx])
 
 
+class TestSitemap(unittest.TestCase):
+    """Test the Sitemap class
+
+    Sitemap takes a list of important locations (front page, pages, posts)
+    and stores a list of tuples (url, output file modification time).
+
+    The modification time is obtained by calling stat() on the output_path,
+    so the Sitemap should be created after all the other files have been
+    written out.
+    """
+    def setUp(self):
+        pass
+
+
 class TestFull(unittest.TestCase):
     """Test the processing of a full source directory
 
