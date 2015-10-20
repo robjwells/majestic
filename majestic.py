@@ -210,6 +210,11 @@ class DraftError(Exception):
     pass
 
 
+class ModificationDateError(Exception):
+    """Raised by Content.is_new() if modification_date is None"""
+    pass
+
+
 class BlogObject(object):
     """Abstract base class for objects representing html/xml files
 
@@ -435,6 +440,23 @@ class Content(BlogObject):
 
         return class_(body=body, settings=settings, source_path=file,
                       **dict(meta))
+
+    def is_new(self):
+        """Return True if source file is newer than output file
+
+        Compares self.modification_time to self.output_path's st_mtime.
+        Returns True if the output file does not exist.
+
+        is_new raises if output_path exists but modification_date is None.
+        (This will only happen through programmatic Content creation when
+        neither source_path or modification_date are provided at init.)
+        """
+        if not self.output_path.exists():
+            return True
+        if self.modification_date is None:
+            raise ModificationDateError('modification_date is None')
+        output_date = datetime.fromtimestamp(self.output_path.stat().st_mtime)
+        return self.modification_date > output_date
 
 
 class Page(Content):
