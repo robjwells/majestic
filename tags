@@ -12,6 +12,7 @@ DraftError	majestic.py	/^class DraftError(Exception):$/;"	c
 Index	majestic.py	/^class Index(PostsCollection):$/;"	c
 MAJESTIC_DIR	majestic.py	/^MAJESTIC_DIR = Path(__file__).resolve().parent$/;"	v
 MAJESTIC_JINJA_OPTIONS	majestic.py	/^MAJESTIC_JINJA_OPTIONS = {$/;"	v
+ModificationDateError	majestic.py	/^class ModificationDateError(Exception):$/;"	c
 Page	majestic.py	/^class Page(Content):$/;"	c
 Path	majestic.py	/^from pathlib import Path$/;"	i
 Post	majestic.py	/^class Post(Content):$/;"	c
@@ -31,7 +32,7 @@ math	majestic.py	/^import math$/;"	i
 normalise_slug	majestic.py	/^def normalise_slug(slug):$/;"	f
 os	majestic.py	/^import os$/;"	i
 paginate_posts	majestic.py	/^    def paginate_posts(class_, posts, settings):$/;"	m	class:Index
-process_blog	majestic.py	/^def process_blog(*, settings, posts=True, pages=True, index=True,$/;"	f
+process_blog	majestic.py	/^def process_blog(*, settings, write_only_new=True,$/;"	f
 pytz	majestic.py	/^import pytz$/;"	i
 re	majestic.py	/^import re$/;"	i
 render_to_disk	majestic.py	/^    def render_to_disk(self, environment, **kwargs):$/;"	m	class:BlogObject
