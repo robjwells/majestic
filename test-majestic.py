@@ -250,6 +250,14 @@ class TestContent(unittest.TestCase):
         content.output_path = self.newest_file
         self.assertFalse(content.is_new())
 
+    def test_content_is_new_raises(self):
+        """Content.is_new raises if mod date is None and output file exists"""
+        content = majestic.Content(title=self.title, body=self.body,
+                                   slug=self.slug, settings=self.settings)
+        content.output_path = self.newest_file
+        with self.assertRaises(majestic.ModificationDateError):
+            content.is_new()
+
     def test_content_lt_title(self):
         """Content with different titles compare properly"""
         post_1 = majestic.Content(title='title a',
