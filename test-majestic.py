@@ -1551,7 +1551,7 @@ class TestFull(unittest.TestCase):
         Content subclasses (Pages and Posts) should have their
         .is_new() method checked before writing them out.
 
-        This test only testa single Page for simplicity.
+        This test only tests single Page for simplicity.
         """
         kwargs = dict(settings=self.settings, pages=True,
                       posts=False, index=False, archives=False, rss=False)
@@ -1562,6 +1562,26 @@ class TestFull(unittest.TestCase):
         majestic.process_blog(**kwargs)
         second_mtime = output.stat().st_mtime
         self.assertEqual(first_mtime, second_mtime)
+
+    @unittest.skip('Slow - sleeps for two seconds')
+    def test_process_blog_force_write_all(self):
+        """process_blog can be forced to write 'old' Content
+
+        By default, Content subclasses have their .is_new() method
+        checked before writing them out. But this can be overridden
+        by passing False for write_only_new in the process_blog call.
+
+        This test only tests single Page for simplicity.
+        """
+        kwargs = dict(settings=self.settings, pages=True, write_only_new=False,
+                      posts=False, index=False, archives=False, rss=False)
+        majestic.process_blog(**kwargs)
+        output = self.outputdir.joinpath(self.expected['.']['pages'][0])
+        first_mtime = output.stat().st_mtime
+        time.sleep(2)
+        majestic.process_blog(**kwargs)
+        second_mtime = output.stat().st_mtime
+        self.assertNotEqual(first_mtime, second_mtime)
 
 
 if __name__ == '__main__':
