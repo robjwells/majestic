@@ -147,6 +147,10 @@ class TestContent(unittest.TestCase):
         settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
+        # Dummy source / output files for modification date tests
+        self.oldest_file = Path(TEST_BLOG_DIR).joinpath('test_file_oldest')
+        self.middle_file = Path(TEST_BLOG_DIR).joinpath('test_file_middle')
+        self.newest_file = Path(TEST_BLOG_DIR).joinpath('test_file_newest')
 
     def test_content_init_basic(self):
         """Content init properly sets core attributes
@@ -197,6 +201,54 @@ class TestContent(unittest.TestCase):
         content = majestic.Content(title='a', body=self.body,
                                    settings=self.settings, slug=invalid_slug)
         self.assertEqual(content.slug, expected)
+
+    def test_content_init_modification_date(self):
+        """Content sets init arg modification_date as an attribute"""
+        mod_date = datetime(2015, 1, 25, 9, 30)
+        content = majestic.Content(title=self.title, body=self.body,
+                                   slug=self.slug, settings=self.settings,
+                                   modification_date=mod_date)
+        self.assertEqual(content.modification_date, mod_date)
+
+    def test_content_init_mod_date_from_source_path(self):
+        """Content sets modification date from source file (if provided)"""
+        expected_mod_date = datetime.fromtimestamp(
+            self.middle_file.stat().st_mtime)
+        content = majestic.Content(title=self.title, body=self.body,
+                                   slug=self.slug, settings=self.settings,
+                                   source_path=self.middle_file)
+        self.assertEqual(content.modification_date, expected_mod_date)
+
+    def test_content_is_new_no_output_file(self):
+        """Content.is_new is True when no corresponding output file exists
+
+        If there is no output file the content object is always considered
+        new, even if it doesn't have a source file and wasn't created with
+        an explicit modification date (ie programmatically).
+        """
+        content = majestic.Content(title=self.title, body=self.body,
+                                   slug=self.slug, settings=self.settings)
+        # Override output path to ensure file does not exist
+        content.output_path = Path('/tmp/test-majestic-no-file-here')
+        self.assertTrue(content.is_new())
+
+    def test_content_is_new_true_with_output_file(self):
+        """Content.is_new is True when an older output file exists"""
+        content = majestic.Content(title=self.title, body=self.body,
+                                   slug=self.slug, settings=self.settings,
+                                   source_path=self.newest_file)
+        # Override output path
+        content.output_path = self.oldest_file
+        self.assertTrue(content.is_new())
+
+    def test_content_is_new_false_with_output_file(self):
+        """Content.is_new is False when a newer output file exists"""
+        content = majestic.Content(title=self.title, body=self.body,
+                                   slug=self.slug, settings=self.settings,
+                                   source_path=self.oldest_file)
+        # Override output path
+        content.output_path = self.newest_file
+        self.assertFalse(content.is_new())
 
     def test_content_lt_title(self):
         """Content with different titles compare properly"""
