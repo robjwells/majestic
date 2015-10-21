@@ -1089,7 +1089,7 @@ class TestBlogObject(unittest.TestCase):
         The intention is that BlogObject only contains default method
         implementations to be inherited and has no content of its own.
         """
-        bo = majestic.BlogObject()      # This should not raise
+        self.assertIsInstance(majestic.BlogObject(), majestic.BlogObject)
 
     def test_BlogObject_properties_exist(self):
         """BlogObject defines expected properties and methods
