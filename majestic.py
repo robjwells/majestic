@@ -492,7 +492,7 @@ class Post(Content):
             date = datetime.strptime(date, date_format)
         tz = pytz.timezone(settings['dates']['timezone'])
         date = tz.localize(date)
-        if date > tz.localize(datetime.now()):
+        if date.astimezone(pytz.utc) > datetime.now(tz=pytz.utc):
             # Post date is in the future and considered a draft
             raise DraftError('Date is in the future')
         self.date = date
