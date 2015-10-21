@@ -293,7 +293,10 @@ class BlogObject(object):
 
     @property
     def url(self):
-        """Return url at which object will be available on the web"""
+        """Return url at which object will be available on the web
+
+        'index.html' is trimmed to allow for for clean URLs.
+        """
         if not hasattr(self, '_url'):
             site_url = self._settings['site']['url']
             full = urljoin(site_url, self.path_part)
