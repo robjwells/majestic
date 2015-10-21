@@ -1637,7 +1637,8 @@ class TestFull(unittest.TestCase):
         This test only tests single Page for simplicity.
         """
         kwargs = dict(settings=self.settings, pages=True,
-                      posts=False, index=False, archives=False, rss=False)
+                      posts=False, index=False, archives=False,
+                      rss=False, sitemap=False)
         majestic.process_blog(**kwargs)
         output = self.outputdir.joinpath(self.expected['.']['pages'][0])
         first_mtime = output.stat().st_mtime
@@ -1656,8 +1657,9 @@ class TestFull(unittest.TestCase):
 
         This test only tests single Page for simplicity.
         """
-        kwargs = dict(settings=self.settings, pages=True, write_only_new=False,
-                      posts=False, index=False, archives=False, rss=False)
+        kwargs = dict(settings=self.settings, write_only_new=False,
+                      pages=True, posts=False, index=False, archives=False,
+                      rss=False, sitemap=False)
         majestic.process_blog(**kwargs)
         output = self.outputdir.joinpath(self.expected['.']['pages'][0])
         first_mtime = output.stat().st_mtime
