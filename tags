@@ -21,13 +21,16 @@ RSSFeed	majestic.py	/^class RSSFeed(PostsCollection):$/;"	c
 Sitemap	majestic.py	/^class Sitemap(BlogObject):$/;"	c
 chunk	majestic.py	/^def chunk(iterable, chunk_length):$/;"	f
 datetime	majestic.py	/^from datetime import datetime$/;"	i
+docopt	majestic.py	/^from docopt import docopt$/;"	i
 from_file	majestic.py	/^    def from_file(class_, file, settings):$/;"	m	class:Content
+http	majestic.py	/^import http.server$/;"	i
 is_new	majestic.py	/^    def is_new(self):$/;"	m	class:Content
 jinja2	majestic.py	/^import jinja2$/;"	i
 jinja_environment	majestic.py	/^def jinja_environment(user_templates, settings, jinja_options=None):$/;"	f
 json	majestic.py	/^import json$/;"	i
 load_jinja_options	majestic.py	/^def load_jinja_options(settings):$/;"	f
 load_settings	majestic.py	/^def load_settings(default=True, local=True, files=None):$/;"	f
+main	majestic.py	/^def main(argv):$/;"	f
 markdown	majestic.py	/^import markdown$/;"	i
 markdown_files	majestic.py	/^def markdown_files(directory):$/;"	f
 math	majestic.py	/^import math$/;"	i
@@ -39,7 +42,11 @@ pytz	majestic.py	/^import pytz$/;"	i
 re	majestic.py	/^import re$/;"	i
 render_to_disk	majestic.py	/^    def render_to_disk(self, environment, **kwargs):$/;"	m	class:BlogObject
 rfc822_date	majestic.py	/^def rfc822_date(date):$/;"	f
+server	majestic.py	/^import http.server$/;"	i
 string	majestic.py	/^import string$/;"	i
+sys	majestic.py	/^import sys$/;"	i
+tempfile	majestic.py	/^import tempfile$/;"	i
 unidecode	majestic.py	/^from unidecode import unidecode$/;"	i
 urljoin	majestic.py	/^from urllib.parse import urljoin$/;"	i
 validate_slug	majestic.py	/^def validate_slug(slug):$/;"	f
+webbrowser	majestic.py	/^import webbrowser$/;"	i
