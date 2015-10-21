@@ -1451,7 +1451,7 @@ class TestSitemap(unittest.TestCase):
             mod_date = datetime.utcfromtimestamp(mtime)
             expected.append((loc, mod_date))
 
-        sitemap = majestic.Sitemap(content=files, settings=self.settings)
+        sitemap = majestic.Sitemap(content=self.files, settings=self.settings)
         self.assertEqual(expected, sitemap.url_date_pairs)
 
 
