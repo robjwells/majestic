@@ -654,6 +654,31 @@ class Archives(PostsCollection):
     _template_file_key = 'archives'
 
 
+class Sitemap(BlogObject):
+    """Represents an XML sitemap
+
+    Contains a list of tuples [(str, datetime)] that correspond to the
+    url (loc) and modification date (lastmod) of each sitemap entry.
+    """
+    _path_template_key = 'sitemap path template'
+    _template_file_key = 'sitemap'
+
+    def __init__(self, content, settings):
+        """Initialise Sitemap with site settings and a list of BlogObjects
+
+        content:    [BlogObject] containing each file to be represented
+        """
+        self._settings = settings
+        self.url_date_pairs = [
+            (c.url, datetime.utcfromtimestamp(c.output_path.stat().st_mtime))
+            for c in content
+            ]
+
+    def __iter__(self):
+        """Iterate over the tuples in self.url_date_pairs"""
+        return (item for item in self.url_date_pairs)
+
+
 def process_blog(*, settings, write_only_new=True,
                  posts=True, pages=True, index=True, archives=True, rss=True):
     """Create output files from the blog's source
