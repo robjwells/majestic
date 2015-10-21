@@ -989,7 +989,6 @@ class TestIndex(unittest.TestCase):
 
     def test_Index_paginate_posts_result(self):
         """Result of paginate_posts on known date gives expected result"""
-        output_root = Path(self.settings['paths']['output root'])
         expected = [
             majestic.Index(page_number=1, settings=self.settings,
                            posts=self.posts[-2:]),
