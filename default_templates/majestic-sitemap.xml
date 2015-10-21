@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    {% for loc, lastmod in content.pairs %}
+    {% for loc, lastmod in content %}
     <url>
         <loc>{{ loc }}</loc>
-        <lastmod>{{ lastmod.strftime('%Y-%m-%d') }}</lastmod>
+        <lastmod>{{ lastmod.strftime('%Y-%m-%dT%H:%M:%S%z') }}</lastmod>
     </url>
     {% endfor %}
 </urlset>
