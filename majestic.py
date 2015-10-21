@@ -726,8 +726,18 @@ def process_blog(*, settings, write_only_new=True,
 
     post_filenames = markdown_files(posts_dir)
     page_filenames = markdown_files(pages_dir)
-    posts_list = [Post.from_file(f, settings) for f in post_filenames]
-    pages_list = [Page.from_file(f, settings) for f in page_filenames]
+
+    posts_list = []
+    pages_list = []
+    for class_, file_list, obj_list in [(Post, post_filenames, posts_list),
+                                        (Page, page_filenames, pages_list)]:
+        for fn in file_list:
+            try:
+                obj_list.append(class_.from_file(fn, settings))
+            except DraftError:
+                print('{file} is marked as a draft'.format(file=fn),
+                      file=sys.stderr)
+
     posts_list.sort(reverse=True)
     pages_list.sort()
 
