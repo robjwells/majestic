@@ -2,6 +2,7 @@
 
 from configparser import ConfigParser
 from datetime import datetime
+import http.server
 import json
 import math
 import os
@@ -9,8 +10,10 @@ from pathlib import Path
 import re
 import string
 import sys
+import tempfile
 from textwrap import dedent
 from urllib.parse import urljoin
+import webbrowser
 
 from docopt import docopt
 import jinja2
@@ -778,11 +781,11 @@ def process_blog(*, settings, write_only_new=True,
 def main(argv):
     """Implements the command-line interface"""
     usage = '''\
-    Majestic
+    Majestic - a simple static blog generator
 
     Usage:
         majestic [options]
-        majestic preview [options]
+        majestic preview [--port=PORT] [options]
         majestic (-h | --help)
         majestic --version
 
@@ -790,10 +793,13 @@ def main(argv):
         -h, --help              Display this help message.
         --version               Display the program version.
 
-        -d, --blog-dir DIR      Path to blog directory [default: .]
-        -f, --force-write       Write all files no matter the modification date
+        -d DIR, --blog-dir=DIR  Path to blog directory [default: .]
+        -f, --force-write       Write all files no matter the modification date.
 
-        -s, --settings CFG      Use the specified settings file.
+        -p PORT, --port=PORT    Port on which to start the preview server.
+                                [default: 8451]
+
+        -s CFG, --settings=CFG  Use the specified settings file.
         --no-defaults           Ignore Majestic's default settings.
         --no-locals             Ignore settings.cfg in BLOG_DIR.
 
@@ -819,7 +825,11 @@ def main(argv):
                              files=custom_config)
 
     # Modify settings to allow preview server
-    # ...
+    if args['preview']:
+        # URLs under our control should be relative
+        settings['site']['url'] = '/'
+        temp_dir = tempfile.TemporaryDirectory()
+        settings['paths']['output root'] = temp_dir.name
 
     # Invert --skip-* options in args
     # A bit unwieldy, but better than having skip_* params to process_blog
@@ -838,6 +848,24 @@ def main(argv):
     process_blog(settings=settings,
                  write_only_new=not args['--force-write'],
                  **files_to_write)
+
+    # Change to temp directory and start web server
+    if args['preview']:
+        os.chdir(temp_dir.name)
+        port = int(args['--port'])
+        url = 'http://localhost:{0}'.format(port)
+        httpd = http.server.HTTPServer(
+            server_address=('', port),
+            RequestHandlerClass=http.server.SimpleHTTPRequestHandler)
+        try:
+            print('Starting Majestic preview server at {0}'.format(url),
+                  file=sys.stderr)
+            webbrowser.open(url)
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            print('Shutting down webserver.', file=sys.stderr)
+            httpd.socket.close()
+            temp_dir.cleanup()
 
 
 if __name__ == '__main__':
