@@ -1442,13 +1442,15 @@ class TestSitemap(unittest.TestCase):
         which it should store the url and modification date of the file
         at output_path.
 
+        The modification date should be an aware datetime in UTC.
+
         These should be stored at self.url_date_pairs.
         """
         expected = []
         for file in self.files:
             loc = file.url
             mtime = file.output_path.stat().st_mtime
-            mod_date = datetime.utcfromtimestamp(mtime)
+            mod_date = datetime.fromtimestamp(mtime, tz=pytz.utc)
             expected.append((loc, mod_date))
 
         sitemap = majestic.Sitemap(content=self.files, settings=self.settings)

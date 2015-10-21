@@ -673,10 +673,12 @@ class Sitemap(BlogObject):
         content:    [BlogObject] containing each file to be represented
         """
         self._settings = settings
-        self.url_date_pairs = [
-            (c.url, datetime.utcfromtimestamp(c.output_path.stat().st_mtime))
-            for c in content
-            ]
+        self.url_date_pairs = []
+        for file in content:
+            url = file.url
+            mtime = file.output_path.stat().st_mtime
+            mod_date = datetime.fromtimestamp(mtime, tz=pytz.utc)
+            self.url_date_pairs.append((url, mod_date))
 
     def __iter__(self):
         """Iterate over the tuples in self.url_date_pairs"""
