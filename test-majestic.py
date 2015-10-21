@@ -1454,6 +1454,13 @@ class TestSitemap(unittest.TestCase):
         sitemap = majestic.Sitemap(content=self.files, settings=self.settings)
         self.assertEqual(expected, sitemap.url_date_pairs)
 
+    def test_Sitemap_iter(self):
+        """Iterating over Sitemap produces tuples of (str, datetime)"""
+        sitemap = majestic.Sitemap(content=self.files, settings=self.settings)
+        expected_types = [str, datetime]
+        for item in sitemap:
+            self.assertEqual(expected_types, [type(x) for x in item])
+
 
 class TestFull(unittest.TestCase):
     """Test the processing of a full source directory
