@@ -11,7 +11,6 @@ import re
 import string
 import sys
 import tempfile
-from textwrap import dedent
 from urllib.parse import urljoin
 import webbrowser
 
@@ -781,36 +780,36 @@ def process_blog(*, settings, write_only_new=True,
 def main(argv):
     """Implements the command-line interface"""
     usage = '''\
-    Majestic - a simple static blog generator
+Majestic - a simple static blog generator
 
-    Usage:
-        majestic [options]
-        majestic preview [--port=PORT] [options]
-        majestic (-h | --help)
-        majestic --version
+Usage:
+    majestic [options]
+    majestic preview [--port=PORT] [options]
+    majestic (-h | --help)
+    majestic --version
 
-    Options:
-        -h, --help              Display this help message.
-        --version               Display the program version.
+Options:
+    -h, --help              Display this help message.
+    --version               Display the program version.
 
-        -d DIR, --blog-dir=DIR  Path to blog directory [default: .]
-        -f, --force-write       Write all files no matter the modification date.
+    -d DIR, --blog-dir=DIR  Path to blog directory. [default: .]
+    -f, --force-write       Write all files no matter the modification date.
 
-        -p PORT, --port=PORT    Port on which to start the preview server.
-                                [default: 8451]
+    -p PORT, --port=PORT    Port on which to start the preview server.
+                            [default: 8451]
 
-        -s CFG, --settings=CFG  Use the specified settings file.
-        --no-defaults           Ignore Majestic's default settings.
-        --no-locals             Ignore settings.cfg in BLOG_DIR.
+    -s CFG, --settings=CFG  Use the specified settings file.
+    --no-defaults           Ignore Majestic's default settings.
+    --no-locals             Ignore settings.cfg in BLOG_DIR.
 
-        --skip-posts            Don't create post HTML files.
-        --skip-pages            Don't create page HTML files.
-        --skip-index            Don't create index page HTML files.
-        --skip-archives         Don't create archives HTML file.
-        --skip-rss              Don't create an RSS feed XML file.
-        --skip-sitemap          Don't create a sitemap XML file.
+    --skip-posts            Don't create post HTML files.
+    --skip-pages            Don't create page HTML files.
+    --skip-index            Don't create index page HTML files.
+    --skip-archives         Don't create archives HTML file.
+    --skip-rss              Don't create an RSS feed XML file.
+    --skip-sitemap          Don't create a sitemap XML file.
     '''
-    args = docopt(doc=dedent(usage), argv=argv, version='dev')
+    args = docopt(doc=usage, argv=argv, version='dev')
 
     # Ensure the working directory is the blog directory
     os.chdir(args['--blog-dir'])
