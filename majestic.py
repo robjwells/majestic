@@ -773,3 +773,72 @@ def process_blog(*, settings, write_only_new=True,
         content_list = posts_list + pages_list + [dummy_front_page]
         sitemap = Sitemap(content=content_list, settings=settings)
         sitemap.render_to_disk(environment=env)
+
+
+def main(argv):
+    """Implements the command-line interface"""
+    usage = '''\
+    Majestic
+
+    Usage:
+        majestic [options]
+        majestic preview [options]
+        majestic (-h | --help)
+        majestic --version
+
+    Options:
+        -h, --help              Display this help message.
+        --version               Display the program version.
+
+        -d, --blog-dir DIR      Path to blog directory [default: .]
+        -f, --force-write       Write all files no matter the modification date
+
+        -s, --settings CFG      Use the specified settings file.
+        --no-defaults           Ignore Majestic's default settings.
+        --no-locals             Ignore settings.cfg in BLOG_DIR.
+
+        --skip-posts            Don't create post HTML files.
+        --skip-pages            Don't create page HTML files.
+        --skip-index            Don't create index page HTML files.
+        --skip-archives         Don't create archives HTML file.
+        --skip-rss              Don't create an RSS feed XML file.
+        --skip-sitemap          Don't create a sitemap XML file.
+    '''
+    args = docopt(doc=dedent(usage), argv=argv, version='dev')
+
+    # Ensure the working directory is the blog directory
+    os.chdir(args['--blog-dir'])
+
+    # Load settings, including any specified custom config file
+    if args['--settings'] is not None:
+        custom_config = [args['--settings']]
+    else:
+        custom_config = None
+    settings = load_settings(default=not args['--no-defaults'],
+                             local=not args['--no-locals'],
+                             files=custom_config)
+
+    # Modify settings to allow preview server
+    # ...
+
+    # Invert --skip-* options in args
+    # A bit unwieldy, but better than having skip_* params to process_blog
+    files_to_write = {k[7:]: not v for k, v in args.items()
+                      if k.find('--skip-') != -1}
+
+    # Load jinja environment
+    if settings.getboolean('jinja', 'custom options'):
+        jinja_opts = load_jinja_options(settings)
+    else:
+        jinja_opts = None
+    environment = jinja_environment(
+        user_templates=settings['paths']['templates root'],
+        settings=settings, jinja_options=jinja_opts)
+
+    process_blog(settings=settings,
+                 write_only_new=not args['--force-write'],
+                 **files_to_write)
+
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
