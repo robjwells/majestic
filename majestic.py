@@ -8,8 +8,11 @@ import os
 from pathlib import Path
 import re
 import string
+import sys
+from textwrap import dedent
 from urllib.parse import urljoin
 
+from docopt import docopt
 import jinja2
 import markdown
 import pytz
