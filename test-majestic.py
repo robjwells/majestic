@@ -1482,7 +1482,8 @@ class TestFull(unittest.TestCase):
                           'page-2.html',
                           'page-3.html'],
                 'archives': ['archives.html'],
-                'rss': ['rss.xml']
+                'rss': ['rss.xml'],
+                'sitemap': ['sitemap.xml']
                 },
             './2012': {
                 'dirs': ['07', '08', '12'],
@@ -1551,7 +1552,8 @@ class TestFull(unittest.TestCase):
         """process_blog correctly writes out the posts"""
         majestic.process_blog(
             settings=self.settings, posts=True,
-            pages=False, index=False, archives=False, rss=False)
+            pages=False, index=False, archives=False,
+            rss=False, sitemap=False)
         os.chdir(str(self.outputdir))
         for dirpath, dirnames, filenames in os.walk('.'):
             self.assertTrue(dirpath in self.expected)
@@ -1563,7 +1565,8 @@ class TestFull(unittest.TestCase):
         """process_blog correctly writes out the pages"""
         majestic.process_blog(
             settings=self.settings, pages=True,
-            posts=False, index=False, archives=False, rss=False)
+            posts=False, index=False, archives=False,
+            rss=False, sitemap=False)
         os.chdir(str(self.outputdir))
         files_set = {p.name for p in Path('.').iterdir()
                      if p.is_file()
@@ -1574,7 +1577,8 @@ class TestFull(unittest.TestCase):
         """process_blog correctly writes out the indexes"""
         majestic.process_blog(
             settings=self.settings, index=True,
-            posts=False, pages=False, archives=False, rss=False)
+            posts=False, pages=False, archives=False,
+            rss=False, sitemap=False)
         os.chdir(str(self.outputdir))
         files_set = {p.name for p in Path('.').iterdir()
                      if p.is_file()
@@ -1585,7 +1589,8 @@ class TestFull(unittest.TestCase):
         """process_blog correctly writes out the archives"""
         majestic.process_blog(
             settings=self.settings, archives=True,
-            posts=False, pages=False, index=False, rss=False)
+            posts=False, pages=False, index=False,
+            rss=False, sitemap=False)
         os.chdir(str(self.outputdir))
         files_set = {p.name for p in Path('.').iterdir()
                      if p.is_file()
@@ -1596,7 +1601,8 @@ class TestFull(unittest.TestCase):
         """process_blog correctly writes out the rss feed"""
         majestic.process_blog(
             settings=self.settings, rss=True,
-            posts=False, pages=False, index=False, archives=False)
+            posts=False, pages=False, index=False,
+            archives=False, sitemap=False)
         os.chdir(str(self.outputdir))
         files_set = {p.name for p in Path('.').iterdir()
                      if p.is_file()
@@ -1612,7 +1618,8 @@ class TestFull(unittest.TestCase):
             self.assertEqual(
                 set(self.expected[dirpath]['dirs']),
                 set(dirnames))
-            for content in ['posts', 'pages', 'index', 'archives', 'rss']:
+            for content in ['posts', 'pages', 'index', 'archives',
+                            'rss', 'sitemap']:
                 if content in self.expected[dirpath]:
                     self.assertLessEqual(  # subset test
                         set(self.expected[dirpath][content]),
