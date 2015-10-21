@@ -20,6 +20,8 @@ import markdown
 import pytz
 from unidecode import unidecode
 
+__version__ = '0.1.0'
+
 MAJESTIC_DIR = Path(__file__).resolve().parent
 MAJESTIC_JINJA_OPTIONS = {
     'auto_reload': False,
@@ -809,7 +811,7 @@ Options:
     --skip-rss              Don't create an RSS feed XML file.
     --skip-sitemap          Don't create a sitemap XML file.
     '''
-    args = docopt(doc=usage, argv=argv, version='dev')
+    args = docopt(doc=usage, argv=argv, version=__version__)
 
     # Ensure the working directory is the blog directory
     os.chdir(args['--blog-dir'])
