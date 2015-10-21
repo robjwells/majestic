@@ -18,9 +18,11 @@ Path	majestic.py	/^from pathlib import Path$/;"	i
 Post	majestic.py	/^class Post(Content):$/;"	c
 PostsCollection	majestic.py	/^class PostsCollection(BlogObject):$/;"	c
 RSSFeed	majestic.py	/^class RSSFeed(PostsCollection):$/;"	c
+Sitemap	majestic.py	/^class Sitemap(BlogObject):$/;"	c
 chunk	majestic.py	/^def chunk(iterable, chunk_length):$/;"	f
 datetime	majestic.py	/^from datetime import datetime$/;"	i
 from_file	majestic.py	/^    def from_file(class_, file, settings):$/;"	m	class:Content
+is_new	majestic.py	/^    def is_new(self):$/;"	m	class:Content
 jinja2	majestic.py	/^import jinja2$/;"	i
 jinja_environment	majestic.py	/^def jinja_environment(user_templates, settings, jinja_options=None):$/;"	f
 json	majestic.py	/^import json$/;"	i
