@@ -1406,7 +1406,53 @@ class TestSitemap(unittest.TestCase):
     written out.
     """
     def setUp(self):
-        pass
+        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        self.settings = majestic.load_settings(files=[settings_path],
+                                               local=False)
+        self.output_dir = Path(self.settings['paths']['output root'])
+        self.files = [
+            majestic.Post(title='', slug='post', date=datetime(2015, 1, 1),
+                          body='', settings=self.settings),
+            majestic.Page(title='', slug='page', body='',
+                          settings=self.settings),
+            majestic.Index(posts=[], settings=self.settings, page_number=1),
+        ]
+        # Make dummy files and directories
+        for f in self.files:
+            try:
+                f.output_path.parent.mkdir(parents=True)
+            except FileExistsError:
+                pass
+            f.output_path.touch()
+
+    def tearDown(self):
+        """Clean up dummy files"""
+        shutil.rmtree(str(self.output_dir))
+
+    def test_Sitemap_sets_key_variables(self):
+        """Sitemap should set key variables required by BlogObject"""
+        sitemap = majestic.Sitemap(content=[], settings=self.settings)
+        self.assertEqual(sitemap._path_template_key, 'sitemap path template')
+        self.assertEqual(sitemap._template_file_key, 'sitemap')
+
+    def test_Sitemap_sets_pairs(self):
+        """Sitemap should store the url and output file mod date of content
+
+        Sitemap is initialised with a list, content, of BlogObjects from
+        which it should store the url and modification date of the file
+        at output_path.
+
+        These should be stored at self.url_date_pairs.
+        """
+        expected = []
+        for file in self.files:
+            loc = file.url
+            mtime = file.output_path.stat().st_mtime
+            mod_date = datetime.utcfromtimestamp(mtime)
+            expected.append((loc, mod_date))
+
+        sitemap = majestic.Sitemap(content=files, settings=self.settings)
+        self.assertEqual(expected, sitemap.url_date_pairs)
 
 
 class TestFull(unittest.TestCase):
