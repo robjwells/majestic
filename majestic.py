@@ -341,6 +341,10 @@ class Content(BlogObject):
 
         modification_date can be provided explicitly, otherwise it is
         taken from the source file (or is None if neither are provided).
+
+        modification_date is a naive datetime in the local time, as it's
+        only used for internal comparisons (which only matter on the
+        system on which majestic is run).
         """
         self.title = title
         self.body = body
