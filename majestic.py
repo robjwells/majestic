@@ -835,15 +835,6 @@ Options:
     files_to_write = {k[7:]: not v for k, v in args.items()
                       if k.find('--skip-') != -1}
 
-    # Load jinja environment
-    if settings.getboolean('jinja', 'custom options'):
-        jinja_opts = load_jinja_options(settings)
-    else:
-        jinja_opts = None
-    environment = jinja_environment(
-        user_templates=settings['paths']['templates root'],
-        settings=settings, jinja_options=jinja_opts)
-
     process_blog(settings=settings,
                  write_only_new=not args['--force-write'],
                  **files_to_write)
