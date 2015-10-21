@@ -1077,6 +1077,13 @@ class TestBlogObject(unittest.TestCase):
             user_templates=self.templates_root,
             settings=None)  # Not needed
 
+    def tearDown(self):
+        """Clean up output-root folder"""
+        try:
+            self.test_output_dir.rmdir()
+        except FileNotFoundError:
+            pass
+
     def test_BlogObject_no_arguments(self):
         """BlogObject should not require arguments to init
 
