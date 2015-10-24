@@ -766,7 +766,6 @@ def process_blog(*, settings, write_only_new=True,
     if rss:
         objects_to_write.append(RSSFeed(posts=posts_list, settings=settings))
 
-    print(len(objects_to_write))
     for obj in objects_to_write:
         obj.render_to_disk(environment=env,
                            build_date=datetime.now(tz=pytz.utc),
