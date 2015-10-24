@@ -9,7 +9,7 @@
         <lastBuildDate>{{ build_date|rfc822_date }}</lastBuildDate>
         <docs>http://blogs.law.harvard.edu/tech/rss</docs>
         <generator>{{ generator }}</generator>
-        {% for post in all_posts %}
+        {% for post in content %}
         <item>
             <title><![CDATA[{{ post.title }}]]></title>
             <link>{{ post.url }}</link>
