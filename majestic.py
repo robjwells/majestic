@@ -2,7 +2,7 @@
 
 from configparser import ConfigParser
 from datetime import datetime
-import http.server
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 import json
 import math
 import os
@@ -766,6 +766,7 @@ def process_blog(*, settings, write_only_new=True,
     if rss:
         objects_to_write.append(RSSFeed(posts=posts_list, settings=settings))
 
+    print(len(objects_to_write))
     for obj in objects_to_write:
         obj.render_to_disk(environment=env,
                            build_date=datetime.now(tz=pytz.utc),
@@ -846,9 +847,9 @@ Options:
         os.chdir(temp_dir.name)
         port = int(args['--port'])
         url = 'http://localhost:{0}'.format(port)
-        httpd = http.server.HTTPServer(
+        httpd = HTTPServer(
             server_address=('', port),
-            RequestHandlerClass=http.server.SimpleHTTPRequestHandler)
+            RequestHandlerClass=SimpleHTTPRequestHandler)
         try:
             print('Starting Majestic preview server at {0}'.format(url),
                   file=sys.stderr)
