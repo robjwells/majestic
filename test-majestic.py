@@ -1691,6 +1691,26 @@ class TestExtensions(unittest.TestCase):
             result = majestic.load_extensions(ext_dir_path)
         self.assertFalse(result)
 
+    def test_apply_extensions(self):
+        """apply_extensions correctly processes posts and pages
+
+        We use a dummy module, a, whose process() method just adds
+        an attribute, test_attr, to each post and page. Posts have
+        test_attr set to 'post', pages have test_attr set to 'page'.
+
+        apply_extensions should return a dictionary, storing the posts
+        list under 'posts' and the pages list under 'pages'.
+        """
+        extensions = majestic.load_extensions(self.ext_dir)
+        posts = [majestic.Post(title='test', body='test', date=datetime.now(),
+                               settings=self.settings)]
+        pages = [majestic.Page(title='test', body='test',
+                               settings=self.settings)]
+        result = majestic.apply_extensions(modules=extensions, pages=pages,
+                                           posts=posts, settings=self.settings)
+        self.assertEqual(result['posts'][0].test_attr, 'post')
+        self.assertEqual(result['pages'][0].test_attr, 'page')
+
 
 if __name__ == '__main__':
     unittest.main()
