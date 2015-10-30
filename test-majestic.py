@@ -1554,7 +1554,7 @@ class TestFull(unittest.TestCase):
         majestic.process_blog(
             settings=self.settings, posts=True,
             pages=False, index=False, archives=False,
-            rss=False, sitemap=False)
+            rss=False, sitemap=False, extensions=False)
         os.chdir(str(self.outputdir))
         for dirpath, dirnames, filenames in os.walk('.'):
             self.assertTrue(dirpath in self.expected)
@@ -1567,7 +1567,7 @@ class TestFull(unittest.TestCase):
         majestic.process_blog(
             settings=self.settings, pages=True,
             posts=False, index=False, archives=False,
-            rss=False, sitemap=False)
+            rss=False, sitemap=False, extensions=False)
         os.chdir(str(self.outputdir))
         files_set = {p.name for p in Path('.').iterdir()
                      if p.is_file()
@@ -1579,7 +1579,7 @@ class TestFull(unittest.TestCase):
         majestic.process_blog(
             settings=self.settings, index=True,
             posts=False, pages=False, archives=False,
-            rss=False, sitemap=False)
+            rss=False, sitemap=False, extensions=False)
         os.chdir(str(self.outputdir))
         files_set = {p.name for p in Path('.').iterdir()
                      if p.is_file()
@@ -1591,7 +1591,7 @@ class TestFull(unittest.TestCase):
         majestic.process_blog(
             settings=self.settings, archives=True,
             posts=False, pages=False, index=False,
-            rss=False, sitemap=False)
+            rss=False, sitemap=False, extensions=False)
         os.chdir(str(self.outputdir))
         files_set = {p.name for p in Path('.').iterdir()
                      if p.is_file()
@@ -1603,7 +1603,7 @@ class TestFull(unittest.TestCase):
         majestic.process_blog(
             settings=self.settings, rss=True,
             posts=False, pages=False, index=False,
-            archives=False, sitemap=False)
+            archives=False, sitemap=False, extensions=False)
         os.chdir(str(self.outputdir))
         files_set = {p.name for p in Path('.').iterdir()
                      if p.is_file()
@@ -1612,7 +1612,7 @@ class TestFull(unittest.TestCase):
 
     def test_process_blog_all(self):
         """process_blog correctly writes out all expected files"""
-        majestic.process_blog(settings=self.settings)
+        majestic.process_blog(settings=self.settings, extensions=False)
         os.chdir(str(self.outputdir))
         for dirpath, dirnames, filenames in os.walk('.'):
             self.assertTrue(dirpath in self.expected)
