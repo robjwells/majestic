@@ -29,6 +29,46 @@ MAJESTIC_JINJA_OPTIONS = {
     }
 
 
+def apply_extensions(*, modules, pages, posts, settings):
+    """Transform posts and pages with each module's process() function
+
+    module.process is called with the following arguments:
+        pages:          list of Page objects
+        posts:          list of Post objects
+        settings:       ConfigParser containing the site's settings
+
+    And should return a dictionary optionally containing any of
+    the following keys:
+        pages
+        posts
+        objects_to_write
+
+    When used in the process_blog function, pages and posts should be a
+    transformed list of the corresponding content type which replaces
+    the existing list.
+
+    If either are omitted, the existing list for each type is used. (So
+    if you want to clear out the list for posts or pages, return an empty
+    list under the corresponding key.)
+
+    objects_to_write should be a list of BlogObject-compatible objects
+    which will be appended to the existing objects_to_write list, and
+    written to disk in the same way as everything else. So if an extension
+    wants to write extra files, the author doesn't have to worry about
+    constructing a jinja environment (etc) and writing to disk themselves.
+
+    Extensions are called in name order.
+    """
+    extra_objs = []
+    for module in sorted(modules, key=lambda m: m.__name__):
+        processed = module.process(pages=pages, posts=posts, settings=settings)
+        posts = processed['posts'] if 'posts' in processed else posts
+        pages = processed['pages'] if 'pages' in processed else pages
+        extra_objs.extend(processed.get('objects_to_write', []))
+
+    return {'posts': posts, 'pages': pages, 'objects_to_write': extra_objs}
+
+
 def chunk(iterable, chunk_length):
     """Yield the members of its iterable chunk_length at a time
 
