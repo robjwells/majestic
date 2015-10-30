@@ -9,6 +9,7 @@ BlogObject	majestic.py	/^class BlogObject(object):$/;"	c
 ConfigParser	majestic.py	/^from configparser import ConfigParser$/;"	i
 Content	majestic.py	/^class Content(BlogObject):$/;"	c
 DraftError	majestic.py	/^class DraftError(Exception):$/;"	c
+HTTPServer	majestic.py	/^from http.server import HTTPServer, SimpleHTTPRequestHandler$/;"	i
 Index	majestic.py	/^class Index(PostsCollection):$/;"	c
 MAJESTIC_DIR	majestic.py	/^MAJESTIC_DIR = Path(__file__).resolve().parent$/;"	v
 MAJESTIC_JINJA_OPTIONS	majestic.py	/^MAJESTIC_JINJA_OPTIONS = {$/;"	v
@@ -18,16 +19,19 @@ Path	majestic.py	/^from pathlib import Path$/;"	i
 Post	majestic.py	/^class Post(Content):$/;"	c
 PostsCollection	majestic.py	/^class PostsCollection(BlogObject):$/;"	c
 RSSFeed	majestic.py	/^class RSSFeed(PostsCollection):$/;"	c
+SimpleHTTPRequestHandler	majestic.py	/^from http.server import HTTPServer, SimpleHTTPRequestHandler$/;"	i
 Sitemap	majestic.py	/^class Sitemap(BlogObject):$/;"	c
+apply_extensions	majestic.py	/^def apply_extensions(*, modules, pages, posts, settings):$/;"	f
 chunk	majestic.py	/^def chunk(iterable, chunk_length):$/;"	f
 datetime	majestic.py	/^from datetime import datetime$/;"	i
 docopt	majestic.py	/^from docopt import docopt$/;"	i
 from_file	majestic.py	/^    def from_file(class_, file, settings):$/;"	m	class:Content
-http	majestic.py	/^import http.server$/;"	i
+importlib	majestic.py	/^import importlib$/;"	i
 is_new	majestic.py	/^    def is_new(self):$/;"	m	class:Content
 jinja2	majestic.py	/^import jinja2$/;"	i
 jinja_environment	majestic.py	/^def jinja_environment(user_templates, settings, jinja_options=None):$/;"	f
 json	majestic.py	/^import json$/;"	i
+load_extensions	majestic.py	/^def load_extensions(directory):$/;"	f
 load_jinja_options	majestic.py	/^def load_jinja_options(settings):$/;"	f
 load_settings	majestic.py	/^def load_settings(default=True, local=True, files=None):$/;"	f
 main	majestic.py	/^def main(argv):$/;"	f
@@ -42,7 +46,6 @@ pytz	majestic.py	/^import pytz$/;"	i
 re	majestic.py	/^import re$/;"	i
 render_to_disk	majestic.py	/^    def render_to_disk(self, environment, **kwargs):$/;"	m	class:BlogObject
 rfc822_date	majestic.py	/^def rfc822_date(date):$/;"	f
-server	majestic.py	/^import http.server$/;"	i
 string	majestic.py	/^import string$/;"	i
 sys	majestic.py	/^import sys$/;"	i
 tempfile	majestic.py	/^import tempfile$/;"	i
