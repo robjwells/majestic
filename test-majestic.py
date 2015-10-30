@@ -1668,5 +1668,28 @@ class TestFull(unittest.TestCase):
         self.assertNotEqual(first_mtime, second_mtime)
 
 
+class Test_load_extensions(unittest.TestCase):
+    """Test the mechanisms for loading and applying extensions"""
+    def setUp(self):
+        os.chdir(str(TEST_BLOG_DIR))
+        self.settings = majestic.load_settings()
+        ext_dir_name = self.settings['paths']['extensions root']
+        self.ext_dir = TEST_BLOG_DIR.joinpath(ext_dir_name)
+
+    def test_load_extensions(self):
+        """load_extensions returns expected extensions from directory"""
+        expected_names = [fn.stem for fn in self.ext_dir.iterdir()
+                          if fn.suffix == '.py']
+        result = majestic.load_extensions(self.ext_dir)
+        result_names = [m.__name__ for m in result]
+        self.assertEqual(expected_names, result_names)
+
+    def test_load_extensions_empty(self):
+        """load_extensions returns empty list for directory with no modules"""
+        with tempfile.TemporaryDirectory() as ext_dir:
+            result = majestic.load_extensions(ext_dir)
+        self.assertFalse(result)
+
+
 if __name__ == '__main__':
     unittest.main()
