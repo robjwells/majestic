@@ -782,9 +782,9 @@ def process_blog(*, settings, write_only_new=True,
     posts_dir = content_dir.joinpath(settings['paths']['posts subdir'])
     pages_dir = content_dir.joinpath(settings['paths']['pages subdir'])
 
-    jinja_opts = load_jinja_options(settings)
-    env = jinja_environment(user_templates=settings['paths']['templates root'],
-                            settings=settings, jinja_options=jinja_opts)
+    env = jinja_environment(
+        user_templates=settings['paths']['templates root'],
+        settings=settings, jinja_options=load_jinja_options(settings))
 
     post_filenames = markdown_files(posts_dir)
     page_filenames = markdown_files(pages_dir)
