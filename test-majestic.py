@@ -1626,6 +1626,37 @@ class TestFull(unittest.TestCase):
                         set(self.expected[dirpath][content]),
                         set(filenames))
 
+    def test_process_blog_extensions(self):
+        """process_blog invokes extensions
+
+        The test extension adds an attribute test_attr to each of the
+        posts and pages (set to 'post' and 'page' respectively), so
+        we use a special template, called extension-test.html, that
+        only includes the value of this attribute.
+
+        It also adds a programmatically created page to objects_to_write.
+        We test for this by checking the output path for the file, also
+        named 'extension-test.html'.
+        """
+        self.settings['templates']['post'] = 'extension-test.html'
+        self.settings['templates']['page'] = 'extension-test.html'
+        majestic.process_blog(settings=self.settings)
+        posts = self.outputdir.glob('20*/*/*.html')
+
+        existing_page = self.outputdir.joinpath('info.html')
+        new_page = self.outputdir.joinpath('extension-test.html')
+
+        # Check programmatically created page was written
+        self.assertTrue(new_page.exists())
+
+        # Read files to check test_attr was set (and written with template)
+        for post in posts:
+            with post.open() as f:
+                self.assertEqual(f.read().strip(), 'post')
+        for page in [existing_page, new_page]:
+            with page.open() as f:
+                self.assertEqual(f.read().strip(), 'page')
+
     @unittest.skip('Slow - sleeps for two seconds')
     def test_process_blog_only_write_new(self):
         """process_blog writes only Content considered new
