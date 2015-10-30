@@ -125,12 +125,15 @@ def load_extensions(directory):
 
 
 def load_jinja_options(settings):
-    """Return the custom settings in templates root/jinja.json as a dict"""
-    jinja_opts_filename = 'jinja.json'
-    templates_root = Path(settings['paths']['templates root'])
-    json_file = templates_root.joinpath(jinja_opts_filename)
-    with json_file.open() as file:
-        custom_options = json.load(file)
+    """Return the custom settings in templates root/jinja.json as a dict
+
+    If the json file doesn't exist, returns an empty dictionary.
+    """
+    jinja_opts_file = Path(settings['paths']['templates root'], 'jinja.json')
+    custom_options = dict()
+    if jinja_opts_file.exists():
+        with jinja_opts_file.open() as file:
+            custom_options.update(json.load(file))
     return custom_options
 
 
@@ -779,11 +782,7 @@ def process_blog(*, settings, write_only_new=True,
     posts_dir = content_dir.joinpath(settings['paths']['posts subdir'])
     pages_dir = content_dir.joinpath(settings['paths']['pages subdir'])
 
-    if settings.getboolean('jinja', 'custom options'):
-        jinja_opts = load_jinja_options(settings)
-    else:
-        jinja_opts = None
-
+    jinja_opts = load_jinja_options(settings)
     env = jinja_environment(user_templates=settings['paths']['templates root'],
                             settings=settings, jinja_options=jinja_opts)
 
