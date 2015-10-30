@@ -166,7 +166,7 @@ def markdown_files(directory):
         * markdown
     """
     extensions = {'.md', '.mkd', '.mdown', '.mkdown', '.markdown'}
-    files = (Path(dirpath).joinpath(f)
+    files = (Path(dirpath, f)
              for dirpath, dirnames, filenames in os.walk(str(directory))
              for f in filenames if Path(f).suffix in extensions)
     return files

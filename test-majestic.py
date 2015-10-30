@@ -149,9 +149,9 @@ class TestContent(unittest.TestCase):
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
         # Dummy source / output files for modification date tests
-        self.oldest_file = Path(TEST_BLOG_DIR).joinpath('test_file_oldest')
-        self.middle_file = Path(TEST_BLOG_DIR).joinpath('test_file_middle')
-        self.newest_file = Path(TEST_BLOG_DIR).joinpath('test_file_newest')
+        self.oldest_file = Path(TEST_BLOG_DIR, 'test_file_oldest')
+        self.middle_file = Path(TEST_BLOG_DIR, 'test_file_middle')
+        self.newest_file = Path(TEST_BLOG_DIR, 'test_file_newest')
 
     def test_content_init_basic(self):
         """Content init properly sets core attributes
@@ -358,7 +358,7 @@ class TestPage(unittest.TestCase):
         output_dir = self.settings['paths']['output root']
         site_url = self.settings['site']['url']
 
-        expected_output = Path(output_dir).joinpath(path)
+        expected_output = Path(output_dir, path)
         expected_url = site_url + '/' + path
 
         self.assertEqual(expected_output, page.output_path)
@@ -527,7 +527,7 @@ class TestPost(unittest.TestCase):
         output_dir = self.settings['paths']['output root']
         site_url = self.settings['site']['url']
 
-        expected_output = Path(output_dir).joinpath(path)
+        expected_output = Path(output_dir, path)
         expected_url = site_url + '/' + path
 
         self.assertEqual(expected_output, post.output_path)
