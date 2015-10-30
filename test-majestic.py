@@ -1694,12 +1694,18 @@ class TestExtensions(unittest.TestCase):
     def test_apply_extensions(self):
         """apply_extensions correctly processes posts and pages
 
+        Returned dictionary should include the following keys:
+            pages
+            posts
+            objects_to_write
+
         We use a dummy module, a, whose process() method just adds
         an attribute, test_attr, to each post and page. Posts have
         test_attr set to 'post', pages have test_attr set to 'page'.
 
         apply_extensions should return a dictionary, storing the posts
-        list under 'posts' and the pages list under 'pages'.
+        list under 'posts' and the pages list under 'pages', and extra
+        objects to write under 'objects_to_write' (or an empty list).
         """
         extensions = majestic.load_extensions(self.ext_dir)
         posts = [majestic.Post(title='test', body='test', date=datetime.now(),
@@ -1708,8 +1714,25 @@ class TestExtensions(unittest.TestCase):
                                settings=self.settings)]
         result = majestic.apply_extensions(modules=extensions, pages=pages,
                                            posts=posts, settings=self.settings)
-        self.assertEqual(result['posts'][0].test_attr, 'post')
-        self.assertEqual(result['pages'][0].test_attr, 'page')
+
+        # Check objects_to_write is the empty list
+        self.assertEqual(result['objects_to_write'], [])
+
+        # Check test_attr is set properly on posts and pages
+        for key in ('post', 'page'):
+            self.assertEqual(result[key + 's'][0].test_attr, key)
+
+    def test_apply_extensions_keys(self):
+        """Dictionary returned from apply_extensions contains correct keys
+
+        While extensions don't have to include all the keys in the
+        dictionary they return, apply_extensions should always have
+        all of the keys.
+        """
+        keys = {'posts', 'pages', 'objects_to_write'}
+        result = majestic.apply_extensions(modules=[], pages=[], posts=[],
+                                           settings=self.settings)
+        self.assertEqual(keys, set(result))
 
 
 if __name__ == '__main__':
