@@ -757,7 +757,7 @@ class Sitemap(BlogObject):
 
 def process_blog(*, settings, write_only_new=True,
                  posts=True, pages=True, index=True, archives=True,
-                 rss=True, sitemap=True):
+                 rss=True, sitemap=True, extensions=True):
     """Create output files from the blog's source
 
     By default, create the entire blog. Certain parts can
@@ -771,6 +771,9 @@ def process_blog(*, settings, write_only_new=True,
     Sitemap can be created by itself but will raise if the first index,
     or any of the page or post output files don't exist. This is because
     the sitemap depends on knowing the mtime of those files on disk.
+
+    If extensions is False, posts and pages are not processed with any
+    extension modules present in the extensions directory.
     """
     content_dir = Path(settings['paths']['content root'])
     posts_dir = content_dir.joinpath(settings['paths']['posts subdir'])
@@ -802,6 +805,15 @@ def process_blog(*, settings, write_only_new=True,
     pages_list.sort()
 
     objects_to_write = []
+
+    if extensions:
+        extensions_dir = Path(settings['paths']['extensions root'])
+        modules = load_extensions(extensions_dir)
+        processed = apply_extensions(modules=modules, pages=pages_list,
+                                     posts=posts_list, settings=settings)
+        posts_list = processed['posts']
+        pages_list = processed['pages']
+        objects_to_write.extend(processed['objects_to_write'])
 
     content_objects = []
     if posts:
