@@ -1687,7 +1687,8 @@ class Test_load_extensions(unittest.TestCase):
     def test_load_extensions_empty(self):
         """load_extensions returns empty list for directory with no modules"""
         with tempfile.TemporaryDirectory() as ext_dir:
-            result = majestic.load_extensions(ext_dir)
+            ext_dir_path = Path(ext_dir)
+            result = majestic.load_extensions(ext_dir_path)
         self.assertFalse(result)
 
 
