@@ -3,6 +3,7 @@
 from configparser import ConfigParser
 from datetime import datetime
 from http.server import HTTPServer, SimpleHTTPRequestHandler
+import importlib
 import json
 import math
 import os
@@ -66,6 +67,20 @@ def jinja_environment(user_templates, settings, jinja_options=None):
     env.filters['rfc822_date'] = rfc822_date    # add custom filter
 
     return env
+
+
+def load_extensions(directory):
+    """Import all modules in directory and return a list of them"""
+    # Swap out existing sys.path
+    original_path = sys.path
+    sys.path = [str(directory)]
+
+    module_names = [file.stem for file in directory.iterdir()
+                    if file.suffix == '.py']
+    imported_modules = [importlib.import_module(name) for name in module_names]
+
+    sys.path = original_path
+    return imported_modules
 
 
 def load_jinja_options(settings):
