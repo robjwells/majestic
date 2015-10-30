@@ -1569,7 +1569,7 @@ class TestFull(unittest.TestCase):
             posts=False, index=False, archives=False,
             rss=False, sitemap=False, extensions=False)
         os.chdir(str(self.outputdir))
-        files_set = {p.name for p in Path('.').iterdir()
+        files_set = {p.name for p in Path().iterdir()
                      if p.is_file()
                      if not p.name.startswith('.')}
         self.assertEqual(set(self.expected['.']['pages']), files_set)
@@ -1581,7 +1581,7 @@ class TestFull(unittest.TestCase):
             posts=False, pages=False, archives=False,
             rss=False, sitemap=False, extensions=False)
         os.chdir(str(self.outputdir))
-        files_set = {p.name for p in Path('.').iterdir()
+        files_set = {p.name for p in Path().iterdir()
                      if p.is_file()
                      if not p.name.startswith('.')}
         self.assertEqual(set(self.expected['.']['index']), files_set)
@@ -1593,7 +1593,7 @@ class TestFull(unittest.TestCase):
             posts=False, pages=False, index=False,
             rss=False, sitemap=False, extensions=False)
         os.chdir(str(self.outputdir))
-        files_set = {p.name for p in Path('.').iterdir()
+        files_set = {p.name for p in Path().iterdir()
                      if p.is_file()
                      if not p.name.startswith('.')}
         self.assertEqual(set(self.expected['.']['archives']), files_set)
@@ -1605,7 +1605,7 @@ class TestFull(unittest.TestCase):
             posts=False, pages=False, index=False,
             archives=False, sitemap=False, extensions=False)
         os.chdir(str(self.outputdir))
-        files_set = {p.name for p in Path('.').iterdir()
+        files_set = {p.name for p in Path().iterdir()
                      if p.is_file()
                      if not p.name.startswith('.')}
         self.assertEqual(set(self.expected['.']['rss']), files_set)
