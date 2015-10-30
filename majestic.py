@@ -61,7 +61,8 @@ def apply_extensions(*, modules, pages, posts, settings):
     """
     extra_objs = []
     for module in sorted(modules, key=lambda m: m.__name__):
-        processed = module.process(pages=pages, posts=posts, settings=settings)
+        processed = module.process(pages=pages[:], posts=posts[:],
+                                   settings=settings)
         posts = processed['posts'] if 'posts' in processed else posts
         pages = processed['pages'] if 'pages' in processed else pages
         extra_objs.extend(processed.get('objects_to_write', []))
