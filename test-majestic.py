@@ -1668,7 +1668,7 @@ class TestFull(unittest.TestCase):
         self.assertNotEqual(first_mtime, second_mtime)
 
 
-class Test_load_extensions(unittest.TestCase):
+class TestExtensions(unittest.TestCase):
     """Test the mechanisms for loading and applying extensions"""
     def setUp(self):
         os.chdir(str(TEST_BLOG_DIR))
