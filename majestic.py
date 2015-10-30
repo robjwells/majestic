@@ -878,6 +878,8 @@ Options:
     --skip-archives         Don't create archives HTML file.
     --skip-rss              Don't create an RSS feed XML file.
     --skip-sitemap          Don't create a sitemap XML file.
+
+    --no-extensions         Disable extensions.
     '''
     args = docopt(doc=usage, argv=argv, version=__version__)
 
@@ -902,12 +904,15 @@ Options:
 
     # Invert --skip-* options in args
     # A bit unwieldy, but better than having skip_* params to process_blog
-    files_to_write = {k[7:]: not v for k, v in args.items()
-                      if k.find('--skip-') != -1}
+    process_options = {k[7:]: not v for k, v in args.items()
+                       if k.find('--skip-') != -1}
+
+    # Set whether extensions should be used (same logic as skipping)
+    process_options['extensions'] = not args['--no-extensions']
 
     process_blog(settings=settings,
                  write_only_new=not args['--force-write'],
-                 **files_to_write)
+                 **process_options)
 
     # Change to temp directory and start web server
     if args['preview']:
