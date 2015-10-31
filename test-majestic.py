@@ -1706,7 +1706,8 @@ class TestExtensions(unittest.TestCase):
         self.settings = majestic.load_settings()
         ext_dir_name = self.settings['paths']['extensions root']
         self.ext_dir = TEST_BLOG_DIR.joinpath(ext_dir_name)
-        self.posts = [majestic.Post(title='test', body='test', date=datetime.now(),
+        self.posts = [majestic.Post(title='test', body='test',
+                                    date=datetime.now(),
                                     settings=self.settings)]
         self.pages = [majestic.Page(title='test', body='test',
                                     settings=self.settings)]
