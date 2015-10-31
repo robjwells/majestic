@@ -1706,6 +1706,10 @@ class TestExtensions(unittest.TestCase):
         self.settings = majestic.load_settings()
         ext_dir_name = self.settings['paths']['extensions root']
         self.ext_dir = TEST_BLOG_DIR.joinpath(ext_dir_name)
+        self.posts = [majestic.Post(title='test', body='test', date=datetime.now(),
+                                    settings=self.settings)]
+        self.pages = [majestic.Page(title='test', body='test',
+                                    settings=self.settings)]
 
     def test_load_extensions(self):
         """load_extensions returns expected extensions from directory"""
@@ -1722,47 +1726,90 @@ class TestExtensions(unittest.TestCase):
             result = majestic.load_extensions(ext_dir_path)
         self.assertFalse(result)
 
-    def test_apply_extensions(self):
+    def test_apply_extensions_posts_and_pages(self):
         """apply_extensions correctly processes posts and pages
 
         Returned dictionary should include the following keys:
             pages
             posts
-            objects_to_write
+            new_objects
 
-        We use a dummy module, a, whose process() method just adds
+        We use a dummy module, a, whose process method just adds
         an attribute, test_attr, to each post and page. Posts have
         test_attr set to 'post', pages have test_attr set to 'page'.
 
         apply_extensions should return a dictionary, storing the posts
         list under 'posts' and the pages list under 'pages', and extra
-        objects to write under 'objects_to_write' (or an empty list).
+        objects to write under 'new_objects' (or an empty list).
         """
         extensions = majestic.load_extensions(self.ext_dir)
-        posts = [majestic.Post(title='test', body='test', date=datetime.now(),
-                               settings=self.settings)]
-        pages = [majestic.Page(title='test', body='test',
-                               settings=self.settings)]
-        result = majestic.apply_extensions(modules=extensions, pages=pages,
-                                           posts=posts, settings=self.settings)
 
-        # Check objects_to_write is the empty list
-        self.assertEqual(result['objects_to_write'], [])
+        result = majestic.apply_extensions(
+            stage=majestic.ExtensionStage.posts_and_pages,
+            modules=extensions, pages=self.pages,
+            posts=self.posts, settings=self.settings)
+
+        # Check new_objects is the empty list
+        self.assertEqual(result['new_objects'], [])
 
         # Check test_attr is set properly on posts and pages
         for key in ('post', 'page'):
             self.assertEqual(result[key + 's'][0].test_attr, key)
 
-    def test_apply_extensions_keys(self):
+    def test_apply_extensions_objects_to_write(self):
+        """apply_extensions correctly processes objects_to_write
+
+        Returned dictionary should include the following key:
+            objects
+
+        We use a dummy module, a, whose process method just adds
+        an attribute, test_attr, to each object, set to 'obj'.
+
+        apply_extensions should return a dictionary, storing the
+        list of objects to write under 'objects'.
+        """
+        extensions = majestic.load_extensions(self.ext_dir)
+        objs = self.posts + self.pages
+        result = majestic.apply_extensions(
+            stage=majestic.ExtensionStage.objects_to_write,
+            modules=extensions, objects=objs,
+            settings=self.settings)
+
+        for obj in result['objects']:
+            self.assertEqual(obj.test_attr, 'obj')
+
+    def test_apply_extensions_posts_and_pages_keys(self):
         """Dictionary returned from apply_extensions contains correct keys
 
+        For the posts_and_pages stage.
+
         While extensions don't have to include all the keys in the
-        dictionary they return, apply_extensions should always have
-        all of the keys.
+        dictionary they return, apply_extensions should return a
+        dictionary that always has all of the keys.
         """
-        keys = {'posts', 'pages', 'objects_to_write'}
-        result = majestic.apply_extensions(modules=[], pages=[], posts=[],
-                                           settings=self.settings)
+        keys = {'posts', 'pages', 'new_objects'}
+        result = majestic.apply_extensions(
+            stage=majestic.ExtensionStage.posts_and_pages,
+            modules=[], pages=[], posts=[],
+            settings=self.settings)
+        self.assertEqual(keys, set(result))
+
+    def test_apply_extensions_objects_to_write_keys(self):
+        """Dictionary returned from apply_extensions contains correct keys
+
+        For the objects_to_write stage.
+
+        If extensions implement process_objects_to_write, they should
+        always return a dictionary with the objects list under the key
+        objects.
+
+        For consistency, apply_extensions should return a dictionary
+        of the same form.
+        """
+        keys = {'objects'}
+        result = majestic.apply_extensions(
+            stage=majestic.ExtensionStage.objects_to_write,
+            modules=[], objects=[], settings=self.settings)
         self.assertEqual(keys, set(result))
 
 
