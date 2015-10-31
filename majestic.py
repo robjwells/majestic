@@ -864,10 +864,12 @@ def process_blog(*, settings, write_only_new=True,
 
     objects_to_write = []
 
+    extensions_loaded = False
     if extensions:
         extensions_dir = Path(settings['paths']['extensions root'])
         if extensions_dir.exists():
             modules = load_extensions(extensions_dir)
+            extensions_loaded = True
             processed = apply_extensions(
                 modules=modules, stage=ExtensionStage.posts_and_pages,
                 pages=pages_list, posts=posts_list, settings=settings)
@@ -893,6 +895,12 @@ def process_blog(*, settings, write_only_new=True,
 
     if rss:
         objects_to_write.append(RSSFeed(posts=posts_list, settings=settings))
+
+    if extensions_loaded:
+        processed = apply_extensions(
+            modules=modules, stage=ExtensionStage.objects_to_write,
+            objects=objects_to_write, settings=settings)
+        objects_to_write = processed['objects']
 
     for obj in objects_to_write:
         obj.render_to_disk(environment=env,

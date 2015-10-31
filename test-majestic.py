@@ -1626,8 +1626,8 @@ class TestFull(unittest.TestCase):
                         set(self.expected[dirpath][content]),
                         set(filenames))
 
-    def test_process_blog_extensions(self):
-        """process_blog invokes extensions
+    def test_process_blog_extensions_posts_and_pages(self):
+        """process_blog invokes extensions for posts_and_pages
 
         The test extension adds an attribute test_attr to each of the
         posts and pages (set to 'post' and 'page' respectively), so
@@ -1656,6 +1656,20 @@ class TestFull(unittest.TestCase):
         for page in [existing_page, new_page]:
             with page.open() as f:
                 self.assertEqual(f.read().strip(), 'page')
+
+    def test_process_blog_extensions_objects_to_write(self):
+        """process_blog invokes extensions for objects_to_write
+
+        The test extension adds a new page to the end of
+        objects_to_write, named 'objects_to_write.html'.
+
+        This should be written to disk.
+        """
+        majestic.process_blog(settings=self.settings)
+
+        # Check programmatically created page was written
+        new_page = self.outputdir.joinpath('objects_to_write.html')
+        self.assertTrue(new_page.exists())
 
     @unittest.skip('Slow - sleeps for two seconds')
     def test_process_blog_only_write_new(self):
