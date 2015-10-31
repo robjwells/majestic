@@ -1640,7 +1640,8 @@ class TestFull(unittest.TestCase):
         """
         self.settings['templates']['post'] = 'extension-test.html'
         self.settings['templates']['page'] = 'extension-test.html'
-        majestic.process_blog(settings=self.settings)
+        majestic.process_blog(settings=self.settings, index=False,
+                              archives=False, rss=False, sitemap=False)
         posts = self.outputdir.glob('20*/*/*.html')
 
         existing_page = self.outputdir.joinpath('info.html')
@@ -1665,7 +1666,8 @@ class TestFull(unittest.TestCase):
 
         This should be written to disk.
         """
-        majestic.process_blog(settings=self.settings)
+        majestic.process_blog(settings=self.settings, index=False,
+                              archives=False, rss=False, sitemap=False)
 
         # Check programmatically created page was written
         new_page = self.outputdir.joinpath('objects_to_write.html')
