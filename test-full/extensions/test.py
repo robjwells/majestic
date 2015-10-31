@@ -1,6 +1,6 @@
 import majestic
 
-def process(*, posts, pages, settings):
+def process_posts_and_pages(*, posts, pages, settings):
     """Dummy process function that sets an attribute on each object"""
     for post in posts:
         post.test_attr = 'post'
@@ -11,4 +11,4 @@ def process(*, posts, pages, settings):
                              slug='extension-test', settings=settings)
     new_page.test_attr = 'page'     # Make it like every other page
 
-    return {'posts': posts, 'pages': pages, 'objects_to_write': [new_page]}
+    return {'posts': posts, 'pages': pages, 'new_objects': [new_page]}

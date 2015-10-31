@@ -868,11 +868,12 @@ def process_blog(*, settings, write_only_new=True,
         extensions_dir = Path(settings['paths']['extensions root'])
         if extensions_dir.exists():
             modules = load_extensions(extensions_dir)
-            processed = apply_extensions(modules=modules, pages=pages_list,
-                                         posts=posts_list, settings=settings)
+            processed = apply_extensions(
+                modules=modules, stage=ExtensionStage.posts_and_pages,
+                pages=pages_list, posts=posts_list, settings=settings)
             posts_list = processed['posts']
             pages_list = processed['pages']
-            objects_to_write.extend(processed['objects_to_write'])
+            objects_to_write.extend(processed['new_objects'])
 
     content_objects = []
     if posts:
