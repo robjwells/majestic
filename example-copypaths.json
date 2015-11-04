@@ -1,0 +1,18 @@
+[
+    ["~/Sites/blog/build/all.min.*",
+     {"directory": "resources"}],
+
+    ["/Users/jcd/Documents/project-reports/",
+     {"directory": "reports"}],
+
+    ["some_file.txt",
+     {"directory": "text",
+      "filename": "important_file.txt"}],
+
+    ["favicon.ico"],
+
+    ["images"],
+
+    ["404.html"]
+
+]
