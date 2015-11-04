@@ -129,6 +129,50 @@ def apply_extensions(*, modules, stage, settings,
     return return_dict
 
 
+def parse_copy_paths(paths_list, settings):
+    """Parse a list of paths to copy read from a json file
+
+    Returns a list of dicts with keys source, (destination) directory
+    and (destination) name, with all values being Path objects.
+
+    The paths_list argument should be of lists:
+        [source, {'subdir': dest_dir, 'name': dest_file}]
+
+    The second item dictionary is optional, if present, either of its
+    keys are optional too.
+    If subdir is missing, the source will be placed in the output root.
+    If name is missing, the source will retain its original name.
+
+    Each is a Path object. The source path is resolved (raising
+    an error if the source file is missing) but the destination paths
+    are not (as the output root may not exist yet).
+
+    The result directory key differ from the one used in the copypaths.json
+    file (directory vs subdir) as the result's directory value will always
+    include the output root.
+    """
+    output_dir = Path(settings['paths']['output root'])
+    transformed = []
+    for entry in paths_list:
+        source = entry[0]
+        if len(entry) == 1 or 'subdir' not in entry[1]:
+            output_subdir = ''
+        else:
+            output_subdir = entry[1]['subdir']
+
+        if len(entry) == 1 or 'name' not in entry[1]:
+            output_fn = source
+        else:
+            output_fn = entry[1]['name']
+
+        new_entry = {'source': Path(source).resolve(),
+                     'directory': output_dir.joinpath(output_subdir),
+                     'name': Path(output_fn)}
+        transformed.append(new_entry)
+
+    return transformed
+
+
 def chunk(iterable, chunk_length):
     """Yield the members of its iterable chunk_length at a time
 

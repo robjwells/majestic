@@ -1830,5 +1830,68 @@ class TestExtensions(unittest.TestCase):
         self.assertEqual(keys, set(result))
 
 
+
+class TestCopyFiles(unittest.TestCase):
+    """Test the file copying/symlinking features"""
+    def setUp(self):
+        os.chdir(str(MAJESTIC_DIR.joinpath('test-copy')))
+        self.settings = majestic.load_settings()
+        self.output_dir = Path(self.settings['paths']['output root'])
+        self.copy_data = [
+            ['404.html'],
+            ['pics', {'directory': 'images'}],
+            ['/usr/share/dict/words',
+             {'directory': 'resources',
+              'filename': 'dictionary.txt'}]
+        ]
+
+    def test_parse_copy_paths(self):
+        """parse_copy_paths transforms list of path lists to list of dicts
+
+        The returned dicts should have a source which will be copied,
+        a destination directory (always the output root or a descendent)
+        and destination name.
+
+        The directory key differs between the json file and the one used
+        internally. 'subdir' is used in the json file as it will be the
+        subdirectory of the output root in which the source is placed,
+        while internally 'directory' is used because it always includes
+        the output directory itself.
+
+        The key 'name' is used rather than filename in case the source
+        is a directory.
+
+        Given a list:
+        [
+            ['404.html'],
+            ['my_file.txt', {'subdir': 'text', 'name': 'majestic.txt'}]
+        ]
+
+        The result should be:
+        [
+            {'source': 'Path(404.html)',
+             'directory': Path(output_root),
+             'name': Path(404.html)},
+            {'source': 'Path(my_file.txt)',
+             'directory': Path(output_root/text),
+             'name': Path(majestic.txt)}
+        ]
+        """
+        copy_list = [
+            ['404.html'],
+            ['my_file.txt', {'subdir': 'text', 'name': 'majestic.txt'}]
+        ]
+        expected = [
+            {'source': Path('404.html').resolve(),
+             'directory': self.output_dir,
+             'name': Path('404.html')},
+            {'source': Path('my_file.txt').resolve(),
+             'directory': self.output_dir.joinpath('text'),
+             'name': Path('majestic.txt')}
+        ]
+        result = majestic.parse_copy_paths(copy_list, self.settings)
+        self.assertEqual(result, expected)
+
+
 if __name__ == '__main__':
     unittest.main()
