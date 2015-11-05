@@ -1837,60 +1837,104 @@ class TestCopyFiles(unittest.TestCase):
         os.chdir(str(MAJESTIC_DIR.joinpath('test-copy')))
         self.settings = majestic.load_settings()
         self.output_dir = Path(self.settings['paths']['output root'])
-        self.copy_data = [
-            ['404.html'],
-            ['pics', {'directory': 'images'}],
-            ['/usr/share/dict/words',
-             {'directory': 'resources',
-              'filename': 'dictionary.txt'}]
-        ]
 
-    def test_parse_copy_paths(self):
-        """parse_copy_paths transforms list of path lists to list of dicts
+    def test_parse_copy_paths_simple(self):
+        """parse_copy_paths produces list of src/dst pairs for simple list
 
-        The returned dicts should have a source which will be copied,
-        a destination directory (always the output root or a descendent)
-        and destination name.
-
-        The directory key differs between the json file and the one used
-        internally. 'subdir' is used in the json file as it will be the
-        subdirectory of the output root in which the source is placed,
-        while internally 'directory' is used because it always includes
-        the output directory itself.
-
-        The key 'name' is used rather than filename in case the source
-        is a directory.
-
-        Given a list:
-        [
-            ['404.html'],
-            ['my_file.txt', {'subdir': 'text', 'name': 'majestic.txt'}]
-        ]
-
-        The result should be:
-        [
-            {'source': 'Path(404.html)',
-             'directory': Path(output_root),
-             'name': Path(404.html)},
-            {'source': 'Path(my_file.txt)',
-             'directory': Path(output_root/text),
-             'name': Path(majestic.txt)}
-        ]
+        This test handles the most simple scenario: a list of paths to
+        copy to the output directory with no new subdirectories or renames.
         """
-        copy_list = [
+        copy_paths = [
             ['404.html'],
-            ['my_file.txt', {'subdir': 'text', 'name': 'majestic.txt'}]
-        ]
+            ['images']
+            ]
         expected = [
-            {'source': Path('404.html').resolve(),
-             'directory': self.output_dir,
-             'name': Path('404.html')},
-            {'source': Path('my_file.txt').resolve(),
-             'directory': self.output_dir.joinpath('text'),
-             'name': Path('majestic.txt')}
-        ]
-        result = majestic.parse_copy_paths(copy_list, self.settings)
-        self.assertEqual(result, expected)
+            [Path('404.html').resolve(), self.output_dir.joinpath('404.html')],
+            [Path('images').resolve(), self.output_dir.joinpath('images')]
+            ]
+        result = majestic.parse_copy_paths(path_list=copy_paths,
+                                           settings=self.settings)
+        self.assertEqual(expected, result)
+
+    def test_parse_copy_paths_glob(self):
+        """parse_copy_paths produces list of src/dst pairs for glob path
+
+        In this test, check that a glob path produces the expected list of
+        src/dst pairs — importantly that one path rule can produce several
+        such pairs.
+        """
+        copy_paths = [
+            ['images/*.jpg']
+            ]
+        expected = [
+            [Path('images/copytest1.jpg').resolve(),
+             self.output_dir.joinpath('images/copytest1.jpg')],
+            [Path('images/copytest2.jpg').resolve(),
+             self.output_dir.joinpath('images/copytest2.jpg')]
+            ]
+        result = majestic.parse_copy_paths(path_list=copy_paths,
+                                           settings=self.settings)
+        self.assertEqual(expected, result)
+
+    def test_parse_copy_paths_subdir(self):
+        """parse_copy_paths result includes specified subdir
+
+        In this test, check that a path specifying a subdir produces a
+        destination that includes the subdir.
+        """
+        copy_paths = [
+            ['404.html', {'subdir': 'static'}],
+            ['images', {'subdir': 'static'}]
+            ]
+        expected = [
+            [Path('404.html').resolve(),
+             self.output_dir.joinpath('static/404.html')],
+            [Path('images').resolve(),
+             self.output_dir.joinpath('static/images')]
+            ]
+        result = majestic.parse_copy_paths(path_list=copy_paths,
+                                           settings=self.settings)
+        self.assertEqual(expected, result)
+
+    def test_parse_copy_paths_name(self):
+        """parse_copy_paths result includes specified new name
+
+        In this test, check that a path specifying a name produces a
+        destination whose last component is the new name.
+        """
+        copy_paths = [
+            ['404.html', {'name': 'error.html'}],
+            ['images', {'name': 'img'}]
+            ]
+        expected = [
+            [Path('404.html').resolve(),
+             self.output_dir.joinpath('error.html')],
+            [Path('images').resolve(),
+             self.output_dir.joinpath('img')]
+            ]
+        result = majestic.parse_copy_paths(path_list=copy_paths,
+                                           settings=self.settings)
+        self.assertEqual(expected, result)
+
+    def test_parse_copy_paths_subdir_and_name(self):
+        """parse_copy_paths result includes specified subdir and name
+
+        In this test, check that a path specifying both a subdir and
+        a new name produces a destination which includes both
+        """
+        copy_paths = [
+            ['404.html', {'subdir': 'static', 'name': 'error.html'}],
+            ['images', {'subdir': 'static', 'name': 'img'}]
+            ]
+        expected = [
+            [Path('404.html').resolve(),
+             self.output_dir.joinpath('static/error.html')],
+            [Path('images').resolve(),
+             self.output_dir.joinpath('static/img')]
+            ]
+        result = majestic.parse_copy_paths(path_list=copy_paths,
+                                           settings=self.settings)
+        self.assertEqual(expected, result)
 
 
 if __name__ == '__main__':
