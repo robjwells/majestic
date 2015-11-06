@@ -39,9 +39,12 @@ class ExtensionStage(Enum):
     operates on all objects that will be written to disk (called
     objects_to_write in the process_blog function), normally
     including all index pages and archives.
+
+    The processing function's name for each stage is stored as the
+    corresponding member's value.
     """
-    posts_and_pages = 1
-    objects_to_write = 2
+    posts_and_pages = 'process_posts_and_pages'
+    objects_to_write = 'process_objects_to_write'
 
 
 def apply_extensions(*, modules, stage, settings,
@@ -108,7 +111,7 @@ def apply_extensions(*, modules, stage, settings,
     be written to disk.
     """
     modules = sorted(modules, key=lambda m: m.__name__)
-    process_func_name = 'process_' + stage.name
+    process_func_name = stage.value
     process_functions = [getattr(m, process_func_name) for m in modules
                          if hasattr(m, process_func_name)]
 
