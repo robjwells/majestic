@@ -1830,7 +1830,6 @@ class TestExtensions(unittest.TestCase):
         self.assertEqual(keys, set(result))
 
 
-
 class TestCopyFiles(unittest.TestCase):
     """Test the file copying/symlinking features"""
     def setUp(self):
