@@ -1848,8 +1848,8 @@ class TestCopyFiles(unittest.TestCase):
             ['images']
             ]
         expected = [
-            [Path('404.html').resolve(), self.output_dir.joinpath('404.html')],
-            [Path('images').resolve(), self.output_dir.joinpath('images')]
+            [Path('404.html'), self.output_dir.joinpath('404.html')],
+            [Path('images'), self.output_dir.joinpath('images')]
             ]
         result = majestic.parse_copy_paths(path_list=copy_paths,
                                            settings=self.settings)
@@ -1866,9 +1866,9 @@ class TestCopyFiles(unittest.TestCase):
             ['images/*.jpg']
             ]
         expected = [
-            [Path('images/copytest1.jpg').resolve(),
+            [Path('images/copytest1.jpg'),
              self.output_dir.joinpath('images/copytest1.jpg')],
-            [Path('images/copytest2.jpg').resolve(),
+            [Path('images/copytest2.jpg'),
              self.output_dir.joinpath('images/copytest2.jpg')]
             ]
         result = majestic.parse_copy_paths(path_list=copy_paths,
@@ -1886,10 +1886,8 @@ class TestCopyFiles(unittest.TestCase):
             ['images', {'subdir': 'static'}]
             ]
         expected = [
-            [Path('404.html').resolve(),
-             self.output_dir.joinpath('static/404.html')],
-            [Path('images').resolve(),
-             self.output_dir.joinpath('static/images')]
+            [Path('404.html'), self.output_dir.joinpath('static/404.html')],
+            [Path('images'), self.output_dir.joinpath('static/images')]
             ]
         result = majestic.parse_copy_paths(path_list=copy_paths,
                                            settings=self.settings)
@@ -1906,10 +1904,8 @@ class TestCopyFiles(unittest.TestCase):
             ['images', {'name': 'img'}]
             ]
         expected = [
-            [Path('404.html').resolve(),
-             self.output_dir.joinpath('error.html')],
-            [Path('images').resolve(),
-             self.output_dir.joinpath('img')]
+            [Path('404.html'), self.output_dir.joinpath('error.html')],
+            [Path('images'), self.output_dir.joinpath('img')]
             ]
         result = majestic.parse_copy_paths(path_list=copy_paths,
                                            settings=self.settings)
@@ -1926,10 +1922,8 @@ class TestCopyFiles(unittest.TestCase):
             ['images', {'subdir': 'static', 'name': 'img'}]
             ]
         expected = [
-            [Path('404.html').resolve(),
-             self.output_dir.joinpath('static/error.html')],
-            [Path('images').resolve(),
-             self.output_dir.joinpath('static/img')]
+            [Path('404.html'), self.output_dir.joinpath('static/error.html')],
+            [Path('images'), self.output_dir.joinpath('static/img')]
             ]
         result = majestic.parse_copy_paths(path_list=copy_paths,
                                            settings=self.settings)
