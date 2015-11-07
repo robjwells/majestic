@@ -1867,9 +1867,9 @@ class TestCopyFiles(unittest.TestCase):
             ]
         expected = [
             [Path('images/copytest1.jpg'),
-             self.output_dir.joinpath('images/copytest1.jpg')],
+             self.output_dir.joinpath('copytest1.jpg')],
             [Path('images/copytest2.jpg'),
-             self.output_dir.joinpath('images/copytest2.jpg')]
+             self.output_dir.joinpath('copytest2.jpg')]
             ]
         result = majestic.parse_copy_paths(path_list=copy_paths,
                                            settings=self.settings)
