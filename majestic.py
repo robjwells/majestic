@@ -3,6 +3,7 @@
 from configparser import ConfigParser
 from datetime import datetime
 from enum import Enum
+from glob import iglob as glob
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import importlib
 import json
@@ -177,27 +178,21 @@ def parse_copy_paths(path_list, settings):
             # ~/Pictures/2.jpg -> output_root/image.jpg
         ]
     """
-#     output_dir = Path(settings['paths']['output root'])
-#     transformed = []
-#     for entry in paths_list:
-#         source = entry[0]
-#         if len(entry) == 1 or 'subdir' not in entry[1]:
-#             output_subdir = ''
-#         else:
-#             output_subdir = entry[1]['subdir']
-#
-#         if len(entry) == 1 or 'name' not in entry[1]:
-#             output_fn = source
-#         else:
-#             output_fn = entry[1]['name']
-#
-#         new_entry = {'source': Path(source).resolve(),
-#                      'directory': output_dir.joinpath(output_subdir),
-#                      'name': Path(output_fn)}
-#         transformed.append(new_entry)
-#
-#     return transformed
-    pass
+    # Add empty dict to path_list entries if they only contain the source path
+    # Allows for simpler code below
+    entries = (e if len(e) == 2 else e + [dict()] for e in path_list)
+    output_root = settings['paths']['output root']
+    src_dst_pairs = []
+
+    for source_pattern, options_dict in entries:
+        output_subdir = options_dict.get('subdir', '')
+        for source in glob(os.path.expanduser(source_pattern)):
+            source = Path(source)
+            output_name = options_dict.get('name', source.name)
+            pair = [source, Path(output_root, output_subdir, output_name)]
+            src_dst_pairs.append(pair)
+
+    return src_dst_pairs
 
 
 def chunk(iterable, chunk_length):
