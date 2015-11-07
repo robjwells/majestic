@@ -136,7 +136,7 @@ def apply_extensions(*, modules, stage, settings,
 def parse_copy_paths(path_list, settings):
     """Parse a list of paths to copy read from a json file
 
-    Returns [Path(source), Path(destination)] for each entry in path_list
+    Returns (Path(source), Path(destination)) for each entry in path_list
 
     path_list is a list of lists containing a path (as a string)
     and optionally a dictionary which can contain the keys
@@ -189,7 +189,7 @@ def parse_copy_paths(path_list, settings):
         for source in glob(os.path.expanduser(source_pattern)):
             source = Path(source)
             output_name = options_dict.get('name', source.name)
-            pair = [source, Path(output_root, output_subdir, output_name)]
+            pair = (source, Path(output_root, output_subdir, output_name))
             src_dst_pairs.append(pair)
 
     return src_dst_pairs
