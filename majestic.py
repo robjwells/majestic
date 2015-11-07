@@ -132,48 +132,72 @@ def apply_extensions(*, modules, stage, settings,
     return return_dict
 
 
-def parse_copy_paths(paths_list, settings):
+def parse_copy_paths(path_list, settings):
     """Parse a list of paths to copy read from a json file
 
-    Returns a list of dicts with keys source, (destination) directory
-    and (destination) name, with all values being Path objects.
+    Returns [Path(source), Path(destination)] for each entry in path_list
 
-    The paths_list argument should be of lists:
-        [source, {'subdir': dest_dir, 'name': dest_file}]
+    path_list is a list of lists containing a path (as a string)
+    and optionally a dictionary which can contain the keys
+    'subdir' and 'name'. For example:
 
-    The second item dictionary is optional, if present, either of its
-    keys are optional too.
-    If subdir is missing, the source will be placed in the output root.
-    If name is missing, the source will retain its original name.
+        [source, {'subdir': subdir, 'name': name}]
 
-    Each is a Path object. The source path is resolved (raising
-    an error if the source file is missing) but the destination paths
-    are not (as the output root may not exist yet).
+    source is a (str) path to a file or directory. It can be a glob pattern.
+    For example:
+        [
+            ['../error.html'],
+            ['~/Pictures/*.jpg']
+        ]
 
-    The result directory key differ from the one used in the copypaths.json
-    file (directory vs subdir) as the result's directory value will always
-    include the output root.
+    subdir specifies a subdirectory of the output directory in which to
+    place the source. If not given, the destination directory will be
+    the root of the output directory. For example:
+        [
+            ['../error.html'],
+            # -> output_root/error.html
+
+            ['~/Pictures/*.jpg', {'subdir': 'images'}]
+            # -> output_root/images/*.jpg
+        ]
+
+    name allows the source to be renamed. If not given, the filename
+    of the source will be used. For example:
+        [
+            ['../error.html', {'name': '404.html'}]
+            # -> output_root/404.html
+        ]
+
+    If source is a glob pattern, name should not be specified as each
+    source path will be copied to the same output path. For example:
+        [
+            ['~/Pictures/*.jpg', {'name': 'image.jpg'}]
+            # Supposing 1.jpg, 2.jpg
+            # ~/Pictures/1.jpg -> output_root/image.jpg
+            # ~/Pictures/2.jpg -> output_root/image.jpg
+        ]
     """
-    output_dir = Path(settings['paths']['output root'])
-    transformed = []
-    for entry in paths_list:
-        source = entry[0]
-        if len(entry) == 1 or 'subdir' not in entry[1]:
-            output_subdir = ''
-        else:
-            output_subdir = entry[1]['subdir']
-
-        if len(entry) == 1 or 'name' not in entry[1]:
-            output_fn = source
-        else:
-            output_fn = entry[1]['name']
-
-        new_entry = {'source': Path(source).resolve(),
-                     'directory': output_dir.joinpath(output_subdir),
-                     'name': Path(output_fn)}
-        transformed.append(new_entry)
-
-    return transformed
+#     output_dir = Path(settings['paths']['output root'])
+#     transformed = []
+#     for entry in paths_list:
+#         source = entry[0]
+#         if len(entry) == 1 or 'subdir' not in entry[1]:
+#             output_subdir = ''
+#         else:
+#             output_subdir = entry[1]['subdir']
+#
+#         if len(entry) == 1 or 'name' not in entry[1]:
+#             output_fn = source
+#         else:
+#             output_fn = entry[1]['name']
+#
+#         new_entry = {'source': Path(source).resolve(),
+#                      'directory': output_dir.joinpath(output_subdir),
+#                      'name': Path(output_fn)}
+#         transformed.append(new_entry)
+#
+#     return transformed
+    pass
 
 
 def chunk(iterable, chunk_length):
