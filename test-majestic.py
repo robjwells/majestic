@@ -337,6 +337,8 @@ class TestPage(unittest.TestCase):
         settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
+        # Avoid index.html trimming mismatch in url tests
+        self.settings['paths']['page path template'] = '{content.slug}.html'
 
     def test_page_inheritance(self):
         """Page instances are also an instance of Content"""
@@ -428,6 +430,10 @@ class TestPost(unittest.TestCase):
         settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
+
+        # Avoid index.html trimming mismatch in url tests
+        self.settings['paths']['post path template'] = (
+            '{content.date:%Y/%m}/{content.slug}.html')
 
         # Override timezone for testing purposes
         self.settings['dates']['timezone'] = 'Europe/London'
