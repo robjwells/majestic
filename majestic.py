@@ -218,10 +218,12 @@ def copy_files(path_pairs):
 
     path_pairs should be a list of [Path(src), Path(dst)]
     """
+    is_older = lambda a, b: a.stat().st_mtime < b.stat().st_mtime
     for source, dest in path_pairs:
         mkdir_exist_ok(dest.parent)
         copy_func = shutil.copytree if source.is_dir() else shutil.copy2
-        copy_func(str(source), str(dest))
+        if not dest.exists() or is_older(dest, source):
+            copy_func(str(source), str(dest))
 
 
 def link_files(path_pairs):
