@@ -1091,6 +1091,10 @@ Options:
     --skip-sitemap          Don't create a sitemap XML file.
 
     --no-extensions         Disable extensions.
+
+    --no-copy               Ignore copypaths.json file.
+    --use-symlinks          Symlink copypaths resources instead of copying.
+                            Preview always uses symlinks (unless --no-copy).
     '''
     args = docopt(doc=usage, argv=argv, version=__version__)
 
@@ -1112,6 +1116,8 @@ Options:
         settings['site']['url'] = '/'
         temp_dir = tempfile.TemporaryDirectory()
         settings['paths']['output root'] = temp_dir.name
+        # Symlink copypaths resources instead of copying
+        args['--use-symlinks'] = True
 
     # Invert --skip-* options in args
     # A bit unwieldy, but better than having skip_* params to process_blog
@@ -1124,6 +1130,10 @@ Options:
     process_blog(settings=settings,
                  write_only_new=not args['--force-write'],
                  **process_options)
+
+    if not args['--no-copy']:
+        execute_copypaths(settings=settings,
+                          use_symlinks=args['--use-symlinks'])
 
     # Change to temp directory and start web server
     if args['preview']:
