@@ -232,8 +232,19 @@ def link_files(path_pairs):
     path_pairs should be a list of [Path(src), Path(dst)]
     """
     for source, dest in path_pairs:
+        source = source.resolve()
         mkdir_exist_ok(dest.parent)
-        dest.symlink_to(source.resolve(), source.is_dir())
+        try:
+            dest.symlink_to(source, source.is_dir())
+        except FileExistsError:
+            if dest.resolve() == source:    # symlink points to source
+                pass
+            else:                           # remove dest and try again
+                if dest.is_dir():
+                    shutil.rmtree(str(dest))
+                else:
+                    dest.unlink()
+                dest.symlink_to(source, source.is_dir())
 
 
 def chunk(iterable, chunk_length):
