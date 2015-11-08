@@ -1952,5 +1952,22 @@ class TestCopyFiles(unittest.TestCase):
             self.assertEqual(source.stat().st_size, dest.stat().st_size)
 
 
+    def test_link_files_simple(self):
+        """link_files links to sources at the specified output locations
+
+        Both files and directories should be linked.
+
+        link_files should create enclosing folders as necessary.
+        """
+        paths = [
+            [Path('404.html'), self.output_dir.joinpath('404.html')],
+            [Path('images'), self.output_dir.joinpath('images')]
+            ]
+        majestic.link_files(paths)
+        for source, dest in paths:
+            self.assertTrue(dest.is_symlink())
+            self.assertEqual(source.stat().st_size, dest.stat().st_size)
+
+
 if __name__ == '__main__':
     unittest.main()

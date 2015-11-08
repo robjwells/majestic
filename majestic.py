@@ -210,6 +210,19 @@ def copy_files(path_pairs):
         copy_func(str(source), str(dest))
 
 
+def link_files(path_pairs):
+    """Create symlinks to files and directories at specified new locations
+
+    path_pairs should be a list of [Path(src), Path(dst)]
+    """
+    for source, dest in path_pairs:
+        try:
+            dest.parent.mkdir(parents=True)
+        except FileExistsError:
+            pass
+        dest.symlink_to(source.resolve(), source.is_dir())
+
+
 def chunk(iterable, chunk_length):
     """Yield the members of its iterable chunk_length at a time
 
