@@ -1958,6 +1958,7 @@ class TestCopyFiles(unittest.TestCase):
         """
         paths = [
             [Path('404.html'), self.output_dir.joinpath('404.html')],
+            [Path('404.html'), self.output_dir.joinpath('404.html')],
             [Path('images'), self.output_dir.joinpath('images')]
             ]
         majestic.copy_files(paths)
@@ -1973,6 +1974,7 @@ class TestCopyFiles(unittest.TestCase):
         link_files should create enclosing folders as necessary.
         """
         paths = [
+            [Path('404.html'), self.output_dir.joinpath('404.html')],
             [Path('404.html'), self.output_dir.joinpath('404.html')],
             [Path('images'), self.output_dir.joinpath('images')]
             ]
