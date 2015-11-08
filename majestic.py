@@ -249,6 +249,15 @@ def link_files(path_pairs):
                 dest.symlink_to(source, source.is_dir())
 
 
+def execute_copypaths(settings, use_symlinks=False):
+    """Load ./copypaths.json and copy/link according to its directives"""
+    with open('copypaths.json') as paths_file:
+        parsed_json = json.load(paths_file)
+    src_dst_pairs = parse_copy_paths(path_list=parsed_json, settings=settings)
+    copy_func = copy_files if not use_symlinks else link_files
+    copy_func(src_dst_pairs)
+
+
 def chunk(iterable, chunk_length):
     """Yield the members of its iterable chunk_length at a time
 
