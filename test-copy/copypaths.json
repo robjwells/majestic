@@ -1,0 +1,6 @@
+[
+    ["404.html", {"subdir": "static", "name": "error.html"}],
+
+    ["images", {"subdir": "resources", "name": "img"}]
+
+]
