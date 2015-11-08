@@ -1983,25 +1983,25 @@ class TestCopyFiles(unittest.TestCase):
             self.assertTrue(dest.is_symlink())
             self.assertEqual(source.stat().st_size, dest.stat().st_size)
 
-    def test_execute_copypaths(self):
-        """execute_copypaths loads copypaths.json file and copies files"""
+    def test_copy_resources(self):
+        """copy_resources loads resources.json file and copies files"""
         expected_walk = [
             ('output', ['resources', 'static'], []),
             ('output/resources', ['img'], []),
             ('output/resources/img', [], ['copytest1.jpg', 'copytest2.jpg']),
             ('output/static', [], ['error.html']),
         ]
-        majestic.execute_copypaths(settings=self.settings)
+        majestic.copy_resources(settings=self.settings)
         self.assertEqual(sorted(expected_walk), sorted(os.walk('output')))
 
-    def test_execute_copypaths_links(self):
-        """execute_copypaths correctly uses symlinks when use_symlinks=True"""
+    def test_copy_resources_links(self):
+        """copy_resources correctly uses symlinks when use_symlinks=True"""
         locations = [
             self.output_dir.joinpath('static', 'error.html'),
             self.output_dir.joinpath('resources', 'img'),
         ]
 
-        majestic.execute_copypaths(settings=self.settings, use_symlinks=True)
+        majestic.copy_resources(settings=self.settings, use_symlinks=True)
         for loc in locations:
             self.assertTrue(loc.is_symlink())
 

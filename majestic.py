@@ -135,7 +135,7 @@ def apply_extensions(*, modules, stage, settings,
 
 
 def parse_copy_paths(path_list, settings):
-    """Parse a list of paths to copy read from a json file
+    """Parse a list of resource copy instructions
 
     Returns (Path(source), Path(destination)) for each entry in path_list
 
@@ -249,14 +249,14 @@ def link_files(path_pairs):
                 dest.symlink_to(source, source.is_dir())
 
 
-def execute_copypaths(settings, use_symlinks=False):
-    """Load ./copypaths.json and copy/link according to its directives
+def copy_resources(settings, use_symlinks=False):
+    """Load ./resources.json and copy/link according to its directives
 
-    If copypaths.json doesn't exist, the function exits.
+    If resources.json doesn't exist, the function exits.
 
     If use_symlinks is True, files/directors will be linked, not copied.
     """
-    file = Path('copypaths.json')
+    file = Path('resources.json')
     if not file.exists():
         return
 
@@ -1092,8 +1092,8 @@ Options:
 
     --no-extensions         Disable extensions.
 
-    --no-copy               Ignore copypaths.json file.
-    --use-symlinks          Symlink copypaths resources instead of copying.
+    --no-resources          Ignore resources.json file.
+    --use-symlinks          Symlink resources instead of copying.
                             Preview always uses symlinks (unless --no-copy).
     '''
     args = docopt(doc=usage, argv=argv, version=__version__)
@@ -1116,7 +1116,7 @@ Options:
         settings['site']['url'] = '/'
         temp_dir = tempfile.TemporaryDirectory()
         settings['paths']['output root'] = temp_dir.name
-        # Symlink copypaths resources instead of copying
+        # Symlink resources instead of copying
         args['--use-symlinks'] = True
 
     # Invert --skip-* options in args
@@ -1132,8 +1132,7 @@ Options:
                  **process_options)
 
     if not args['--no-copy']:
-        execute_copypaths(settings=settings,
-                          use_symlinks=args['--use-symlinks'])
+        copy_resources(settings=settings, use_symlinks=args['--use-symlinks'])
 
     # Change to temp directory and start web server
     if args['preview']:
