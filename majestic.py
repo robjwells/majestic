@@ -250,8 +250,17 @@ def link_files(path_pairs):
 
 
 def execute_copypaths(settings, use_symlinks=False):
-    """Load ./copypaths.json and copy/link according to its directives"""
-    with open('copypaths.json') as paths_file:
+    """Load ./copypaths.json and copy/link according to its directives
+
+    If copypaths.json doesn't exist, the function exits.
+
+    If use_symlinks is True, files/directors will be linked, not copied.
+    """
+    file = Path('copypaths.json')
+    if not file.exists():
+        return
+
+    with file.open() as paths_file:
         parsed_json = json.load(paths_file)
     src_dst_pairs = parse_copy_paths(path_list=parsed_json, settings=settings)
     copy_func = copy_files if not use_symlinks else link_files
