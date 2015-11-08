@@ -1837,6 +1837,12 @@ class TestCopyFiles(unittest.TestCase):
         self.settings = majestic.load_settings()
         self.output_dir = Path(self.settings['paths']['output root'])
 
+    def tearDown(self):
+        try:
+            shutil.rmtree(str(self.output_dir))
+        except FileNotFoundError:
+            pass
+
     def test_parse_copy_paths_simple(self):
         """parse_copy_paths produces list of src/dst pairs for simple list
 
@@ -1928,6 +1934,22 @@ class TestCopyFiles(unittest.TestCase):
         result = majestic.parse_copy_paths(path_list=copy_paths,
                                            settings=self.settings)
         self.assertEqual(expected, result)
+
+    def test_copy_files_simple(self):
+        """copy_files copies sources to the specified output
+
+        Both files and directories should be copied.
+
+        copy_files should create enclosing folders as necessary.
+        """
+        paths = [
+            [Path('404.html'), self.output_dir.joinpath('404.html')],
+            [Path('images'), self.output_dir.joinpath('images')]
+            ]
+        majestic.copy_files(paths)
+        for source, dest in paths:
+            self.assertTrue(dest.exists())
+            self.assertEqual(source.stat().st_size, dest.stat().st_size)
 
 
 if __name__ == '__main__':

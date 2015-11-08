@@ -11,6 +11,7 @@ import math
 import os
 from pathlib import Path
 import re
+import shutil
 import string
 import sys
 import tempfile
@@ -193,6 +194,20 @@ def parse_copy_paths(path_list, settings):
             src_dst_pairs.append(pair)
 
     return src_dst_pairs
+
+
+def copy_files(path_pairs):
+    """Copy files and directories to specified new locations
+
+    path_pairs should be a list of [Path(src), Path(dst)]
+    """
+    for source, dest in path_pairs:
+        try:
+            dest.parent.mkdir(parents=True)
+        except FileExistsError:
+            pass
+        copy_func = shutil.copytree if source.is_dir() else shutil.copy2
+        copy_func(str(source), str(dest))
 
 
 def chunk(iterable, chunk_length):
