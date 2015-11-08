@@ -1935,6 +1935,20 @@ class TestCopyFiles(unittest.TestCase):
                                            settings=self.settings)
         self.assertEqual(expected, result)
 
+    def test_mkdir_exist_ok(self):
+        """mkdir_parents_ok ensures enclosing directory exists
+
+        mkdir_exist_ok should make the target directory
+        and suppress any FileExistsError if it already exists.
+        """
+        paths = [
+            self.output_dir.joinpath('404.html'),
+            self.output_dir.joinpath('images')
+            ]
+        for dest in paths:
+            majestic.mkdir_exist_ok(dest)
+            self.assertTrue(dest.parent.exists())
+
     def test_copy_files_simple(self):
         """copy_files copies sources to the specified output
 
@@ -1950,7 +1964,6 @@ class TestCopyFiles(unittest.TestCase):
         for source, dest in paths:
             self.assertTrue(dest.exists())
             self.assertEqual(source.stat().st_size, dest.stat().st_size)
-
 
     def test_link_files_simple(self):
         """link_files links to sources at the specified output locations

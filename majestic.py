@@ -196,16 +196,30 @@ def parse_copy_paths(path_list, settings):
     return src_dst_pairs
 
 
+def mkdir_exist_ok(target):
+    """Make the target directory and suppress any error if it exists
+
+    target should be a Path object.
+
+    If target directory does not exist, create the directory.
+    If it does exist, suppress the FileNotFoundError.
+
+    When majestic requires Python 3.5, this helper function can be
+    replaced with adding `exist_ok=True` to the path.mkdir call.
+    """
+    try:
+        target.mkdir(parents=True)
+    except FileExistsError:
+        pass
+
+
 def copy_files(path_pairs):
     """Copy files and directories to specified new locations
 
     path_pairs should be a list of [Path(src), Path(dst)]
     """
     for source, dest in path_pairs:
-        try:
-            dest.parent.mkdir(parents=True)
-        except FileExistsError:
-            pass
+        mkdir_exist_ok(dest.parent)
         copy_func = shutil.copytree if source.is_dir() else shutil.copy2
         copy_func(str(source), str(dest))
 
@@ -216,10 +230,7 @@ def link_files(path_pairs):
     path_pairs should be a list of [Path(src), Path(dst)]
     """
     for source, dest in path_pairs:
-        try:
-            dest.parent.mkdir(parents=True)
-        except FileExistsError:
-            pass
+        mkdir_exist_ok(dest.parent)
         dest.symlink_to(source.resolve(), source.is_dir())
 
 
