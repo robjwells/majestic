@@ -1131,7 +1131,7 @@ Options:
                  write_only_new=not args['--force-write'],
                  **process_options)
 
-    if not args['--no-copy']:
+    if not args['--no-resources']:
         copy_resources(settings=settings, use_symlinks=args['--use-symlinks'])
 
     # Change to temp directory and start web server
