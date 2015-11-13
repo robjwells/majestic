@@ -1093,7 +1093,7 @@ Options:
     --no-extensions         Disable extensions.
 
     --no-resources          Ignore resources.json file.
-    --use-symlinks          Symlink resources instead of copying.
+    --link-resources        Symlink resources instead of copying.
                             Preview always uses symlinks (unless --no-copy).
     '''
     args = docopt(doc=usage, argv=argv, version=__version__)
@@ -1117,7 +1117,7 @@ Options:
         temp_dir = tempfile.TemporaryDirectory()
         settings['paths']['output root'] = temp_dir.name
         # Symlink resources instead of copying
-        args['--use-symlinks'] = True
+        args['--link-resources'] = True
 
     # Invert --skip-* options in args
     # A bit unwieldy, but better than having skip_* params to process_blog
@@ -1132,7 +1132,8 @@ Options:
                  **process_options)
 
     if not args['--no-resources']:
-        copy_resources(settings=settings, use_symlinks=args['--use-symlinks'])
+        copy_resources(settings=settings,
+                       use_symlinks=args['--link-resources'])
 
     # Change to temp directory and start web server
     if args['preview']:
