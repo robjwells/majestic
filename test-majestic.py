@@ -1977,6 +1977,10 @@ class TestCopyFiles(unittest.TestCase):
         """When copying dirs, copy_files should remove existing dest dir
 
         This is to avoid shutil.copytree raising FileExistsError.
+
+        It's necessary to sleep for a second before touching the folder to
+        ensure the modification date is properly changed, and ensure that
+        copy_files doesn't skip the folder (making the test useless!).
         """
         src = Path('images')
         dst = self.output_dir.joinpath('images')
