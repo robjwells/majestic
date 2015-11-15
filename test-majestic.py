@@ -1972,7 +1972,7 @@ class TestCopyFiles(unittest.TestCase):
             self.assertTrue(dest.exists())
             self.assertEqual(source.stat().st_size, dest.stat().st_size)
 
-#     @unittest.skip('Slow - sleeps for two seconds')
+    @unittest.skip('Slow - sleeps for two seconds')
     def test_copy_files_dir_exists(self):
         """When copying dirs, copy_files should remove existing dest dir
 
