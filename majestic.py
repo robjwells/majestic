@@ -225,6 +225,8 @@ def copy_files(path_pairs):
         mkdir_exist_ok(dest.parent)
         copy_func = shutil.copytree if source.is_dir() else shutil.copy2
         if not dest.exists() or is_older(dest, source):
+            if dest.is_dir():   # False if it doesn't exist, so this is safe
+                shutil.rmtree(str(dest))    # dest must not exist for copytree
             copy_func(str(source), str(dest))
 
 
