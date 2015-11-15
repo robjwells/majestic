@@ -1972,6 +1972,22 @@ class TestCopyFiles(unittest.TestCase):
             self.assertTrue(dest.exists())
             self.assertEqual(source.stat().st_size, dest.stat().st_size)
 
+#     @unittest.skip('Slow - sleeps for two seconds')
+    def test_copy_files_dir_exists(self):
+        """When copying dirs, copy_files should remove existing dest dir
+
+        This is to avoid shutil.copytree raising FileExistsError.
+        """
+        src = Path('images')
+        dst = self.output_dir.joinpath('images')
+        paths = [[src, dst]]
+
+        dst.mkdir(parents=True)  # Ensure destination dir exists
+        time.sleep(1)            # Modification date resolution
+        src.touch()              # Ensure src is newer (so should be copied)
+
+        majestic.copy_files(paths)
+
     def test_link_files_simple(self):
         """link_files links to sources at the specified output locations
 
