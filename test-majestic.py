@@ -1990,7 +1990,10 @@ class TestCopyFiles(unittest.TestCase):
         time.sleep(1)            # Modification date resolution
         src.touch()              # Ensure src is newer (so should be copied)
 
-        majestic.copy_files(paths)
+        try:
+            majestic.copy_files(paths)
+        except FileExistsError:
+            self.fail('destination directory was not removed')
 
     def test_link_files_simple(self):
         """link_files links to sources at the specified output locations
