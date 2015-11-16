@@ -221,13 +221,44 @@ def copy_files(path_pairs):
     def is_older(path_1, path_2):
         return path_1.stat().st_mtime < path_2.stat().st_mtime
 
+    def copy_directory_tree(source, dest):
+        """Walk source directory, copying files into dest if new or newer
+
+        source and dest should both be pathlib.Path objects
+        """
+        if not dest.exists():
+            mkdir_exist_ok(dest)        # Ensure destination dir exists
+
+        # Store strings for source and destination roots for path 'rebasing'
+        # later on. Both paths are resolved so that the wrong part of the
+        # path isn't swapped in the str.replace operation.
+        # Not resolving could lead to problems with duplicate path segments.
+        source_root = str(source.resolve())
+        dest_root = str(dest.resolve())
+
+        for dirpath, dirnames, filenames in os.walk(source_root,
+                                                    followlinks=True):
+            # Swap source_root for dest_root.
+            # Manipulating strings as pathlib doesn't have an alternative
+            new_dest = Path(dirpath.replace(source_root, dest_root, 1))
+
+            for file in filenames:
+                src_file = source.joinpath(file)
+                dst_file = new_dest.joinpath(file)
+                if not dst_file.exists() or is_older(dst_file, src_file):
+                    shutil.copy(str(src_file), str(dst_file))
+
+            for dirname in dirnames:
+                # Make subdirectories ready for copying files
+                mkdir_exist_ok(new_dest.joinpath(dirname))
+
     for source, dest in path_pairs:
-        mkdir_exist_ok(dest.parent)
-        copy_func = shutil.copytree if source.is_dir() else shutil.copy2
-        if not dest.exists() or is_older(dest, source):
-            if dest.is_dir():   # False if it doesn't exist, so this is safe
-                shutil.rmtree(str(dest))    # dest must not exist for copytree
-            copy_func(str(source), str(dest))
+        if source.is_dir():
+            copy_directory_tree(source, dest)
+        else:
+            mkdir_exist_ok(dest.parent)
+            if not dest.exists() or is_older(dest, source):
+                shutil.copy2(str(source), str(dest))
 
 
 def link_files(path_pairs):
