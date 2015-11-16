@@ -1972,7 +1972,7 @@ class TestCopyFiles(unittest.TestCase):
             self.assertTrue(dest.exists())
             self.assertEqual(source.stat().st_size, dest.stat().st_size)
 
-#     @unittest.skip('Slow - sleeps for one second')
+    @unittest.skip('Slow - sleeps for one second')
     def test_copy_files_dir_updated(self):
         """copy_files copies modified files inside target directory
 
