@@ -611,10 +611,7 @@ class BlogObject(object):
         template = environment.get_template(
             self._settings['templates'][self._template_file_key])
         rendered_html = template.render(content=self, **kwargs)
-        try:
-            self.output_path.parent.mkdir(parents=True)
-        except FileExistsError:
-            pass
+        mkdir_exist_ok(self.output_path.parent)
         with self.output_path.open(mode='w') as file:
             file.write(rendered_html)
 
