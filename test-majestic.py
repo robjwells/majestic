@@ -1972,7 +1972,40 @@ class TestCopyFiles(unittest.TestCase):
             self.assertTrue(dest.exists())
             self.assertEqual(source.stat().st_size, dest.stat().st_size)
 
-    @unittest.skip('Slow - sleeps for two seconds')
+#     @unittest.skip('Slow - sleeps for one second')
+    def test_copy_files_dir_updated(self):
+        """copy_files copies modified files inside target directory
+
+        This tests whether copy_files checks the files inside the
+        target directory for modifications rather than just testing
+        the containing directory (which may not have its mtime
+        changed by a modification to a file it contains).
+        """
+        src = Path('images')
+        dst = self.output_dir.joinpath('images')
+        paths = [[src, dst]]
+
+        test_filename = 'copytest1.jpg'
+        src_file = src.joinpath(test_filename)
+        dst_file = dst.joinpath(test_filename)
+
+        self.output_dir.mkdir()
+        shutil.copytree(str(src), str(dst))     # Manually copy over directory
+
+        old_dst_mtime = dst_file.stat().st_mtime
+        self.assertEqual(src_file.stat().st_mtime, old_dst_mtime)
+
+        time.sleep(1)   # Ensure m_time will be different
+        src_file.touch()
+        # Check src now has a different mtime
+        self.assertNotEqual(src_file.stat().st_mtime, old_dst_mtime)
+
+        majestic.copy_files(paths)
+        new_dst_mtime = dst_file.stat().st_mtime
+        # Check that modified source has indeed been copied
+        self.assertNotEqual(old_dst_mtime, new_dst_mtime)
+
+    @unittest.skip('Slow - sleeps for one second')
     def test_copy_files_dir_exists(self):
         """When copying dirs, copy_files should remove existing dest dir
 
