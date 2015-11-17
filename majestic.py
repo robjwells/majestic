@@ -976,9 +976,10 @@ class Sitemap(BlogObject):
     Contains a list of tuples [(str, datetime)] that correspond to the
     url (loc) and modification date (lastmod) of each sitemap entry.
 
-    The modification date is the file's modification time in UTC, as a
-    naive datetime. This skips around issues of retrieving the system
-    timezone (not a trivial task and of no advantage).
+    The modification date is the file's modification time in UTC, as an
+    aware datetime. This skips around issues of retrieving the system
+    timezone (not a trivial task and of no advantage) yet allows the
+    inclusion of a timezone in the sitemap itself.
     """
     _path_template_key = 'sitemap path template'
     _template_file_key = 'sitemap'
