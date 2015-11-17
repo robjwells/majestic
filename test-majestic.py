@@ -220,6 +220,28 @@ class TestContent(unittest.TestCase):
                                    source_path=self.middle_file)
         self.assertEqual(content.modification_date, expected_mod_date)
 
+    def test_content_init_save_as(self):
+        """Content overrides .path_part if given save_as argument
+
+        save_as should be a string which is joined onto the output
+        root or site URL when accessing .output_path or .url
+
+        It's sufficient just to check that .path_part is set to the
+        save_as argument as the .output_path and .url properties are
+        tested separately.
+
+        If this is not implemented or broken, expect the test to cause
+        BlogObject to raise NotImplementedError. This is because the
+        ordinary .path_part getter fetches the class's _path_template_key,
+        which is not implemented (well, it is as a property that raises)
+        on BlogObject or its abstract subclasses.
+        """
+        custom_path = '404.html'
+        content = majestic.Content(title=self.title, body=self.body,
+                                   settings=self.settings,
+                                   save_as=custom_path)
+        self.assertEqual(content.path_part, custom_path)
+
     def test_content_is_new_no_output_file(self):
         """Content.is_new is True when no corresponding output file exists
 
