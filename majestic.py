@@ -507,7 +507,7 @@ class DraftError(Exception):
 
 
 class ModificationDateError(Exception):
-    """Raised by Content.is_new() if modification_date is None"""
+    """Raised by Content.is_new if modification_date is None"""
     pass
 
 
@@ -748,6 +748,7 @@ class Content(BlogObject):
         return class_(body=body, settings=settings, source_path=file,
                       **dict(meta))
 
+    @property
     def is_new(self):
         """Return True if source file is newer than output file
 
@@ -758,12 +759,20 @@ class Content(BlogObject):
         (This will only happen through programmatic Content creation when
         neither source_path or modification_date are provided at init.)
         """
-        if not self.output_path.exists():
-            return True
-        if self.modification_date is None:
-            raise ModificationDateError('modification_date is None')
-        output_date = datetime.fromtimestamp(self.output_path.stat().st_mtime)
-        return self.modification_date > output_date
+        if not hasattr(self, '_is_new'):
+            if not self.output_path.exists():
+                return True
+            if self.modification_date is None:
+                raise ModificationDateError('modification_date is None')
+            output_timestamp = self.output_path.stat().st_mtime
+            output_date = datetime.fromtimestamp(output_timestamp)
+            self._is_new = self.modification_date > output_date
+        return self._is_new
+
+    @is_new.setter
+    def is_new(self, value):
+        """Override _is_new by setting it directly"""
+        self._is_new = value
 
 
 class Page(Content):
@@ -1002,7 +1011,7 @@ def process_blog(*, settings, write_only_new=True,
     to False.
 
     By default, only Pages and Posts that are considered new (by
-    checking content.is_new()) are written out. This can be overridden
+    checking content.is_new) are written out. This can be overridden
     by passing False to write_only_new.
 
     Sitemap can be created by itself but will raise if the first index,
@@ -1058,7 +1067,7 @@ def process_blog(*, settings, write_only_new=True,
     if pages:
         content_objects.extend(pages_list)
     if write_only_new:
-        content_objects = [c for c in content_objects if c.is_new()]
+        content_objects = [c for c in content_objects if c.is_new]
     objects_to_write.extend(content_objects)
 
     if index:

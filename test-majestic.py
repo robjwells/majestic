@@ -253,7 +253,7 @@ class TestContent(unittest.TestCase):
                                    slug=self.slug, settings=self.settings)
         # Override output path to ensure file does not exist
         content.output_path = Path('/tmp/test-majestic-no-file-here')
-        self.assertTrue(content.is_new())
+        self.assertTrue(content.is_new)
 
     def test_content_is_new_true_with_output_file(self):
         """Content.is_new is True when an older output file exists"""
@@ -262,7 +262,7 @@ class TestContent(unittest.TestCase):
                                    source_path=self.newest_file)
         # Override output path
         content.output_path = self.oldest_file
-        self.assertTrue(content.is_new())
+        self.assertTrue(content.is_new)
 
     def test_content_is_new_false_with_output_file(self):
         """Content.is_new is False when a newer output file exists"""
@@ -271,7 +271,7 @@ class TestContent(unittest.TestCase):
                                    source_path=self.oldest_file)
         # Override output path
         content.output_path = self.newest_file
-        self.assertFalse(content.is_new())
+        self.assertFalse(content.is_new)
 
     def test_content_is_new_raises(self):
         """Content.is_new raises if mod date is None and output file exists"""
@@ -279,7 +279,14 @@ class TestContent(unittest.TestCase):
                                    slug=self.slug, settings=self.settings)
         content.output_path = self.newest_file
         with self.assertRaises(majestic.ModificationDateError):
-            content.is_new()
+            content.is_new
+
+    def test_content_is_new_setter(self):
+        """Content.is_new is a property that can be set"""
+        content = majestic.Content(title=self.title, body=self.body,
+                                   slug=self.slug, settings=self.settings)
+        content.is_new = True
+        self.assertTrue(content.is_new)
 
     def test_content_lt_title(self):
         """Content with different titles compare properly"""
@@ -1706,7 +1713,7 @@ class TestFull(unittest.TestCase):
         """process_blog writes only Content considered new
 
         Content subclasses (Pages and Posts) should have their
-        .is_new() method checked before writing them out.
+        .is_new property checked before writing them out.
 
         This test only tests single Page for simplicity.
         """
@@ -1725,7 +1732,7 @@ class TestFull(unittest.TestCase):
     def test_process_blog_force_write_all(self):
         """process_blog can be forced to write 'old' Content
 
-        By default, Content subclasses have their .is_new() method
+        By default, Content subclasses have their .is_new property
         checked before writing them out. But this can be overridden
         by passing False for write_only_new in the process_blog call.
 
