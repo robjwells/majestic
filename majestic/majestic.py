@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from configparser import ConfigParser
 from datetime import datetime
@@ -1199,7 +1199,3 @@ Options:
             print('Shutting down webserver.', file=sys.stderr)
             httpd.socket.close()
             temp_dir.cleanup()
-
-
-if __name__ == '__main__':
-    main(sys.argv[1:])
