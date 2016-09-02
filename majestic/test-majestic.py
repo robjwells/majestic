@@ -1721,7 +1721,6 @@ class TestFull(unittest.TestCase):
         new_page = self.outputdir.joinpath('objects_to_write.html')
         self.assertTrue(new_page.exists())
 
-    @unittest.skip('Slow - sleeps for two seconds')
     def test_process_blog_only_write_new(self):
         """process_blog writes only Content considered new
 
@@ -1741,7 +1740,6 @@ class TestFull(unittest.TestCase):
         second_mtime = output.stat().st_mtime
         self.assertEqual(first_mtime, second_mtime)
 
-    @unittest.skip('Slow - sleeps for two seconds')
     def test_process_blog_force_write_all(self):
         """process_blog can be forced to write 'old' Content
 
@@ -2014,7 +2012,6 @@ class TestCopyFiles(unittest.TestCase):
             self.assertTrue(dest.exists())
             self.assertEqual(source.stat().st_size, dest.stat().st_size)
 
-    @unittest.skip('Slow - sleeps for one second')
     def test_copy_files_dir_updated(self):
         """copy_files copies modified files inside target directory
 
@@ -2047,7 +2044,6 @@ class TestCopyFiles(unittest.TestCase):
         # Check that modified source has indeed been copied
         self.assertNotEqual(old_dst_mtime, new_dst_mtime)
 
-    @unittest.skip('Slow - sleeps for one second')
     def test_copy_files_dir_exists(self):
         """When copying dirs, copy_files should remove existing dest dir
 
