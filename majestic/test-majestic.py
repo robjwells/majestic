@@ -153,6 +153,19 @@ class TestContent(unittest.TestCase):
         self.middle_file = Path(TEST_BLOG_DIR, 'test_file_middle')
         self.newest_file = Path(TEST_BLOG_DIR, 'test_file_newest')
 
+    @classmethod
+    def setUpClass(self):
+        """Set up modification date test files
+
+        These files are touched to ensure the date difference between
+        them is correct. Sleep for 1 second because of HFS+ resolution.
+        """
+        Path(TEST_BLOG_DIR, 'test_file_oldest').touch()
+        time.sleep(1)
+        Path(TEST_BLOG_DIR, 'test_file_middle').touch()
+        time.sleep(1)
+        Path(TEST_BLOG_DIR, 'test_file_newest').touch()
+
     def test_content_init_basic(self):
         """Content init properly sets core attributes
 
