@@ -13,7 +13,7 @@
         <item>
             <title><![CDATA[{{ post.title }}]]></title>
             <link>{{ post.url }}</link>
-            <description><![CDATA[{{ post.html }}]]></description>
+            <description><![CDATA[{{ post.html|replace('src="/', 'src="' + settings['site']['url'] + '/')|replace("src='/", "src='" + settings['site']['url'] + '/') }}]]></description>
             <pubDate>{{ post.date|rfc822_date }}</pubDate>
             <guid>{{ post.url }}</guid>
         </item>
