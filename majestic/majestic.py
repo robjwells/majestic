@@ -15,9 +15,10 @@ import shutil
 import string
 import sys
 import tempfile
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 import webbrowser
 
+from bs4 import BeautifulSoup
 from docopt import docopt
 import jinja2
 import markdown
@@ -47,6 +48,22 @@ class ExtensionStage(Enum):
     """
     posts_and_pages = 'process_posts_and_pages'
     objects_to_write = 'process_objects_to_write'
+
+
+def absolute_urls(html, base_url):
+    """Change relative URLs in html to absolute URLs using base_url
+
+    Arguments:
+        html:           str containing HTML markup
+        base_url:       str containing a URL
+    """
+    parsed_html = BeautifulSoup(html, 'html.parser')
+    for attr in ['href', 'src']:
+        for tag in parsed_html.select('[{0}]'.format(attr)):
+            tag_url = tag[attr]
+            if not urlparse(tag_url).netloc:
+                tag[attr] = urljoin(base_url, tag_url)
+    return str(parsed_html)
 
 
 def apply_extensions(*, modules, stage, settings,
@@ -334,8 +351,9 @@ def jinja_environment(user_templates, settings, jinja_options=None):
         map(str, [user_templates, default_templates]))  # order is important
     env = jinja2.Environment(loader=loader, **opts)
 
-    env.globals['settings'] = settings          # add settings as a global
-    env.filters['rfc822_date'] = rfc822_date    # add custom filter
+    env.globals['settings'] = settings            # add settings as a global
+    env.filters['rfc822_date'] = rfc822_date      # add custom filter
+    env.filters['absolute_urls'] = absolute_urls  # add custom filter
 
     return env
 

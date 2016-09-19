@@ -892,6 +892,13 @@ class TestTemplating(unittest.TestCase):
             settings=self.settings)
         self.assertEqual(env.filters['rfc822_date'], majestic.rfc822_date)
 
+    def test_jinja_environment_absolute_urls_filter(self):
+        """jinja_environment adds absolute_urls as a custom filter"""
+        env = majestic.jinja_environment(
+            user_templates=self.settings['paths']['templates root'],
+            settings=self.settings)
+        self.assertEqual(env.filters['absolute_urls'], majestic.absolute_urls)
+
 
 class TestRFC822Date(unittest.TestCase):
     """Test the rfc822_date function"""
@@ -918,6 +925,59 @@ class TestRFC822Date(unittest.TestCase):
 
         locale.setlocale(locale.LC_ALL, starting_locale)       # Restore locale
 
+        self.assertEqual(expected, result)
+
+
+class TestAbsoluteURLs(unittest.TestCase):
+    """Test the absolute_urls function
+
+    asbolute_urls should take HTML and return it with relative URLs
+    changed to absolute URLs, using the given base URL.
+    """
+    def setUp(self):
+        self.base_url = 'http://example.com'
+
+    def test_absolute_urls_href(self):
+        """absolute_urls changes relative URLs in href attributes
+
+        example:
+            <a href="/my/great/page.html">
+        becomes:
+            <a href="http://example.com/my/great/page.html">
+        """
+        html = '''\
+<head>
+<link href="/resources/my-stylesheet.css">
+</link></head>
+<p><a href="/latin">Lorem ipsum</a>.</p>
+        '''.strip()
+        expected = '''\
+<head>
+<link href="http://example.com/resources/my-stylesheet.css">
+</link></head>
+<p><a href="http://example.com/latin">Lorem ipsum</a>.</p>
+        '''.strip()
+        result = majestic.absolute_urls(html=html, base_url=self.base_url)
+        self.assertEqual(expected, result)
+
+
+    def test_absolute_urls_src(self):
+        """absolute_urls changes relative URLs in src attributes
+
+        example:
+            <img src="/my/great/image.jpg">
+        becomes:
+            <img src="http://example.com/my/great/image.jpg">
+        """
+        html = '''\
+<p><img src="/my/great/image.jpg"/></p>
+<p><audio src="/my/great/song.mp3"></audio></p>
+        '''.strip()
+        expected = '''\
+<p><img src="http://example.com/my/great/image.jpg"/></p>
+<p><audio src="http://example.com/my/great/song.mp3"></audio></p>
+        '''.strip()
+        result = majestic.absolute_urls(html=html, base_url=self.base_url)
         self.assertEqual(expected, result)
 
 
