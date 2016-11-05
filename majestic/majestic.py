@@ -58,7 +58,7 @@ def absolute_urls(html, base_url):
         base_url:       str containing a URL
     """
     parsed_html = BeautifulSoup(html, 'html.parser')
-    for attr in ['href', 'src']:
+    for attr in ['href', 'src', 'poster']:
         for tag in parsed_html.select('[{0}]'.format(attr)):
             tag_url = tag[attr]
             if not urlparse(tag_url).netloc:
