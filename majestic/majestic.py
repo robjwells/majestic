@@ -1159,7 +1159,8 @@ Options:
 
     --no-resources          Ignore resources.json file.
     --link-resources        Symlink resources instead of copying.
-                            Preview always uses symlinks (unless --no-copy).
+                            Preview always uses symlinks (unless
+                            --no-resources is given).
     '''
     args = docopt(doc=usage, argv=argv, version=__version__)
 
