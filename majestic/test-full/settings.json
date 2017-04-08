@@ -15,5 +15,9 @@
         "page path template": "{content.slug}.html",
         "index pages path template": "page-{content.page_number}.html",
         "archives path template": "archives.html"
-    }
+    },
+
+    "resources": [
+        ["note.txt"]
+    ]
 }

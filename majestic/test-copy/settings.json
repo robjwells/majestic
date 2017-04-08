@@ -3,5 +3,10 @@
         "url": "http://example.com",
         "title": "Copy test",
         "description": "Copy test"
-    }
+    },
+
+    "resources": [
+        ["404.html", {"subdir": "static", "name": "error.html"}],
+        ["images", {"subdir": "resources", "name": "img"}]
+    ]
 }

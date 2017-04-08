@@ -150,14 +150,19 @@ def apply_extensions(*, modules, stage, settings,
     return return_dict
 
 
-def parse_copy_paths(path_list, settings):
+def parse_copy_paths(path_list, output_root):
     """Parse a list of resource copy instructions
 
     Returns (Path(source), Path(destination)) for each entry in path_list
 
     path_list is a list of lists containing a path (as a string)
     and optionally a dictionary which can contain the keys
-    'subdir' and 'name'. For example:
+    'subdir' and 'name'.
+
+    output_root is a pathlib.Path object to a directory which serves
+    as the root directory for any copied resources.
+
+    Given an example entry in path_list:
 
         [source, {'subdir': subdir, 'name': name}]
 
@@ -198,7 +203,6 @@ def parse_copy_paths(path_list, settings):
     # Add empty dict to path_list entries if they only contain the source path
     # Allows for simpler code below
     entries = (e if len(e) == 2 else e + [dict()] for e in path_list)
-    output_root = settings['paths']['output root']
     src_dst_pairs = []
 
     for source_pattern, options_dict in entries:
@@ -299,19 +303,16 @@ def link_files(path_pairs):
 
 
 def copy_resources(settings, use_symlinks=False):
-    """Load ./resources.json and copy/link according to its directives
+    """Place resource files in the output directory.
 
     If resources.json doesn't exist, the function exits.
 
     If use_symlinks is True, files/directors will be linked, not copied.
     """
-    file = Path('resources.json')
-    if not file.exists():
-        return
-
-    with file.open() as paths_file:
-        parsed_json = json.load(paths_file)
-    src_dst_pairs = parse_copy_paths(path_list=parsed_json, settings=settings)
+    src_dst_pairs = parse_copy_paths(
+        path_list=settings['resources'],
+        output_root=settings['paths']['output root']
+        )
     copy_func = copy_files if not use_symlinks else link_files
     copy_func(src_dst_pairs)
 

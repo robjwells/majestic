@@ -1983,7 +1983,7 @@ class TestCopyFiles(unittest.TestCase):
             (Path('images'), self.output_dir.joinpath('images'))
             ]
         result = majestic.parse_copy_paths(path_list=copy_paths,
-                                           settings=self.settings)
+                                           output_root=self.output_dir)
         self.assertEqual(expected, result)
 
     def test_parse_copy_paths_glob(self):
@@ -2003,7 +2003,7 @@ class TestCopyFiles(unittest.TestCase):
              self.output_dir.joinpath('copytest2.jpg'))
             ]
         result = majestic.parse_copy_paths(path_list=copy_paths,
-                                           settings=self.settings)
+                                           output_root=self.output_dir)
         self.assertEqual(expected, result)
 
     def test_parse_copy_paths_subdir(self):
@@ -2021,7 +2021,7 @@ class TestCopyFiles(unittest.TestCase):
             (Path('images'), self.output_dir.joinpath('static/images'))
             ]
         result = majestic.parse_copy_paths(path_list=copy_paths,
-                                           settings=self.settings)
+                                           output_root=self.output_dir)
         self.assertEqual(expected, result)
 
     def test_parse_copy_paths_name(self):
@@ -2039,7 +2039,7 @@ class TestCopyFiles(unittest.TestCase):
             (Path('images'), self.output_dir.joinpath('img'))
             ]
         result = majestic.parse_copy_paths(path_list=copy_paths,
-                                           settings=self.settings)
+                                           output_root=self.output_dir)
         self.assertEqual(expected, result)
 
     def test_parse_copy_paths_subdir_and_name(self):
@@ -2057,7 +2057,7 @@ class TestCopyFiles(unittest.TestCase):
             (Path('images'), self.output_dir.joinpath('static/img'))
             ]
         result = majestic.parse_copy_paths(path_list=copy_paths,
-                                           settings=self.settings)
+                                           output_root=self.output_dir)
         self.assertEqual(expected, result)
 
     def test_mkdir_exist_ok(self):

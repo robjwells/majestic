@@ -45,11 +45,11 @@
         "number of posts": 10
     },
 
-    "site": {
-
-    },
+    "site": {},
 
     "markdown": {
         "extensions": {}
-    }
+    },
+
+    "resources": []
 }
