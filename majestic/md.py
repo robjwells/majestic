@@ -6,4 +6,9 @@ def get_markdown(settings):
     The returned instance will be set up with any extensions specified
     in the settings dictionary.
     """
-    return markdown.Markdown()
+    md = markdown.Markdown(
+        extensions = settings['markdown']['extensions'].keys(),
+        extension_configs = settings['markdown']['extensions']
+        )
+
+    return md
