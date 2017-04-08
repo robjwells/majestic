@@ -1,6 +1,32 @@
+from majestic import load_extensions
+
 import markdown
+from markdown.extensions import Extension
+from pathlib import Path
 
 MD_INSTANCE = None
+
+
+def load_custom_markdown_extensions(extensions_dir):
+    """Return a list of custom markdown extension classes
+
+    extensions_dir:    pathlib.Path
+    """
+    if not extensions_dir.exists():
+        return []
+    exts = load_extensions(extensions_dir)
+    return [e for e in Extension.__subclasses__()]
+
+
+def get_custom_extensions(settings):
+    """Instantiate custom markdown extensions with configuration"""
+    classes = load_custom_markdown_extensions(
+        Path(settings['paths']['extensions root']))
+    instances = []
+    for ext in classes:
+        config = ext_settings.pop(ext.__name__, {})
+        instances.append(ext(**config))
+    return instances
 
 
 def get_markdown(settings, reload=False):
@@ -11,8 +37,10 @@ def get_markdown(settings, reload=False):
     """
     global MD_INSTANCE
     if MD_INSTANCE is None or reload:
+        extensions = [*get_custom_extensions(settings),
+                      *settings['markdown']['extensions'].keys()]
         MD_INSTANCE = markdown.Markdown(
-            extensions=settings['markdown']['extensions'].keys(),
+            extensions=extensions,
             extension_configs=settings['markdown']['extensions']
             )
     return MD_INSTANCE
