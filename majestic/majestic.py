@@ -725,19 +725,17 @@ class Content(BlogObject):
     def html(self):
         """Render self.body markdown text as HTML
 
-        Uses the extensions stored in the config file under [markdown] as
-        a whitespace-separated list under the 'extensions' property
-
-        'markdown.extensions.' is added to members of the extension list
-        that are missing it
+        Uses the extensions listed in the config file under
+        markdown -> extensions. The dictionary key names are used as
+        strings to import the extensions and the dictionary contents
+        as the extension configuration.
         """
         if not hasattr(self, '_html'):
-            prefix = 'markdown.extensions.'
-            extensions = [
-                ext if ext.startswith(prefix) else prefix + ext
-                for ext in self._settings['markdown']['extensions']
-                ]
-            md = markdown.Markdown(extensions=extensions)
+            extensions_dict = self._settings['markdown']['extensions']
+            md = markdown.Markdown(
+                extensions=extensions_dict.keys(),
+                extension_configs=extensions_dict
+                )
             self._html = md.convert(self.body)
         return self._html
 

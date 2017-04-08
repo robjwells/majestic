@@ -358,7 +358,20 @@ class TestMarkdown(unittest.TestCase):
                                    body=original)
         self.assertEqual(plain_html, content.html)
 
-        self.settings['markdown']['extensions'].update({'smarty': {}})
+        self.settings['markdown']['extensions'].update(
+            {'markdown.extensions.smarty': {}})
+        content = majestic.Content(title=self.title, settings=self.settings,
+                                   body=original)
+        self.assertEqual(with_smarty, content.html)
+
+    def test_render_html_extensions_config(self):
+        """Markdown extension config is used"""
+        original = '<<abc>>'
+        with_smarty = '<p>&laquo;abc&raquo;</p>'
+
+        self.settings['markdown']['extensions'].update({
+            'markdown.extensions.smarty': {'smart_angled_quotes': True}
+            })
         content = majestic.Content(title=self.title, settings=self.settings,
                                    body=original)
         self.assertEqual(with_smarty, content.html)
