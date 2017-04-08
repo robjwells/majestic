@@ -1,0 +1,19 @@
+{
+    "site": {
+        "url": "http://example.com",
+        "title": "Pelican Development Blog",
+        "description": "Pelican Development Blog"
+    },
+
+    "dates": {
+        "format": "%Y-%m-%d",
+        "timezone": "Europe/Paris"
+    },
+
+    "paths": {
+        "post path template": "{content.date:%Y/%m}/{content.slug}.html",
+        "page path template": "{content.slug}.html",
+        "index pages path template": "page-{content.page_number}.html",
+        "archives path template": "archives.html"
+    }
+}

@@ -41,11 +41,15 @@
         "posts per page": 5
     },
 
-    "markdown": {
-        "extensions": {}
-    },
-
     "rss": {
         "number of posts": 10
+    },
+
+    "site": {
+
+    },
+
+    "markdown": {
+        "extensions": {}
     }
 }

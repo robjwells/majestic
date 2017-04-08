@@ -1,0 +1,14 @@
+{
+    "testing": {
+        "test-blog cfg loaded": true,
+        "overridden setting": true
+    },
+
+    "site": {
+        "url": "http://www.example.com"
+    },
+
+    "dates": {
+        "timezone": "Europe/London"
+    }
+}

@@ -735,7 +735,7 @@ class Content(BlogObject):
             prefix = 'markdown.extensions.'
             extensions = [
                 ext if ext.startswith(prefix) else prefix + ext
-                for ext in self._settings['markdown']['extensions'].split()
+                for ext in self._settings['markdown']['extensions']
                 ]
             md = markdown.Markdown(extensions=extensions)
             self._html = md.convert(self.body)
@@ -950,7 +950,7 @@ class Index(PostsCollection):
 
         The returned list is ordered by index page number.
         """
-        posts_per_page = settings.getint('index', 'posts per page')
+        posts_per_page = settings['index']['posts per page']
         posts_newest_first = sorted(posts, reverse=True)
         chunked = chunk(posts_newest_first, chunk_length=posts_per_page)
 
@@ -983,7 +983,7 @@ class RSSFeed(PostsCollection):
         calling super().__init__ and doing unnecessary work.
         """
         self._settings = settings
-        post_limit = settings.getint('rss', 'number of posts')
+        post_limit = settings['rss']['number of posts']
         self.posts = sorted(posts, reverse=True)[:post_limit]
 
 

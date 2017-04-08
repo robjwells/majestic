@@ -67,8 +67,6 @@ class TestLoadSettings(unittest.TestCase):
         """Properly load defaults and settings.json in current directory"""
         os.chdir(str(TEST_BLOG_DIR))
         settings = majestic.load_settings(default=True, local=True)
-        from pprint import pprint
-        pprint(settings)
         self.assertTrue(settings['testing']['test-blog cfg loaded'])
         self.assertTrue(settings['testing']['default cfg loaded'])
 
@@ -144,7 +142,7 @@ class TestContent(unittest.TestCase):
             "island. Dr. Wu inserted a gene that makes a single faulty"
             "enzyme in protein metabolism."
             )
-        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        settings_path = TEST_BLOG_DIR.joinpath('settings.json')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
         # Dummy source / output files for modification date tests
@@ -344,7 +342,7 @@ class TestMarkdown(unittest.TestCase):
     """Test the markdown module wrappers"""
     def setUp(self):
         """Set dummy values for use in testing"""
-        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        settings_path = TEST_BLOG_DIR.joinpath('settings.json')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
         self.title = 'Test Title'
@@ -355,12 +353,12 @@ class TestMarkdown(unittest.TestCase):
         plain_html = "<p>here's some 'quoted' text</p>"
         with_smarty = '<p>here&rsquo;s some &lsquo;quoted&rsquo; text</p>'
 
-        self.settings['markdown']['extensions'] = ''
+        self.settings['markdown']['extensions'] = {}
         content = majestic.Content(title=self.title, settings=self.settings,
                                    body=original)
         self.assertEqual(plain_html, content.html)
 
-        self.settings['markdown']['extensions'] = 'smarty'
+        self.settings['markdown']['extensions'].update({'smarty': {}})
         content = majestic.Content(title=self.title, settings=self.settings,
                                    body=original)
         self.assertEqual(with_smarty, content.html)
@@ -385,7 +383,7 @@ class TestPage(unittest.TestCase):
             "island. Dr. Wu inserted a gene that makes a single faulty"
             "enzyme in protein metabolism."
             )
-        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        settings_path = TEST_BLOG_DIR.joinpath('settings.json')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
         # Avoid index.html trimming mismatch in url tests
@@ -478,7 +476,7 @@ class TestPost(unittest.TestCase):
             "island. Dr. Wu inserted a gene that makes a single faulty"
             "enzyme in protein metabolism."
             )
-        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        settings_path = TEST_BLOG_DIR.joinpath('settings.json')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
 
@@ -712,7 +710,7 @@ class TestSlugFunctions(unittest.TestCase):
 class TestFromFile(unittest.TestCase):
     """Test that .from_file on Content classes correctly parses files"""
     def setUp(self):
-        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        settings_path = TEST_BLOG_DIR.joinpath('settings.json')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
 
@@ -829,7 +827,7 @@ class TestTemplating(unittest.TestCase):
     """Test functions concerned with loading and rendering templates"""
     def setUp(self):
         os.chdir(str(TEST_BLOG_DIR))
-        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        settings_path = TEST_BLOG_DIR.joinpath('settings.json')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
         loader = jinja2.FileSystemLoader([
@@ -1006,10 +1004,10 @@ class TestIndex(unittest.TestCase):
     a list of Index objects.
     """
     def setUp(self):
-        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        settings_path = TEST_BLOG_DIR.joinpath('settings.json')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
-        self.settings['index']['posts per page'] = '2'
+        self.settings['index']['posts per page'] = 2
         path_template = 'page-{content.page_number}.html'
         self.settings['paths']['index pages path template'] = path_template
         self.settings['site']['url'] = 'http://example.com'
@@ -1265,7 +1263,7 @@ class TestBlogObject(unittest.TestCase):
         bo = majestic.BlogObject()
 
         settings = majestic.load_settings(
-            files=[TEST_BLOG_DIR.joinpath('settings.cfg')], local=False)
+            files=[TEST_BLOG_DIR.joinpath('settings.json')], local=False)
         bo._settings = settings     # Suppress exceptions about settings
 
         for prop in ['url', 'output_path']:
@@ -1402,11 +1400,11 @@ class TestBlogObject(unittest.TestCase):
 class TestRSSFeed(unittest.TestCase):
     """Test the RSSFeed class"""
     def setUp(self):
-        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        settings_path = TEST_BLOG_DIR.joinpath('settings.json')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
         self.number_of_posts = 5
-        self.settings['rss']['number of posts'] = str(self.number_of_posts)
+        self.settings['rss']['number of posts'] = self.number_of_posts
 
         starting_date = datetime(2015, 9, 22, 19)
         self.posts = [
@@ -1444,7 +1442,7 @@ class TestRSSFeed(unittest.TestCase):
 class TestArchives(unittest.TestCase):
     """Test the Archives class"""
     def setUp(self):
-        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        settings_path = TEST_BLOG_DIR.joinpath('settings.json')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
         starting_date = datetime(2015, 9, 22, 19)
@@ -1483,7 +1481,7 @@ class TestPostsCollection(unittest.TestCase):
     It should also implement __iter__ on behalf of its subclasses.
     """
     def setUp(self):
-        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        settings_path = TEST_BLOG_DIR.joinpath('settings.json')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
         starting_date = datetime(2015, 9, 22, 19)
@@ -1521,7 +1519,7 @@ class TestSitemap(unittest.TestCase):
     written out.
     """
     def setUp(self):
-        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        settings_path = TEST_BLOG_DIR.joinpath('settings.json')
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
         self.output_dir = Path(self.settings['paths']['output root'])
