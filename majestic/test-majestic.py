@@ -330,13 +330,6 @@ class TestContent(unittest.TestCase):
         self.assertTrue(post_1 < post_2)
         self.assertFalse(post_2 < post_1)
 
-    def test_render_html(self):
-        """Content.html returns the body converted to HTML"""
-        content = majestic.Content(title=self.title, settings=self.settings,
-                                   body='*abc*')
-        expected = '<p><em>abc</em></p>'
-        self.assertEqual(expected, content.html)
-
 
 class TestMarkdown(unittest.TestCase):
     """Test the markdown module wrappers"""
@@ -346,6 +339,13 @@ class TestMarkdown(unittest.TestCase):
         self.settings = majestic.load_settings(files=[settings_path],
                                                local=False)
         self.title = 'Test Title'
+
+    def test_render_html(self):
+        """Content.html returns the body converted to HTML"""
+        content = majestic.Content(title=self.title, settings=self.settings,
+                                   body='*abc*')
+        expected = '<p><em>abc</em></p>'
+        self.assertEqual(expected, content.html)
 
     def test_render_html_extensions(self):
         """Content.html is rendered with specified Markdown extensions"""
