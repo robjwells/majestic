@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from configparser import ConfigParser
 from datetime import datetime
 from enum import Enum
 from glob import iglob as glob
@@ -74,7 +73,7 @@ def apply_extensions(*, modules, stage, settings,
         modules:        A list of imported python modules.
         stage:          An ExtensionStage enum member.
                         This sets which processing function is called.
-        settings:       ConfigParser containing the site's settings.
+        settings:       dictionary containing the site's settings.
 
     At the ExtensionStage.posts_and_pages stage, the following arguments
     should be provided:
@@ -96,7 +95,7 @@ def apply_extensions(*, modules, stage, settings,
     module.process_posts_and_pages is called with the following arguments:
         pages:          List of Page objects.
         posts:          List of Post objects.
-        settings:       ConfigParser containing the site's settings.
+        settings:       dictionary containing the site's settings.
 
     And should return a dictionary optionally containing any of
     the following keys:
@@ -120,7 +119,7 @@ def apply_extensions(*, modules, stage, settings,
 
     module.process_objects_to_write is called with the following arguments:
         objects:        list of BlogObjects
-        settings:       ConfigParser containing the site's settings
+        settings:       dictionary containing the site's settings
 
     And should return a dictionary containing the following key:
         objects
@@ -335,7 +334,7 @@ def jinja_environment(user_templates, settings, jinja_options=None):
     """Create a Jinja2 Environment with a loader for templates_dir
 
     user_templates:    path to user templates directory
-    settings:          ConfigParser of the site's settings
+    settings:          dictionary of the site's settings
     options:           dictionary of custom options for the Jinja2 Environment
 
     The majestic default templates directory is also included in
@@ -651,7 +650,7 @@ class Content(BlogObject):
 
         title:                  str
         body:                   str
-        settings:               ConfigParser
+        settings:               dictionary
         slug:                   str (if not None)
         source_path:            pathlib.Path (if not None)
         save_as:                str (if not None)
@@ -745,7 +744,7 @@ class Content(BlogObject):
 
         class_:     the class from which the class method was called
         file:       a pathlib.Path
-        settings:   a ConfigParser object containing the site's settings
+        settings:   a dictionary containing the site's settings
 
         Raises DraftError if the file is explicitly marked as a draft,
         by way of 'draft' appearing by itself on a line in the metadata
