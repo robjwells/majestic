@@ -24,7 +24,7 @@ def get_custom_extensions(settings):
         Path(settings['paths']['extensions root']))
     instances = []
     for ext in classes:
-        config = ext_settings.pop(ext.__name__, {})
+        config = settings['markdown']['extensions'].pop(ext.__name__, {})
         instances.append(ext(**config))
     return instances
 
