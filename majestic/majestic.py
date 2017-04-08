@@ -703,12 +703,7 @@ class Content(BlogObject):
         as the extension configuration.
         """
         if not hasattr(self, '_html'):
-            extensions_dict = self._settings['markdown']['extensions']
-            md = markdown.Markdown(
-                extensions=extensions_dict.keys(),
-                extension_configs=extensions_dict
-                )
-            self._html = md.convert(self.body)
+            self._html = md.get_markdown(self._settings).convert(self.body)
         return self._html
 
     @classmethod

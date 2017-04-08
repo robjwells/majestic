@@ -330,52 +330,6 @@ class TestContent(unittest.TestCase):
         self.assertFalse(post_2 < post_1)
 
 
-class TestMarkdown(unittest.TestCase):
-    """Test the markdown module wrappers"""
-    def setUp(self):
-        """Set dummy values for use in testing"""
-        settings_path = TEST_BLOG_DIR.joinpath('settings.json')
-        self.settings = majestic.load_settings(files=[settings_path],
-                                               local=False)
-        self.title = 'Test Title'
-
-    def test_render_html(self):
-        """Content.html returns the body converted to HTML"""
-        content = majestic.Content(title=self.title, settings=self.settings,
-                                   body='*abc*')
-        expected = '<p><em>abc</em></p>'
-        self.assertEqual(expected, content.html)
-
-    def test_render_html_extensions(self):
-        """Content.html is rendered with specified Markdown extensions"""
-        original = "here's some 'quoted' text"
-        plain_html = "<p>here's some 'quoted' text</p>"
-        with_smarty = '<p>here&rsquo;s some &lsquo;quoted&rsquo; text</p>'
-
-        self.settings['markdown']['extensions'] = {}
-        content = majestic.Content(title=self.title, settings=self.settings,
-                                   body=original)
-        self.assertEqual(plain_html, content.html)
-
-        self.settings['markdown']['extensions'].update(
-            {'markdown.extensions.smarty': {}})
-        content = majestic.Content(title=self.title, settings=self.settings,
-                                   body=original)
-        self.assertEqual(with_smarty, content.html)
-
-    def test_render_html_extensions_config(self):
-        """Markdown extension config is used"""
-        original = '<<abc>>'
-        with_smarty = '<p>&laquo;abc&raquo;</p>'
-
-        self.settings['markdown']['extensions'].update({
-            'markdown.extensions.smarty': {'smart_angled_quotes': True}
-            })
-        content = majestic.Content(title=self.title, settings=self.settings,
-                                   body=original)
-        self.assertEqual(with_smarty, content.html)
-
-
 class TestPage(unittest.TestCase):
     """Test the Page content classes"""
     def setUp(self):
