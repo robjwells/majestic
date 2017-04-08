@@ -1147,7 +1147,7 @@ Options:
 
     --no-extensions         Disable extensions.
 
-    --no-resources          Ignore resources.json file.
+    --no-resources          Don't place resources in output directory.
     --link-resources        Symlink resources instead of copying.
                             Preview always uses symlinks (unless
                             --no-resources is given).
