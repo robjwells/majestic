@@ -27,9 +27,6 @@ from unidecode import unidecode
 __version__ = '0.2.0'
 
 MAJESTIC_DIR = Path(__file__).resolve().parent
-MAJESTIC_JINJA_OPTIONS = {
-    'auto_reload': False,
-    }
 
 
 class ExtensionStage(Enum):
@@ -331,25 +328,21 @@ def chunk(iterable, chunk_length):
         yield iterable[lower:upper]
 
 
-def jinja_environment(user_templates, settings, jinja_options=None):
+def jinja_environment(user_templates, settings):
     """Create a Jinja2 Environment with a loader for templates_dir
 
     user_templates:    path to user templates directory
     settings:          dictionary of the site's settings
-    options:           dictionary of custom options for the Jinja2 Environment
 
     The majestic default templates directory is also included in
     the returned Environment's template search path.
     """
-    if jinja_options is None:
-        jinja_options = {}
-    opts = MAJESTIC_JINJA_OPTIONS.copy()    # get default options
-    opts.update(jinja_options)              # update defaults with user options
+    options = settings['jinja']
 
     default_templates = MAJESTIC_DIR.joinpath('default_templates')
     loader = jinja2.FileSystemLoader(
         map(str, [user_templates, default_templates]))  # order is important
-    env = jinja2.Environment(loader=loader, **opts)
+    env = jinja2.Environment(loader=loader, **options)
 
     env.globals['settings'] = settings            # add settings as a global
     env.filters['rfc822_date'] = rfc822_date      # add custom filter
@@ -370,19 +363,6 @@ def load_extensions(directory):
     # Remove extensions directory from path
     sys.path = sys.path[1:]
     return imported_modules
-
-
-def load_jinja_options(settings):
-    """Return the custom settings in templates root/jinja.json as a dict
-
-    If the json file doesn't exist, returns an empty dictionary.
-    """
-    jinja_opts_file = Path(settings['paths']['templates root'], 'jinja.json')
-    custom_options = dict()
-    if jinja_opts_file.exists():
-        with jinja_opts_file.open() as file:
-            custom_options.update(json.load(file))
-    return custom_options
 
 
 def load_settings(default=True, local=True, files=None):
@@ -1055,7 +1035,8 @@ def process_blog(*, settings, write_only_new=True,
 
     env = jinja_environment(
         user_templates=settings['paths']['templates root'],
-        settings=settings, jinja_options=load_jinja_options(settings))
+        settings=settings
+        )
 
     post_filenames = markdown_files(posts_dir)
     page_filenames = markdown_files(pages_dir)

@@ -51,5 +51,9 @@
         "extensions": {}
     },
 
-    "resources": []
+    "resources": [],
+
+    "jinja": {
+        "auto_reload": false
+    }
 }

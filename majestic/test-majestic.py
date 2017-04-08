@@ -871,11 +871,10 @@ class TestTemplating(unittest.TestCase):
 
     def test_jinja_environment_custom_options(self):
         """jinja_environment properly applies custom jinja options"""
-        opts = {'trim_blocks': True}
+        self.settings['jinja']['trim_blocks'] = True
         env = majestic.jinja_environment(
             user_templates=self.settings['paths']['templates root'],
-            settings=self.settings,
-            jinja_options=opts)
+            settings=self.settings)
         self.assertTrue(env.trim_blocks)
 
     def test_jinja_environment_default_templates(self):
@@ -891,19 +890,6 @@ class TestTemplating(unittest.TestCase):
             settings=self.settings)
         self.assertIn(str(MAJESTIC_DIR.joinpath('default_templates')),
                       env.loader.searchpath)
-
-    def test_load_jinja_options(self):
-        """load_jinja_options parses the jinja.json file and returns a dict
-
-        It should create the path to jinja.json from the templates root
-        in the settings object.
-        """
-        templates_root = Path(self.settings['paths']['templates root'])
-        json_file = templates_root.joinpath('jinja.json')
-        with json_file.open() as f:
-            expected = json.load(f)
-        result = majestic.load_jinja_options(self.settings)
-        self.assertEqual(expected, result)
 
     def test_jinja_environment_rfc822_filter(self):
         """jinja_environment adds rfc822_date as a custom filter"""
@@ -1201,7 +1187,7 @@ class TestBlogObject(unittest.TestCase):
 
         self.env = majestic.jinja_environment(
             user_templates=self.templates_root,
-            settings=None)  # Not needed
+            settings=self.settings)
 
     def tearDown(self):
         """Clean up output-root folder"""
