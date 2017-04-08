@@ -58,6 +58,14 @@
                                      # The 'markdown.extensions.' prefix is optional.
     },
 
+    "resources": [                  # A list of lists
+                                    # [source_path]
+                                    # or
+                                    # [source path,
+                                    #   {"subdir": "images",
+                                    #    "name": "logo.png"}]
+    ],
+
     "user": {                        # optional, put anything you like in here
         "foo": "bar"
     }
