@@ -67,6 +67,8 @@ class TestLoadSettings(unittest.TestCase):
         """Properly load defaults and settings.json in current directory"""
         os.chdir(str(TEST_BLOG_DIR))
         settings = majestic.load_settings(default=True, local=True)
+        from pprint import pprint
+        pprint(settings)
         self.assertTrue(settings['testing']['test-blog cfg loaded'])
         self.assertTrue(settings['testing']['default cfg loaded'])
 
@@ -83,8 +85,7 @@ class TestLoadSettings(unittest.TestCase):
     def test_settings_empty_when_not_given_anything(self):
         """Returned config object should be empty when everything disabled"""
         settings = majestic.load_settings(default=False, local=False)
-        self.assertEqual(1, len(settings))
-        self.assertFalse(list(settings['DEFAULT']))
+        self.assertFalse(settings)
 
 
 class TestLoadContentFiles(unittest.TestCase):

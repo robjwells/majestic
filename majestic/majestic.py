@@ -395,11 +395,19 @@ def load_settings(default=True, local=True, files=None):
     if files is None:
         files = []
     if local:
-        files.insert(0, Path.cwd().joinpath('settings.cfg'))
+        files.insert(0, Path.cwd().joinpath('settings.json'))
     if default:
-        files.insert(0, MAJESTIC_DIR.joinpath('majestic.cfg'))
-    settings = ConfigParser(interpolation=None, inline_comment_prefixes='#')
-    settings.read(map(str, files))
+        files.insert(0, MAJESTIC_DIR.joinpath('majestic.json'))
+    settings = {}
+    for file in files:
+        with open(file) as json_file:
+            from_file = json.load(json_file)
+            # Merge settings
+            for key in from_file:
+                if key in settings:
+                    settings[key].update(from_file[key])
+                else:
+                    settings[key] = from_file[key]
     return settings
 
 
