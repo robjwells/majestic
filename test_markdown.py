@@ -8,6 +8,7 @@ class TestMarkdown(unittest.TestCase):
     """Test the majestic package's markdown module"""
     def setUp(self):
         self.settings = majestic.load_settings(local=False)
+        md._reset_cached_markdown()
 
     def test_get_markdown(self):
         """get_markdown returns a Markdown instance"""
@@ -18,7 +19,7 @@ class TestMarkdown(unittest.TestCase):
 
     def test_render_html(self):
         """Returned Markdown instance converts as expected"""
-        original='*abc*'
+        original = '*abc*'
         expected = '<p><em>abc</em></p>'
         self.assertEqual(
             md.get_markdown(self.settings).convert(original),
@@ -44,6 +45,7 @@ class TestMarkdown(unittest.TestCase):
             })
         rendered = md.get_markdown(self.settings).convert(original)
         self.assertEqual(expected, rendered)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
