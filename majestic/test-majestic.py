@@ -970,7 +970,6 @@ class TestAbsoluteURLs(unittest.TestCase):
         result = majestic.absolute_urls(html=html, base_url=self.base_url)
         self.assertEqual(expected, result)
 
-
     def test_absolute_urls_src(self):
         """absolute_urls changes relative URLs in src attributes
 
