@@ -25,7 +25,7 @@ import markdown
 import pytz
 from unidecode import unidecode
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 MAJESTIC_DIR = Path(__file__).resolve().parent
 MAJESTIC_JINJA_OPTIONS = {
