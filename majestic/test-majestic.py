@@ -340,6 +340,16 @@ class TestContent(unittest.TestCase):
         expected = '<p><em>abc</em></p>'
         self.assertEqual(expected, content.html)
 
+
+class TestMarkdown(unittest.TestCase):
+    """Test the markdown module wrappers"""
+    def setUp(self):
+        """Set dummy values for use in testing"""
+        settings_path = TEST_BLOG_DIR.joinpath('settings.cfg')
+        self.settings = majestic.load_settings(files=[settings_path],
+                                               local=False)
+        self.title = 'Test Title'
+
     def test_render_html_extensions(self):
         """Content.html is rendered with specified Markdown extensions"""
         original = "here's some 'quoted' text"
