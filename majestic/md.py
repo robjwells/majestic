@@ -1,4 +1,4 @@
-from .utils import load_extensions
+from majestic.utils import load_extensions
 
 import markdown
 from markdown.extensions import Extension
