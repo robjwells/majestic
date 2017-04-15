@@ -1,6 +1,7 @@
 import importlib
 import sys
 
+
 def load_extensions(directory):
     """Import all modules in directory and return a list of them"""
     # Add extensions directory to path

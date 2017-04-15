@@ -14,6 +14,9 @@ def load_custom_markdown_extensions(extensions_dir):
     """
     if not extensions_dir.exists():
         return []
+    # Assign list of imported modules so we don’t lose them
+    # before the search of markdown.Extension subclasses
+    # (out of an abundance of caution).
     exts = load_extensions(extensions_dir)
     return [e for e in Extension.__subclasses__()]
 

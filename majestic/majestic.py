@@ -4,7 +4,6 @@ from datetime import datetime
 from enum import Enum
 from glob import iglob as glob
 from http.server import HTTPServer, SimpleHTTPRequestHandler
-import importlib
 import json
 import math
 import os
@@ -20,7 +19,6 @@ import webbrowser
 from bs4 import BeautifulSoup
 from docopt import docopt
 import jinja2
-import markdown
 import pytz
 from unidecode import unidecode
 
