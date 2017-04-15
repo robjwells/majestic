@@ -5,7 +5,6 @@ from enum import Enum
 from glob import iglob as glob
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import json
-import math
 import os
 from pathlib import Path
 import re
@@ -303,10 +302,8 @@ def chunk(iterable, chunk_length):
     meet the chunk length (unlike the grouper recipe in the
     itertools documentation).
     """
-    for idx in range(math.ceil(len(iterable) / chunk_length)):
-        lower = idx * chunk_length
-        upper = lower + chunk_length
-        yield iterable[lower:upper]
+    for idx in range(0, len(iterable), chunk_length):
+        yield iterable[idx:idx + chunk_length]
 
 
 def jinja_environment(user_templates, settings):
