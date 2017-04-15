@@ -893,7 +893,9 @@ class TestCopyFiles(unittest.TestCase):
             ('output/resources/img', [], ['copytest1.jpg', 'copytest2.jpg']),
             ('output/static', [], ['error.html']),
         ]
-        majestic.copy_resources(settings=self.settings)
+        majestic.copy_resources(
+            resources=self.settings['resources'],
+            output_root=self.settings['paths']['output root'])
         self.assertEqual(sorted(expected_walk), sorted(os.walk('output')))
 
     def test_copy_resources_links(self):
@@ -903,7 +905,10 @@ class TestCopyFiles(unittest.TestCase):
             self.output_dir.joinpath('resources', 'img'),
         ]
 
-        majestic.copy_resources(settings=self.settings, use_symlinks=True)
+        majestic.copy_resources(
+            resources=self.settings['resources'],
+            output_root=self.settings['paths']['output root'],
+            use_symlinks=True)
         for loc in locations:
             self.assertTrue(loc.is_symlink())
 

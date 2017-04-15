@@ -284,15 +284,13 @@ def link_files(path_pairs):
                 dest.symlink_to(source, source.is_dir())
 
 
-def copy_resources(settings, use_symlinks=False):
+def copy_resources(resources, output_root, use_symlinks=False):
     """Place resource files in the output directory.
 
     If use_symlinks is True, files/directors will be linked, not copied.
     """
-    src_dst_pairs = parse_copy_paths(
-        path_list=settings['resources'],
-        output_root=settings['paths']['output root']
-        )
+    src_dst_pairs = parse_copy_paths(path_list=resources,
+                                     output_root=output_root)
     copy_func = copy_files if not use_symlinks else link_files
     copy_func(src_dst_pairs)
 
