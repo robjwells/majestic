@@ -10,15 +10,13 @@ from pathlib import Path
 import shutil
 import sys
 import tempfile
-from urllib.parse import urljoin, urlparse
 import webbrowser
 
-from bs4 import BeautifulSoup
 from docopt import docopt
 import jinja2
 import pytz
 
-from majestic.utils import load_extensions
+from majestic.utils import load_extensions, absolute_urls
 from majestic.content import Page, Post, DraftError
 from majestic.collections import Archives, Index, RSSFeed, Sitemap
 
@@ -42,22 +40,6 @@ class ExtensionStage(Enum):
     """
     posts_and_pages = 'process_posts_and_pages'
     objects_to_write = 'process_objects_to_write'
-
-
-def absolute_urls(html, base_url):
-    """Change relative URLs in html to absolute URLs using base_url
-
-    Arguments:
-        html:           str containing HTML markup
-        base_url:       str containing a URL
-    """
-    parsed_html = BeautifulSoup(html, 'html.parser')
-    for attr in ['href', 'src', 'poster']:
-        for tag in parsed_html.select('[{0}]'.format(attr)):
-            tag_url = tag[attr]
-            if not urlparse(tag_url).netloc:
-                tag[attr] = urljoin(base_url, tag_url)
-    return str(parsed_html)
 
 
 def apply_extensions(*, modules, stage, settings,
