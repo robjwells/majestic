@@ -886,7 +886,7 @@ class TestCopyFiles(unittest.TestCase):
             self.assertEqual(source.stat().st_size, dest.stat().st_size)
 
     def test_copy_resources(self):
-        """copy_resources loads resources.json file and copies files"""
+        """copy_resources copies specified files"""
         expected_walk = [
             ('output', ['resources', 'static'], []),
             ('output/resources', ['img'], []),

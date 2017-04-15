@@ -287,8 +287,6 @@ def link_files(path_pairs):
 def copy_resources(settings, use_symlinks=False):
     """Place resource files in the output directory.
 
-    If resources.json doesn't exist, the function exits.
-
     If use_symlinks is True, files/directors will be linked, not copied.
     """
     src_dst_pairs = parse_copy_paths(
