@@ -14,8 +14,9 @@ import pytz
 
 import majestic
 
-MAJESTIC_DIR = Path(__file__).resolve().parent
-TEST_BLOG_DIR = MAJESTIC_DIR.joinpath('test-blog')
+TESTS_DIR = Path(__file__).resolve().parent
+MAJESTIC_DIR = TESTS_DIR.parent.joinpath('majestic')
+TEST_BLOG_DIR = TESTS_DIR.joinpath('test-blog')
 
 # Timing report code
 # import time
@@ -35,7 +36,7 @@ TEST_BLOG_DIR = MAJESTIC_DIR.joinpath('test-blog')
 class TestLoadSettings(unittest.TestCase):
     """Default and site-specific settings tests"""
     def setUp(self):
-        os.chdir(str(MAJESTIC_DIR))
+        os.chdir(str(TESTS_DIR))
 
     def test_load_default_settings(self):
         """Config class contains setting set only in default config file"""
@@ -1132,10 +1133,10 @@ class TestBlogObject(unittest.TestCase):
     def setUp(self):
         self.settings = majestic.load_settings(local=False)
 
-        self.test_output_dir = MAJESTIC_DIR.joinpath('output-root')
+        self.test_output_dir = TESTS_DIR.joinpath('output-root')
         self.settings['paths']['output root'] = str(self.test_output_dir)
 
-        self.templates_root = MAJESTIC_DIR.joinpath('test-templates')
+        self.templates_root = TESTS_DIR.joinpath('test-templates')
         self.settings['paths']['templates root'] = str(self.templates_root)
 
         self.env = majestic.jinja_environment(
@@ -1536,7 +1537,7 @@ class TestFull(unittest.TestCase):
     locations in the output directory.
     """
     def setUp(self):
-        self.blogdir = MAJESTIC_DIR.joinpath('test-full')
+        self.blogdir = TESTS_DIR.joinpath('test-full')
         self.outputdir = self.blogdir.joinpath('output')
         os.chdir(str(self.blogdir))
         self.settings = majestic.load_settings()
@@ -1897,7 +1898,7 @@ class TestExtensions(unittest.TestCase):
 class TestCopyFiles(unittest.TestCase):
     """Test the file copying/symlinking features"""
     def setUp(self):
-        os.chdir(str(MAJESTIC_DIR.joinpath('test-copy')))
+        os.chdir(str(TESTS_DIR.joinpath('test-copy')))
         self.settings = majestic.load_settings()
         self.output_dir = Path(self.settings['paths']['output root'])
 
