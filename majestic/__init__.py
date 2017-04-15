@@ -80,7 +80,7 @@ def apply_extensions(*, modules, stage, settings,
 
     At the ExtensionStage.posts_and_pages stage, the following argument
     should be provided:
-        objects:        List of BlobObject subclass instances.
+        objects:        List of BlogObject subclass instances.
                         This is the list of objects that will be
                         rendered and written to disk.
 
@@ -287,7 +287,7 @@ def link_files(path_pairs):
 def copy_resources(resources, output_root, use_symlinks=False):
     """Place resource files in the output directory.
 
-    If use_symlinks is True, files/directors will be linked, not copied.
+    If use_symlinks is True, files/directories will be linked, not copied.
     """
     src_dst_pairs = parse_copy_paths(path_list=resources,
                                      output_root=output_root)
