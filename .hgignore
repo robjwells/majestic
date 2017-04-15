@@ -1,2 +1,4 @@
 .python-version
 majestic.egg-info
+build/
+dist/
