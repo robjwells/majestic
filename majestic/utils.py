@@ -87,3 +87,15 @@ def normalise_slug(slug):
         raise ValueError('Slug is the empty string')
 
     return new_slug
+
+
+def chunk(iterable, chunk_length):
+    """Yield the members of its iterable chunk_length at a time
+
+    If the length of the iterable is not a multiple of the chunk length,
+    the final chunk contains the remaining data but does not fill to
+    meet the chunk length (unlike the grouper recipe in the
+    itertools documentation).
+    """
+    for idx in range(0, len(iterable), chunk_length):
+        yield iterable[idx:idx + chunk_length]

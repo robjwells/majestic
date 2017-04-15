@@ -1,5 +1,9 @@
 import unittest
-import majestic
+from majestic import load_settings
+from majestic.content import Post, Page
+from majestic.collections import (
+    PostsCollection, Archives, Index, RSSFeed, Sitemap
+    )
 
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -31,8 +35,8 @@ class TestIndex(unittest.TestCase):
     """
     def setUp(self):
         settings_path = TEST_BLOG_DIR.joinpath('settings.json')
-        self.settings = majestic.load_settings(files=[settings_path],
-                                               local=False)
+        self.settings = load_settings(files=[settings_path],
+                                      local=False)
         self.settings['index']['posts per page'] = 2
         path_template = 'page-{content.page_number}.html'
         self.settings['paths']['index pages path template'] = path_template
@@ -42,21 +46,21 @@ class TestIndex(unittest.TestCase):
         titles = ['A', 'B', 'C', 'D', 'E']
         bodies = ['A', 'B', 'C', 'D', 'E']
         self.posts = [
-            majestic.Post(title=t, body=b, date=d, settings=self.settings)
+            Post(title=t, body=b, date=d, settings=self.settings)
             for t, b, d in zip(titles, bodies, dates)
             ]
 
     def test_Index_paginate_posts_per_index(self):
         """paginate_posts gives each Index the right number of posts"""
-        result = majestic.Index.paginate_posts(posts=self.posts,
-                                               settings=self.settings)
+        result = Index.paginate_posts(posts=self.posts,
+                                      settings=self.settings)
         for expected_count, index in zip([2, 2, 1], result):
             self.assertEqual(expected_count, len(index.posts))
 
     def test_Index_paginate_order(self):
         """paginate_posts returns Index objects ordered first to last"""
-        result = majestic.Index.paginate_posts(posts=self.posts,
-                                               settings=self.settings)
+        result = Index.paginate_posts(posts=self.posts,
+                                      settings=self.settings)
         for expected_number, index in enumerate(result, start=1):
             self.assertEqual(expected_number, index.page_number)
 
@@ -64,8 +68,8 @@ class TestIndex(unittest.TestCase):
         """Each Index returned by paginate_posts has the correct attributes"""
         attr_list = ['page_number', 'newer_index_url', 'older_index_url',
                      'output_path', 'url', 'posts']
-        result = majestic.Index.paginate_posts(posts=self.posts,
-                                               settings=self.settings)
+        result = Index.paginate_posts(posts=self.posts,
+                                      settings=self.settings)
         for index in result:
             for attribute in attr_list:
                 self.assertTrue(hasattr(index, attribute))
@@ -74,7 +78,7 @@ class TestIndex(unittest.TestCase):
         """Index properly sets output path"""
         self.settings['paths']['output root'] = ''
         indexes = [
-            majestic.Index(page_number=n, settings=self.settings, posts=[])
+            Index(page_number=n, settings=self.settings, posts=[])
             for n in range(1, 3)
             ]
         self.assertEqual(Path('index.html'), indexes[0].output_path)
@@ -85,7 +89,7 @@ class TestIndex(unittest.TestCase):
         base_url = 'http://example.com'
         self.settings['site']['url'] = base_url
         indexes = [
-            majestic.Index(page_number=n, settings=self.settings, posts=[])
+            Index(page_number=n, settings=self.settings, posts=[])
             for n in range(1, 3)
             ]
         self.assertEqual(base_url, indexes[0].url)
@@ -93,26 +97,24 @@ class TestIndex(unittest.TestCase):
 
     def test_Index_compare(self):
         """Index objects compare by page number"""
-        index_a = majestic.Index(page_number=1, settings=self.settings,
-                                 posts=[])
-        index_b = majestic.Index(page_number=2, settings=self.settings,
-                                 posts=[])
+        index_a = Index(page_number=1, settings=self.settings, posts=[])
+        index_b = Index(page_number=2, settings=self.settings, posts=[])
         self.assertLess(index_a, index_b)
 
     def test_Index_posts_sorted(self):
         """Index sorts posts by newest before storing them"""
-        index = majestic.Index(page_number=1, settings=self.settings,
-                               posts=self.posts)
+        index = Index(page_number=1, settings=self.settings,
+                      posts=self.posts)
         self.assertEqual(sorted(self.posts, reverse=True), index.posts)
 
     def test_Index_eq(self):
         """Two distinct Index objects with same attrs compare equal"""
-        index_a = majestic.Index(page_number=1, settings=self.settings,
-                                 posts=self.posts)
-        index_b = majestic.Index(page_number=1, settings=self.settings,
-                                 posts=self.posts)
-        index_c = majestic.Index(page_number=2, settings=self.settings,
-                                 posts=self.posts)
+        index_a = Index(page_number=1, settings=self.settings,
+                        posts=self.posts)
+        index_b = Index(page_number=1, settings=self.settings,
+                        posts=self.posts)
+        index_c = Index(page_number=2, settings=self.settings,
+                        posts=self.posts)
         self.assertEqual(index_a, index_b)
         self.assertNotEqual(index_a, index_c)
 
@@ -123,19 +125,19 @@ class TestIndex(unittest.TestCase):
         its posts list attribute.
         """
         expected = sorted(self.posts, reverse=True)
-        index = majestic.Index(page_number=1, settings=self.settings,
-                               posts=self.posts)
+        index = Index(page_number=1, settings=self.settings,
+                      posts=self.posts)
         self.assertEqual(expected, [p for p in index])
 
     def test_Index_paginate_posts_result(self):
         """Result of paginate_posts on known date gives expected result"""
         expected = [
-            majestic.Index(page_number=1, settings=self.settings,
-                           posts=self.posts[-2:]),
-            majestic.Index(page_number=2, settings=self.settings,
-                           posts=self.posts[-4:-2]),
-            majestic.Index(page_number=3, settings=self.settings,
-                           posts=self.posts[:-4])
+            Index(page_number=1, settings=self.settings,
+                  posts=self.posts[-2:]),
+            Index(page_number=2, settings=self.settings,
+                  posts=self.posts[-4:-2]),
+            Index(page_number=3, settings=self.settings,
+                  posts=self.posts[:-4])
             ]
 
         expected[0].older_index_url = expected[1].url
@@ -143,7 +145,7 @@ class TestIndex(unittest.TestCase):
         expected[2].newer_index_url = expected[1].url
         expected[1].newer_index_url = expected[0].url
 
-        result = majestic.Index.paginate_posts(
+        result = Index.paginate_posts(
             posts=self.posts, settings=self.settings)
         self.assertEqual(expected, result)
 
@@ -152,13 +154,13 @@ class TestArchives(unittest.TestCase):
     """Test the Archives class"""
     def setUp(self):
         settings_path = TEST_BLOG_DIR.joinpath('settings.json')
-        self.settings = majestic.load_settings(files=[settings_path],
-                                               local=False)
+        self.settings = load_settings(files=[settings_path],
+                                      local=False)
         starting_date = datetime(2015, 9, 22, 19)
         self.posts = [
-            majestic.Post(title='post {}'.format(i), body='Here’s some text!',
-                          date=starting_date - timedelta(i),
-                          settings=self.settings)
+            Post(title='post {}'.format(i), body='Here’s some text!',
+                 date=starting_date - timedelta(i),
+                 settings=self.settings)
             for i in range(40)
             ]
         random.shuffle(self.posts)      # Ensure not sorted
@@ -168,13 +170,13 @@ class TestArchives(unittest.TestCase):
 
         Archives.posts should be sorted by date, newest first.
         """
-        arch = majestic.Archives(posts=self.posts, settings=self.settings)
+        arch = Archives(posts=self.posts, settings=self.settings)
         sorted_posts = sorted(self.posts, reverse=True)
         self.assertEqual(arch.posts, sorted_posts)
 
     def test_Archives_sets_key_variables(self):
         """Archives should set key variables required by BlogObject"""
-        arch = majestic.Archives(posts=self.posts, settings=self.settings)
+        arch = Archives(posts=self.posts, settings=self.settings)
         self.assertEqual(arch._path_template_key, 'archives path template')
         self.assertEqual(arch._template_file_key, 'archives')
 
@@ -191,27 +193,27 @@ class TestPostsCollection(unittest.TestCase):
     """
     def setUp(self):
         settings_path = TEST_BLOG_DIR.joinpath('settings.json')
-        self.settings = majestic.load_settings(files=[settings_path],
-                                               local=False)
+        self.settings = load_settings(files=[settings_path],
+                                      local=False)
         starting_date = datetime(2015, 9, 22, 19)
         self.posts = [
-            majestic.Post(title='post {}'.format(i), body='Here’s some text!',
-                          date=starting_date - timedelta(i),
-                          settings=self.settings)
+            Post(title='post {}'.format(i), body='Here’s some text!',
+                 date=starting_date - timedelta(i),
+                 settings=self.settings)
             for i in range(40)
             ]
         random.shuffle(self.posts)      # Ensure not sorted
 
     def test_PostsCollection_store_posts(self):
         """PostsCollection stores a list of posts newest-first"""
-        coll = majestic.PostsCollection(posts=self.posts,
-                                        settings=self.settings)
+        coll = PostsCollection(posts=self.posts,
+                               settings=self.settings)
         self.assertEqual(sorted(self.posts, reverse=True), coll.posts)
 
     def test_PostsCollection_iterator(self):
         """PostsCollection can be iterated over"""
-        coll = majestic.PostsCollection(posts=self.posts,
-                                        settings=self.settings)
+        coll = PostsCollection(posts=self.posts,
+                               settings=self.settings)
         sorted_posts = sorted(self.posts, reverse=True)
         for idx, post in enumerate(coll):
             self.assertEqual(post, sorted_posts[idx])
@@ -229,15 +231,15 @@ class TestSitemap(unittest.TestCase):
     """
     def setUp(self):
         settings_path = TEST_BLOG_DIR.joinpath('settings.json')
-        self.settings = majestic.load_settings(files=[settings_path],
-                                               local=False)
+        self.settings = load_settings(files=[settings_path],
+                                      local=False)
         self.output_dir = Path(self.settings['paths']['output root'])
         self.files = [
-            majestic.Post(title='', slug='post', date=datetime(2015, 1, 1),
-                          body='', settings=self.settings),
-            majestic.Page(title='', slug='page', body='',
-                          settings=self.settings),
-            majestic.Index(posts=[], settings=self.settings, page_number=1),
+            Post(title='', slug='post', date=datetime(2015, 1, 1),
+                 body='', settings=self.settings),
+            Page(title='', slug='page', body='',
+                 settings=self.settings),
+            Index(posts=[], settings=self.settings, page_number=1),
         ]
         # Make dummy files and directories
         for f in self.files:
@@ -253,7 +255,7 @@ class TestSitemap(unittest.TestCase):
 
     def test_Sitemap_sets_key_variables(self):
         """Sitemap should set key variables required by BlogObject"""
-        sitemap = majestic.Sitemap(content=[], settings=self.settings)
+        sitemap = Sitemap(content=[], settings=self.settings)
         self.assertEqual(sitemap._path_template_key, 'sitemap path template')
         self.assertEqual(sitemap._template_file_key, 'sitemap')
 
@@ -275,12 +277,12 @@ class TestSitemap(unittest.TestCase):
             mod_date = datetime.fromtimestamp(mtime, tz=pytz.utc)
             expected.append((loc, mod_date))
 
-        sitemap = majestic.Sitemap(content=self.files, settings=self.settings)
+        sitemap = Sitemap(content=self.files, settings=self.settings)
         self.assertEqual(expected, sitemap.url_date_pairs)
 
     def test_Sitemap_iter(self):
         """Iterating over Sitemap produces tuples of (str, datetime)"""
-        sitemap = majestic.Sitemap(content=self.files, settings=self.settings)
+        sitemap = Sitemap(content=self.files, settings=self.settings)
         expected_types = [str, datetime]
         for item in sitemap:
             self.assertEqual(expected_types, [type(x) for x in item])
@@ -290,16 +292,16 @@ class TestRSSFeed(unittest.TestCase):
     """Test the RSSFeed class"""
     def setUp(self):
         settings_path = TEST_BLOG_DIR.joinpath('settings.json')
-        self.settings = majestic.load_settings(files=[settings_path],
-                                               local=False)
+        self.settings = load_settings(files=[settings_path],
+                                      local=False)
         self.number_of_posts = 5
         self.settings['rss']['number of posts'] = self.number_of_posts
 
         starting_date = datetime(2015, 9, 22, 19)
         self.posts = [
-            majestic.Post(title='post {}'.format(i), body='Here’s some text!',
-                          date=starting_date - timedelta(i),
-                          settings=self.settings)
+            Post(title='post {}'.format(i), body='Here’s some text!',
+                 date=starting_date - timedelta(i),
+                 settings=self.settings)
             for i in range(40)
             ]
         random.shuffle(self.posts)      # Ensure not sorted
@@ -309,7 +311,7 @@ class TestRSSFeed(unittest.TestCase):
 
         The number of posts in RSSFeed.posts should equal self.number_of_posts.
         """
-        feed = majestic.RSSFeed(posts=self.posts, settings=self.settings)
+        feed = RSSFeed(posts=self.posts, settings=self.settings)
         self.assertEqual(len(feed.posts), self.number_of_posts)
 
     def test_RSSFeed_init_posts_sorted(self):
@@ -317,12 +319,12 @@ class TestRSSFeed(unittest.TestCase):
 
         RSSFeed.posts should be sorted by date, newest first.
         """
-        feed = majestic.RSSFeed(posts=self.posts, settings=self.settings)
+        feed = RSSFeed(posts=self.posts, settings=self.settings)
         sorted_posts = sorted(self.posts, reverse=True)[:self.number_of_posts]
         self.assertEqual(feed.posts, sorted_posts)
 
     def test_RSSFeed_sets_key_variables(self):
         """RSSFeed should set key variables required by BlogObject"""
-        feed = majestic.RSSFeed(posts=self.posts, settings=self.settings)
+        feed = RSSFeed(posts=self.posts, settings=self.settings)
         self.assertEqual(feed._path_template_key, 'rss path template')
         self.assertEqual(feed._template_file_key, 'rss')

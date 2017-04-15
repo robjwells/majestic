@@ -15,6 +15,7 @@ import majestic
 import majestic.utils as utils
 from majestic.content import Post, Page
 
+
 TESTS_DIR = Path(__file__).resolve().parent
 MAJESTIC_DIR = TESTS_DIR.parent.joinpath('majestic')
 TEST_BLOG_DIR = TESTS_DIR.joinpath('test-blog')
@@ -319,13 +320,13 @@ class TestChunk(unittest.TestCase):
     def test_chunk_5(self):
         """Take chunks of 5 elements from self.data"""
         expected = ['ABCDE', 'FGHIJ']
-        result = majestic.chunk(self.data, 5)
+        result = utils.chunk(self.data, 5)
         self.assertEqual(expected, list(result))
 
     def test_chunk_3(self):
         """Take chunks of 3 elements from self.data"""
         expected = ['ABC', 'DEF', 'GHI', 'J']
-        result = majestic.chunk(self.data, 3)
+        result = utils.chunk(self.data, 3)
         self.assertEqual(expected, list(result))
 
 
