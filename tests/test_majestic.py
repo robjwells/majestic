@@ -797,7 +797,6 @@ class TestCopyFiles(unittest.TestCase):
                                            output_root=self.output_dir)
         self.assertEqual(expected, result)
 
-
     def test_copy_files_simple(self):
         """copy_files copies sources to the specified output
 
