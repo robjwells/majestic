@@ -12,6 +12,8 @@ import jinja2
 import pytz
 
 import majestic
+import majestic.utils as utils
+from majestic.content import Post, Page
 
 TESTS_DIR = Path(__file__).resolve().parent
 MAJESTIC_DIR = TESTS_DIR.parent.joinpath('majestic')
@@ -70,7 +72,7 @@ class TestSlugFunctions(unittest.TestCase):
         """normalise_slug correctly normalises known bad slug"""
         known_bad_slug = "This is a completely invalid slug :/?#[]@!$&'()*+,;="
         expected = 'this-is-a-completely-invalid-slug'
-        new_slug = majestic.normalise_slug(known_bad_slug)
+        new_slug = utils.normalise_slug(known_bad_slug)
         self.assertEqual(new_slug, expected)
 
     def test_normalise_slug_chars(self):
@@ -84,18 +86,18 @@ class TestSlugFunctions(unittest.TestCase):
         good_set = set(string.ascii_lowercase + string.digits + '-')
 
         test_bad_slug = "this is an :/?#[]@!$&'()*+,;= invalid slug"
-        new_slug = majestic.normalise_slug(test_bad_slug)
+        new_slug = utils.normalise_slug(test_bad_slug)
         self.assertTrue(set(new_slug).issubset(good_set))
         self.assertTrue(set(new_slug).isdisjoint(bad_set))
 
         test_good_slug = "00-this-is-a-valid-slug"
-        self.assertEqual(majestic.normalise_slug(test_good_slug),
+        self.assertEqual(utils.normalise_slug(test_good_slug),
                          test_good_slug)
 
     def test_normalise_slug_empty_string(self):
         """normalise_slug should raise if result is the empty string"""
         with self.assertRaises(ValueError):
-            majestic.normalise_slug(":/?#[]@!$&'()*+,;=")
+            utils.normalise_slug(":/?#[]@!$&'()*+,;=")
 
     def test_normalise_slug_conservative(self):
         """Normalise correctly removes unreserved chars . _ ~
@@ -104,7 +106,7 @@ class TestSlugFunctions(unittest.TestCase):
         if the slug is normalised because of another character.
         """
         slug = 'here are some valid chars . _ ~ and an invalid one!'
-        normalised = majestic.normalise_slug(slug)
+        normalised = utils.normalise_slug(slug)
         self.assertEqual(
             normalised,
             'here-are-some-valid-chars-and-an-invalid-one'
@@ -113,32 +115,32 @@ class TestSlugFunctions(unittest.TestCase):
     def test_normalise_slug_percent_encoding(self):
         """normalise_slug removes percent-encoded characters"""
         slug = 'this%20slug%20has%20spaces'
-        normalised = majestic.normalise_slug(slug)
+        normalised = utils.normalise_slug(slug)
         self.assertEqual(normalised, 'this-slug-has-spaces')
 
     def test_validate_slug_empty(self):
         """validate_slug returns False if slug is the empty string"""
-        self.assertFalse(majestic.validate_slug(''))
+        self.assertFalse(utils.validate_slug(''))
 
     def test_validate_slug_false(self):
         """validate_slug returns False if slug contains invalid characters"""
         known_bad_slug = "This is a completely invalid slug :/?#[]@!$&'()*+,;="
-        self.assertFalse(majestic.validate_slug(known_bad_slug))
+        self.assertFalse(utils.validate_slug(known_bad_slug))
 
     def test_validate_slug_bad_percent(self):
         """validate_slug returns False if slug has bad percent encoding"""
         known_bad_slug = "this-is-not-100%-valid"
-        self.assertFalse(majestic.validate_slug(known_bad_slug))
+        self.assertFalse(utils.validate_slug(known_bad_slug))
 
     def test_validate_slug_good_percent(self):
         """validate_slug returns True given proper percent encoding"""
         known_good_slug = 'hello%20world'
-        self.assertTrue(majestic.validate_slug(known_good_slug))
+        self.assertTrue(utils.validate_slug(known_good_slug))
 
     def test_validate_slug_true(self):
         """validate_slug returns True when slug contains all valid chars"""
         known_good_slug = "00-this-is_a~valid.slug"
-        self.assertTrue(majestic.validate_slug(known_good_slug))
+        self.assertTrue(utils.validate_slug(known_good_slug))
 
     def test_validate_slug_nonascii(self):
         """validate_slug returns False when slug contains non-ASCII chars
@@ -147,7 +149,7 @@ class TestSlugFunctions(unittest.TestCase):
         the characters in the reserved set and the unreserved set.
         """
         slug = 'lets-go-to-the-café'
-        self.assertFalse(majestic.validate_slug(slug))
+        self.assertFalse(utils.validate_slug(slug))
 
 
 class TestTemplating(unittest.TestCase):
@@ -584,11 +586,11 @@ class TestExtensions(unittest.TestCase):
         self.settings = majestic.load_settings()
         ext_dir_name = self.settings['paths']['extensions root']
         self.ext_dir = TEST_BLOG_DIR.joinpath(ext_dir_name)
-        self.posts = [majestic.Post(title='test', body='test',
-                                    date=datetime.now(),
-                                    settings=self.settings)]
-        self.pages = [majestic.Page(title='test', body='test',
-                                    settings=self.settings)]
+        self.posts = [Post(title='test', body='test',
+                           date=datetime.now(),
+                           settings=self.settings)]
+        self.pages = [Page(title='test', body='test',
+                           settings=self.settings)]
 
     def test_load_extensions(self):
         """load_extensions returns expected extensions from directory"""

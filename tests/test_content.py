@@ -1,5 +1,8 @@
 import unittest
 import majestic
+from majestic.content import (
+    BlogObject, Content, Page, Post, ModificationDateError
+    )
 
 from datetime import datetime
 import os
@@ -106,7 +109,7 @@ class TestBlogObject(unittest.TestCase):
         The intention is that BlogObject only contains default method
         implementations to be inherited and has no content of its own.
         """
-        self.assertIsInstance(majestic.BlogObject(), majestic.BlogObject)
+        self.assertIsInstance(BlogObject(), BlogObject)
 
     def test_BlogObject_properties_exist(self):
         """BlogObject defines expected properties and methods
@@ -118,7 +121,7 @@ class TestBlogObject(unittest.TestCase):
             * render_to_disk
         """
         attrs = ['path_part', 'output_path', 'url', 'render_to_disk']
-        bo = majestic.BlogObject()
+        bo = BlogObject()
         for a in attrs:
             self.assertIn(a, dir(bo))
 
@@ -137,7 +140,7 @@ class TestBlogObject(unittest.TestCase):
                 _path_template_key = 'a path template'
                 _template_file_key = 'a template filename'
         """
-        bo = majestic.BlogObject()
+        bo = BlogObject()
         for attr in ['_path_template_key', '_template_file_key']:
             with self.assertRaises(NotImplementedError):
                 getattr(bo, attr)
@@ -163,7 +166,7 @@ class TestBlogObject(unittest.TestCase):
         suppress unrelated to exceptions. (Subclasses are required to
         have self.settings.)
         """
-        bo = majestic.BlogObject()
+        bo = BlogObject()
 
         settings = majestic.load_settings(
             files=[TEST_BLOG_DIR.joinpath('settings.json')], local=False)
@@ -184,7 +187,7 @@ class TestBlogObject(unittest.TestCase):
         users could override that but that should be an implementation
         detail.
         """
-        bo = majestic.BlogObject()
+        bo = BlogObject()
         path_part = 'index.html'
         bo.path_part = path_part
         self.assertEqual(bo.path_part, path_part)
@@ -196,7 +199,7 @@ class TestBlogObject(unittest.TestCase):
         actually setting and checking the underlying variable and
         not just raising NotImplementError regardless.
         """
-        bo = majestic.BlogObject()
+        bo = BlogObject()
         url = 'http://example.com/my-test-url.html'
         bo.url = url
         self.assertEqual(bo.url, url)
@@ -207,7 +210,7 @@ class TestBlogObject(unittest.TestCase):
         This is necessary to have clean URLs internally if the path
         template writes the file as index.html in a subdirectory.
         """
-        bo = majestic.BlogObject()
+        bo = BlogObject()
         base_url = 'http://example.com'
         self.settings['site']['url'] = base_url
         bo._settings = self.settings
@@ -223,7 +226,7 @@ class TestBlogObject(unittest.TestCase):
         is actually setting and checking the underlying variable and
         not just raising NotImplementError regardless.
         """
-        bo = majestic.BlogObject()
+        bo = BlogObject()
         path = '/some/path/on/the/system'
         bo.output_path = path
         self.assertEqual(bo.output_path, path)
@@ -244,8 +247,8 @@ class TestBlogObject(unittest.TestCase):
         """
 
         # Override BlogObject variables
-        majestic.BlogObject._template_file_key = test_file_name
-        bo = majestic.BlogObject()
+        BlogObject._template_file_key = test_file_name
+        bo = BlogObject()
         bo.path_part = test_file_name
 
         # Override settings
@@ -350,15 +353,15 @@ class TestContent(unittest.TestCase):
 
         No other attributes are required.
         """
-        content = majestic.Content(title=self.title, body=self.body,
-                                   settings=self.settings)
+        content = Content(title=self.title, body=self.body,
+                          settings=self.settings)
         self.assertEqual([self.title, self.body, self.settings],
                          [content.title, content.body, content._settings])
 
     def test_content_init_meta(self):
         """Content stores extra kwargs as the .meta attribute"""
-        content = majestic.Content(title=self.title, body=self.body,
-                                   settings=self.settings, foo='bar')
+        content = Content(title=self.title, body=self.body,
+                          settings=self.settings, foo='bar')
         self.assertEqual(content.meta['foo'], 'bar')
 
     def test_content_init_slug(self):
@@ -367,8 +370,8 @@ class TestContent(unittest.TestCase):
         Slug validity is defined elsewhere, but this test uses the
         simplest possible slug, a single alphabetical character.
         """
-        content = majestic.Content(title=self.title, body=self.body,
-                                   slug='a', settings=self.settings)
+        content = Content(title=self.title, body=self.body,
+                          slug='a', settings=self.settings)
         self.assertEqual(content.slug, 'a')
 
     def test_content_init_slug_from_title(self):
@@ -378,33 +381,33 @@ class TestContent(unittest.TestCase):
         simplest possible title for the source, a single alphabetical
         character.
         """
-        content = majestic.Content(title='a', body=self.body,
-                                   settings=self.settings)
+        content = Content(title='a', body=self.body,
+                          settings=self.settings)
         self.assertEqual(content.slug, 'a')
 
     def test_content_init_invalid_slug(self):
         """Content normalises invalid slugs before storing them"""
         invalid_slug = '!not:valid!'
         expected = 'not-valid'
-        content = majestic.Content(title='a', body=self.body,
-                                   settings=self.settings, slug=invalid_slug)
+        content = Content(title='a', body=self.body,
+                          settings=self.settings, slug=invalid_slug)
         self.assertEqual(content.slug, expected)
 
     def test_content_init_modification_date(self):
         """Content sets init arg modification_date as an attribute"""
         mod_date = datetime(2015, 1, 25, 9, 30)
-        content = majestic.Content(title=self.title, body=self.body,
-                                   slug=self.slug, settings=self.settings,
-                                   modification_date=mod_date)
+        content = Content(title=self.title, body=self.body,
+                          slug=self.slug, settings=self.settings,
+                          modification_date=mod_date)
         self.assertEqual(content.modification_date, mod_date)
 
     def test_content_init_mod_date_from_source_path(self):
         """Content sets modification date from source file (if provided)"""
         expected_mod_date = datetime.fromtimestamp(
             self.middle_file.stat().st_mtime)
-        content = majestic.Content(title=self.title, body=self.body,
-                                   slug=self.slug, settings=self.settings,
-                                   source_path=self.middle_file)
+        content = Content(title=self.title, body=self.body,
+                          slug=self.slug, settings=self.settings,
+                          source_path=self.middle_file)
         self.assertEqual(content.modification_date, expected_mod_date)
 
     def test_content_init_save_as(self):
@@ -424,9 +427,8 @@ class TestContent(unittest.TestCase):
         on BlogObject or its abstract subclasses.
         """
         custom_path = '404.html'
-        content = majestic.Content(title=self.title, body=self.body,
-                                   settings=self.settings,
-                                   save_as=custom_path)
+        content = Content(title=self.title, body=self.body,
+                          settings=self.settings, save_as=custom_path)
         self.assertEqual(content.path_part, custom_path)
 
     def test_content_is_new_no_output_file(self):
@@ -436,74 +438,74 @@ class TestContent(unittest.TestCase):
         new, even if it doesn't have a source file and wasn't created with
         an explicit modification date (ie programmatically).
         """
-        content = majestic.Content(title=self.title, body=self.body,
-                                   slug=self.slug, settings=self.settings)
+        content = Content(title=self.title, body=self.body,
+                          slug=self.slug, settings=self.settings)
         # Override output path to ensure file does not exist
         content.output_path = Path('/tmp/test-majestic-no-file-here')
         self.assertTrue(content.is_new)
 
     def test_content_is_new_true_with_output_file(self):
         """Content.is_new is True when an older output file exists"""
-        content = majestic.Content(title=self.title, body=self.body,
-                                   slug=self.slug, settings=self.settings,
-                                   source_path=self.newest_file)
+        content = Content(title=self.title, body=self.body,
+                          slug=self.slug, settings=self.settings,
+                          source_path=self.newest_file)
         # Override output path
         content.output_path = self.oldest_file
         self.assertTrue(content.is_new)
 
     def test_content_is_new_false_with_output_file(self):
         """Content.is_new is False when a newer output file exists"""
-        content = majestic.Content(title=self.title, body=self.body,
-                                   slug=self.slug, settings=self.settings,
-                                   source_path=self.oldest_file)
+        content = Content(title=self.title, body=self.body,
+                          slug=self.slug, settings=self.settings,
+                          source_path=self.oldest_file)
         # Override output path
         content.output_path = self.newest_file
         self.assertFalse(content.is_new)
 
     def test_content_is_new_raises(self):
         """Content.is_new raises if mod date is None and output file exists"""
-        content = majestic.Content(title=self.title, body=self.body,
-                                   slug=self.slug, settings=self.settings)
+        content = Content(title=self.title, body=self.body,
+                          slug=self.slug, settings=self.settings)
         content.output_path = self.newest_file
-        with self.assertRaises(majestic.ModificationDateError):
+        with self.assertRaises(ModificationDateError):
             content.is_new
 
     def test_content_is_new_setter(self):
         """Content.is_new is a property that can be set"""
-        content = majestic.Content(title=self.title, body=self.body,
-                                   slug=self.slug, settings=self.settings)
+        content = Content(title=self.title, body=self.body,
+                          slug=self.slug, settings=self.settings)
         content.is_new = True
         self.assertTrue(content.is_new)
 
     def test_content_lt_title(self):
         """Content with different titles compare properly"""
-        post_1 = majestic.Content(title='title a',
-                                  slug=self.slug, body=self.body,
-                                  settings=self.settings)
-        post_2 = majestic.Content(title='title b',
-                                  slug=self.slug, body=self.body,
-                                  settings=self.settings)
+        post_1 = Content(title='title a',
+                         slug=self.slug, body=self.body,
+                         settings=self.settings)
+        post_2 = Content(title='title b',
+                         slug=self.slug, body=self.body,
+                         settings=self.settings)
         self.assertTrue(post_1 < post_2)
         self.assertFalse(post_2 < post_1)
 
     def test_content_compare_title_case_insensitive(self):
         """Content with titles that differ in case compare properly"""
-        post_1 = majestic.Content(title='title a',
-                                  slug=self.slug, body=self.body,
-                                  settings=self.settings)
-        post_2 = majestic.Content(title='title B',
-                                  slug=self.slug, body=self.body,
-                                  settings=self.settings)
+        post_1 = Content(title='title a',
+                         slug=self.slug, body=self.body,
+                         settings=self.settings)
+        post_2 = Content(title='title B',
+                         slug=self.slug, body=self.body,
+                         settings=self.settings)
         self.assertTrue(post_1 < post_2)
 
     def test_content_lt_slug(self):
         """Content with different slugs compare properly"""
-        post_1 = majestic.Content(title=self.title,
-                                  slug='test-a', body=self.body,
-                                  settings=self.settings)
-        post_2 = majestic.Content(title=self.title,
-                                  slug='test-b', body=self.body,
-                                  settings=self.settings)
+        post_1 = Content(title=self.title,
+                         slug='test-a', body=self.body,
+                         settings=self.settings)
+        post_2 = Content(title=self.title,
+                         slug='test-b', body=self.body,
+                         settings=self.settings)
         self.assertTrue(post_1 < post_2)
         self.assertFalse(post_2 < post_1)
 
@@ -535,17 +537,17 @@ class TestPage(unittest.TestCase):
 
     def test_page_inheritance(self):
         """Page instances are also an instance of Content"""
-        page = majestic.Page(title=self.title, body=self.body,
-                             settings=self.settings)
-        self.assertTrue(isinstance(page, majestic.Content))
+        page = Page(title=self.title, body=self.body,
+                    settings=self.settings)
+        self.assertTrue(isinstance(page, Content))
 
     def test_page_output_path_and_url(self):
         """Page defines output_path and url properties
 
         Output path should be a pathlib.Path object, url a str
         """
-        page = majestic.Page(title=self.title, body=self.body,
-                             settings=self.settings, slug='abc')
+        page = Page(title=self.title, body=self.body,
+                    settings=self.settings, slug='abc')
 
         path_template = self.settings['paths']['page path template']
         path = path_template.format(content=page)
@@ -571,8 +573,8 @@ class TestPage(unittest.TestCase):
         in one place in the class and stored, with .output_path and .url
         both looking in one place for them.
         """
-        page = majestic.Page(title=self.title, body=self.body,
-                             settings=self.settings, slug='abc')
+        page = Page(title=self.title, body=self.body,
+                    settings=self.settings, slug='abc')
 
         path_template = self.settings['paths']['page path template']
         path = path_template.format(content=page)
@@ -592,12 +594,12 @@ class TestPage(unittest.TestCase):
         otherwise both Page and Post would have to implement almost
         exactly the same method.)
         """
-        page_a = majestic.Page(title=self.title, body=self.body,
-                               settings=self.settings)
-        page_b = majestic.Page(title=self.title, body=self.body,
-                               settings=self.settings)
-        page_c = majestic.Page(title='different', body=self.body,
-                               settings=self.settings)
+        page_a = Page(title=self.title, body=self.body,
+                      settings=self.settings)
+        page_b = Page(title=self.title, body=self.body,
+                      settings=self.settings)
+        page_c = Page(title='different', body=self.body,
+                      settings=self.settings)
         self.assertEqual(page_a, page_b)
         self.assertNotEqual(page_a, page_c)
 
@@ -637,27 +639,27 @@ class TestPost(unittest.TestCase):
 
     def test_post_inheritance(self):
         """Post instances are also an instance of Content"""
-        post = majestic.Post(title=self.title, body=self.body,
-                             date=self.naive_date, settings=self.settings)
-        self.assertTrue(isinstance(post, majestic.Content))
+        post = Post(title=self.title, body=self.body,
+                    date=self.naive_date, settings=self.settings)
+        self.assertTrue(isinstance(post, Content))
 
     def test_post_init_date(self):
         """Post stores provided date as self.date"""
-        post = majestic.Post(title=self.title, body=self.body,
-                             date=self.naive_date, settings=self.settings)
+        post = Post(title=self.title, body=self.body,
+                    date=self.naive_date, settings=self.settings)
         self.assertEqual(self.aware_date, post.date)
 
     def test_post_init_date_string(self):
         """If given a str for date, Post parses it into a datetime object"""
         self.settings['dates']['format'] = '%Y-%m-%d %H:%M'
-        post = majestic.Post(title=self.title, body=self.body,
-                             date=self.date_string, settings=self.settings)
+        post = Post(title=self.title, body=self.body,
+                    date=self.date_string, settings=self.settings)
         self.assertEqual(self.aware_date, post.date)
 
     def test_date_has_timezone(self):
         """Post correctly localizes the provided date"""
-        post = majestic.Post(title=self.title, body=self.body,
-                             date=self.naive_date, settings=self.settings)
+        post = Post(title=self.title, body=self.body,
+                    date=self.naive_date, settings=self.settings)
         self.assertEqual(post.date, self.aware_date)
 
     def test_Post_eq(self):
@@ -673,24 +675,24 @@ class TestPost(unittest.TestCase):
         """
         new_path = '{content.date.year}/{content.slug}'
         self.settings['paths']['post path template'] = new_path
-        post_a = majestic.Post(title=self.title, body=self.body,
-                               settings=self.settings, date=self.naive_date)
-        post_b = majestic.Post(title=self.title, body=self.body,
-                               settings=self.settings, date=self.naive_date)
-        post_c = majestic.Post(title=self.title, body=self.body,
-                               settings=self.settings,
-                               date=datetime(2015, 1, 1))
+        post_a = Post(title=self.title, body=self.body,
+                      settings=self.settings, date=self.naive_date)
+        post_b = Post(title=self.title, body=self.body,
+                      settings=self.settings, date=self.naive_date)
+        post_c = Post(title=self.title, body=self.body,
+                      settings=self.settings,
+                      date=datetime(2015, 1, 1))
         self.assertEqual(post_a, post_b)
         self.assertNotEqual(post_a, post_c)
 
     def test_post_compare_lt_dates(self):
         """Posts with different dates compare properly"""
-        post_1 = majestic.Post(title=self.title, body=self.body,
-                               settings=self.settings,
-                               date=datetime(2015, 1, 1))
-        post_2 = majestic.Post(title=self.title, body=self.body,
-                               settings=self.settings,
-                               date=datetime(2014, 1, 1))
+        post_1 = Post(title=self.title, body=self.body,
+                      settings=self.settings,
+                      date=datetime(2015, 1, 1))
+        post_2 = Post(title=self.title, body=self.body,
+                      settings=self.settings,
+                      date=datetime(2014, 1, 1))
         self.assertLess(post_2, post_1)
 
     def test_post_compare_lt_identical_dates(self):
@@ -699,26 +701,26 @@ class TestPost(unittest.TestCase):
         The Post class should only test the dates, and delegate title and
         slug comparison to its superclass.
         """
-        post_1 = majestic.Post(title='title a', body=self.body,
-                               date=self.naive_date, settings=self.settings)
-        post_2 = majestic.Post(title='title B', body=self.body,
-                               date=self.naive_date, settings=self.settings)
+        post_1 = Post(title='title a', body=self.body,
+                      date=self.naive_date, settings=self.settings)
+        post_2 = Post(title='title B', body=self.body,
+                      date=self.naive_date, settings=self.settings)
         self.assertLess(post_1, post_2)
 
     def test_post_future_date_raises_DraftPost(self):
         """Initialising a Post with a future date raises DraftError"""
         with self.assertRaises(majestic.DraftError):
-            majestic.Post(title=self.title, body=self.body,
-                          settings=self.settings,
-                          date=datetime(2100, 1, 1))
+            Post(title=self.title, body=self.body,
+                 settings=self.settings,
+                 date=datetime(2100, 1, 1))
 
     def test_post_output_path_and_url(self):
         """Post defines output_path and url properties
 
         Output path should be a pathlib.Path object, url a str
         """
-        post = majestic.Post(title=self.title, body=self.body,
-                             settings=self.settings, date=self.naive_date)
+        post = Post(title=self.title, body=self.body,
+                    settings=self.settings, date=self.naive_date)
 
         path_template = self.settings['paths']['post path template']
         path = path_template.format(content=post)
@@ -788,7 +790,7 @@ class TestFromFile(unittest.TestCase):
             file_dict['body'] = body.strip('\n')
             file_dict['source_path'] = file
 
-            post = majestic.Post.from_file(file, settings=self.settings)
+            post = Post.from_file(file, settings=self.settings)
             post_dict = post.meta.copy()
             post_dict['title'] = post.title
             post_dict['slug'] = post.slug
@@ -800,8 +802,8 @@ class TestFromFile(unittest.TestCase):
 
     def test_about_page(self):
         """Parsing basic page should work as with posts"""
-        page = majestic.Page.from_file(self.pages_path.joinpath('about.md'),
-                                       settings=self.settings)
+        page = Page.from_file(self.pages_path.joinpath('about.md'),
+                              settings=self.settings)
         self.assertEqual(page.title, 'About majestic')
         self.assertEqual(page.slug, 'about')
         self.assertEqual(
@@ -819,15 +821,15 @@ class TestFromFile(unittest.TestCase):
         known_bad_file = self.posts_path.joinpath('test_invalid_slug.md')
         good_chars = set(string.ascii_lowercase + string.digits + '-')
 
-        post = majestic.Post.from_file(known_bad_file, settings=self.settings)
+        post = Post.from_file(known_bad_file, settings=self.settings)
         self.assertLess(set(post.slug), good_chars)  # Subset test
 
     def test_parse_bad_percent_encoding(self):
         """.from_file normalises slugs containing invalid percent encoding"""
         bad_percent_file = self.posts_path.joinpath('test_bad_percent.md')
         bad_percent_slug = 'this-is-not-100%-valid'
-        post = majestic.Post.from_file(bad_percent_file,
-                                       settings=self.settings)
+        post = Post.from_file(bad_percent_file,
+                              settings=self.settings)
         self.assertNotEqual(post.slug, bad_percent_slug)
 
     def test_parse_known_good_slug(self):
@@ -835,7 +837,7 @@ class TestFromFile(unittest.TestCase):
         known_good_file = self.posts_path.joinpath('test_good_slug.md')
         known_good_slug = 'valid%20slug'
 
-        post = majestic.Post.from_file(known_good_file, settings=self.settings)
+        post = Post.from_file(known_good_file, settings=self.settings)
         self.assertTrue(post.slug, known_good_slug)
 
     def test_explicit_draft(self):
@@ -844,6 +846,6 @@ class TestFromFile(unittest.TestCase):
         'draft' should appear (without quotes) on a line by itself
         """
         with self.assertRaises(majestic.DraftError):
-            majestic.Post.from_file(
+            Post.from_file(
                 file=self.posts_path.joinpath('test_explicit_draft.md'),
                 settings=self.settings)
