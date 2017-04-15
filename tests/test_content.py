@@ -52,6 +52,254 @@ class TestLoadContentFiles(unittest.TestCase):
         temp_dir.rmdir()
 
 
+class TestBlogObject(unittest.TestCase):
+    """Test the BlogObject base class
+
+    Superclass for all classes that ultimately represent and will
+    produce a file on disk for consumption on the web. (That's all
+    html files and the RSS and sitemap XML files.)
+
+    It should provide implementations for all common web/disk-related
+    properties and methods:
+        * URL
+        * Output path
+        * Rendering self to a file
+
+    It should require classes to do only the minimum needed support them,
+    in particular defining string keys to retrieve the following from
+    the settings object:
+        * the path template string
+        * the jinja template filename
+
+    The BlogObject class should itself raise NotImplementedError when
+    the properties for those keys are accessed, making clear the need
+    for concrete subclasses to define them. (Exempt from this are
+    abstract classes that aren't intended to be written to disk, so
+    Content does not define them but Content's subclasses must.)
+
+    It is ultimately content agnostic. In a language with protocols this
+    would probably be a protocol with default implementations.
+    """
+    def setUp(self):
+        self.settings = majestic.load_settings(local=False)
+
+        self.test_output_dir = TESTS_DIR.joinpath('output-root')
+        self.settings['paths']['output root'] = str(self.test_output_dir)
+
+        self.templates_root = TESTS_DIR.joinpath('test-templates')
+        self.settings['paths']['templates root'] = str(self.templates_root)
+
+        self.env = majestic.jinja_environment(
+            user_templates=self.templates_root,
+            settings=self.settings)
+
+    def tearDown(self):
+        """Clean up output-root folder"""
+        try:
+            self.test_output_dir.rmdir()
+        except FileNotFoundError:
+            pass
+
+    def test_BlogObject_no_arguments(self):
+        """BlogObject should not require arguments to init
+
+        The intention is that BlogObject only contains default method
+        implementations to be inherited and has no content of its own.
+        """
+        self.assertIsInstance(majestic.BlogObject(), majestic.BlogObject)
+
+    def test_BlogObject_properties_exist(self):
+        """BlogObject defines expected properties and methods
+
+        Expected:
+            * path_part
+            * output_path
+            * url
+            * render_to_disk
+        """
+        attrs = ['path_part', 'output_path', 'url', 'render_to_disk']
+        bo = majestic.BlogObject()
+        for a in attrs:
+            self.assertIn(a, dir(bo))
+
+    def test_BlogObject_key_props_raise(self):
+        """BlogObject key properties should raise NotImplementedError
+
+        key properties in question:
+            * _path_template_key
+            * _template_file_key
+
+        The intention being that subclasses will define class variables
+        that contain the strings needed to index into the settings.
+
+        For example:
+            class A(BlogObject):
+                _path_template_key = 'a path template'
+                _template_file_key = 'a template filename'
+        """
+        bo = majestic.BlogObject()
+        for attr in ['_path_template_key', '_template_file_key']:
+            with self.assertRaises(NotImplementedError):
+                getattr(bo, attr)
+
+    def test_BlogObject_computed_props_raise(self):
+        """Computed properties that depend on unimplemented ones raise
+
+        computed properties in question:
+            * output_path
+            * url
+
+        To prevent repetition, these properties should depend on a single
+        path_part property/method that computes the path part of the url
+        (http://siteurl.com/[path/part.html]) and the part of the file
+        path below the output root (blog dir/output root/[path/part.html]).
+
+        In turn this should depend on the class setting the _path_template_key
+        class variable. Since only subclasses set this, BlogObject should
+        raise NotImplementedError (see test_BlogObject_key_props_raise)
+        when these properties are accessed.
+
+        The BlogObject is given a self.settings attribute in order to
+        suppress unrelated to exceptions. (Subclasses are required to
+        have self.settings.)
+        """
+        bo = majestic.BlogObject()
+
+        settings = majestic.load_settings(
+            files=[TEST_BLOG_DIR.joinpath('settings.json')], local=False)
+        bo._settings = settings     # Suppress exceptions about settings
+
+        for prop in ['url', 'output_path']:
+            with self.assertRaises(NotImplementedError):
+                getattr(bo, prop)
+
+    def test_BlogObject_set_path_part(self):
+        """Can override the path_part property by setting it
+
+        Directly setting path_part makes it easier to directly
+        override both the output_path and url properties, as
+        they both retrieve the path part from that attribute.
+
+        As path_part stores the constructed string at _path_part,
+        users could override that but that should be an implementation
+        detail.
+        """
+        bo = majestic.BlogObject()
+        path_part = 'index.html'
+        bo.path_part = path_part
+        self.assertEqual(bo.path_part, path_part)
+
+    def test_BlogObject_set_url(self):
+        """Can override the url property by setting it
+
+        This tests the url setter and ensures that BlogObject is
+        actually setting and checking the underlying variable and
+        not just raising NotImplementError regardless.
+        """
+        bo = majestic.BlogObject()
+        url = 'http://example.com/my-test-url.html'
+        bo.url = url
+        self.assertEqual(bo.url, url)
+
+    def test_BlogObject_url_trims_index(self):
+        """URL property trims index.html from path_part
+
+        This is necessary to have clean URLs internally if the path
+        template writes the file as index.html in a subdirectory.
+        """
+        bo = majestic.BlogObject()
+        base_url = 'http://example.com'
+        self.settings['site']['url'] = base_url
+        bo._settings = self.settings
+
+        path_part = 'some_dir/index.html'
+        bo.path_part = base_url + '/' + path_part
+        self.assertEqual(bo.url, base_url + '/some_dir/')
+
+    def test_BlogObject_set_output_path(self):
+        """Can override the output_path property by setting it
+
+        This tests the output_path setter and ensures that BlogObject
+        is actually setting and checking the underlying variable and
+        not just raising NotImplementError regardless.
+        """
+        bo = majestic.BlogObject()
+        path = '/some/path/on/the/system'
+        bo.output_path = path
+        self.assertEqual(bo.output_path, path)
+
+    def render_tests_setup_helper(self, test_file_name):
+        """Return a properly overriden and set up BlogObject for file tests
+
+        test_file_name serves as the name of the template file to load
+        as well as the file in the test-output directory to write to.
+
+        BlogObject has its key class variables, which would normally raise
+        on instances, overriden to use this name, allowing the tests to
+        proceed without having to use a concrete subclass.
+
+        BlogObject by design cannot normally be written to a file. But to
+        avoid having to test a concrete subclass, which may have its own
+        problems, we monkey around with BlogObject to allow us to test it.
+        """
+
+        # Override BlogObject variables
+        majestic.BlogObject._template_file_key = test_file_name
+        bo = majestic.BlogObject()
+        bo.path_part = test_file_name
+
+        # Override settings
+        self.settings['templates'][test_file_name] = test_file_name
+        self.settings['paths'][test_file_name] = test_file_name
+        bo._settings = self.settings
+
+        return bo
+
+    def render_tests_read_and_delete_file(self, filename):
+        """Read and delete file 'name' in the test-output dir
+
+        Teardown helper for render_to_disk tests.
+        """
+        file = self.test_output_dir.joinpath(filename)
+        with file.open() as f:
+            content = f.read()
+        file.unlink()
+        return content
+
+    def test_BlogObject_render_basic(self):
+        """render_to_disk chooses template and writes to correct location"""
+        name = 'basic'
+        bo = self.render_tests_setup_helper(name)
+
+        bo.render_to_disk(self.env)
+
+        self.assertEqual(self.render_tests_read_and_delete_file(name),
+                         'This is the template for the basic test.')
+
+    def test_BlogObject_render_kwargs(self):
+        """render_to_disk passes keyword arguments to the render function"""
+        name = 'kwargs'
+        bo = self.render_tests_setup_helper(name)
+
+        bo.render_to_disk(self.env,
+                          some_kwarg='abc',
+                          another_kwarg=[1, 2, 3])
+
+        self.assertEqual(self.render_tests_read_and_delete_file(name),
+                         'abc\n[1, 2, 3]')
+
+    def test_BlogObject_render_self_passed_as_content(self):
+        """render_to_disk passes self to render as the 'content' kwarg"""
+        name = 'self-is-content'
+        bo = self.render_tests_setup_helper(name)
+        bo.some_attribute = 42
+
+        bo.render_to_disk(self.env)
+
+        self.assertEqual(self.render_tests_read_and_delete_file(name),
+                         '42')
+
+
 class TestContent(unittest.TestCase):
     """Test the Content base class"""
     def setUp(self):
