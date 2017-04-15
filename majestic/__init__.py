@@ -214,23 +214,6 @@ def parse_copy_paths(path_list, output_root):
     return src_dst_pairs
 
 
-def mkdir_exist_ok(target):
-    """Make the target directory and suppress any error if it exists
-
-    target should be a Path object.
-
-    If target directory does not exist, create the directory.
-    If it does exist, suppress the FileNotFoundError.
-
-    When majestic requires Python 3.5, this helper function can be
-    replaced with adding `exist_ok=True` to the path.mkdir call.
-    """
-    try:
-        target.mkdir(parents=True)
-    except FileExistsError:
-        pass
-
-
 def copy_files(path_pairs):
     """Copy files and directories to specified new locations
 
@@ -245,7 +228,8 @@ def copy_files(path_pairs):
         source and dest should both be pathlib.Path objects
         """
         if not dest.exists():
-            mkdir_exist_ok(dest)        # Ensure destination dir exists
+            # Ensure destination dir exists
+            dest.mkdir(parents=True, exist_ok=True)
 
         # Store strings for source and destination roots for path 'rebasing'
         # later on. Both paths are resolved so that the wrong part of the
@@ -268,13 +252,13 @@ def copy_files(path_pairs):
 
             for dirname in dirnames:
                 # Make subdirectories ready for copying files
-                mkdir_exist_ok(new_dest.joinpath(dirname))
+                new_dest.joinpath(dirname).mkdir(exist_ok=True)
 
     for source, dest in path_pairs:
         if source.is_dir():
             copy_directory_tree(source, dest)
         else:
-            mkdir_exist_ok(dest.parent)
+            dest.parent.mkdir(parents=True, exist_ok=True)
             if not dest.exists() or is_older(dest, source):
                 shutil.copy2(str(source), str(dest))
 
@@ -286,7 +270,7 @@ def link_files(path_pairs):
     """
     for source, dest in path_pairs:
         source = source.resolve()
-        mkdir_exist_ok(dest.parent)
+        dest.parent.mkdir(parents=True, exist_ok=True)
         try:
             dest.symlink_to(source, source.is_dir())
         except FileExistsError:
@@ -607,7 +591,7 @@ class BlogObject(object):
         template = environment.get_template(
             self._settings['templates'][self._template_file_key])
         rendered_html = template.render(content=self, **kwargs)
-        mkdir_exist_ok(self.output_path.parent)
+        self.output_path.parent.mkdir(parents=True, exist_ok=True)
         with self.output_path.open(mode='w') as file:
             file.write(rendered_html)
 
