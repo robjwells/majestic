@@ -1,87 +1,57 @@
 !_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
 !_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
-!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
-!_TAG_PROGRAM_NAME	Exuberant Ctags	//
-!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
-!_TAG_PROGRAM_VERSION	5.8	//
-Archives	majestic/__init__.py	/^class Archives(PostsCollection):$/;"	c
-BeautifulSoup	majestic/__init__.py	/^from bs4 import BeautifulSoup$/;"	i
-BlogObject	majestic/__init__.py	/^class BlogObject(object):$/;"	c
-Content	majestic/__init__.py	/^class Content(BlogObject):$/;"	c
-DraftError	majestic/__init__.py	/^class DraftError(Exception):$/;"	c
-Enum	majestic/__init__.py	/^from enum import Enum$/;"	i
-Extension	majestic/md.py	/^from markdown.extensions import Extension$/;"	i
-ExtensionStage	majestic/__init__.py	/^class ExtensionStage(Enum):$/;"	c
-HTTPServer	majestic/__init__.py	/^from http.server import HTTPServer, SimpleHTTPRequestHandler$/;"	i
-Index	majestic/__init__.py	/^class Index(PostsCollection):$/;"	c
-MAJESTIC_DIR	majestic/__init__.py	/^MAJESTIC_DIR = Path(__file__).resolve().parent$/;"	v
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	0.0.0	/6e5c9a9/
+Archives	majestic/collections.py	/^class Archives(PostsCollection):$/;"	c
+BlogObject	majestic/content.py	/^class BlogObject(object):$/;"	c
+Content	majestic/content.py	/^class Content(BlogObject):$/;"	c
+DraftError	majestic/content.py	/^class DraftError(Exception):$/;"	c
+ExtensionStage	majestic/extensions.py	/^class ExtensionStage(Enum):$/;"	c
+Index	majestic/collections.py	/^class Index(PostsCollection):$/;"	c
+MAJESTIC_DIR	majestic/utils.py	/^MAJESTIC_DIR = Path(__file__).resolve().parent$/;"	v
 MD_INSTANCE	majestic/md.py	/^MD_INSTANCE = None$/;"	v
-ModificationDateError	majestic/__init__.py	/^class ModificationDateError(Exception):$/;"	c
-Page	majestic/__init__.py	/^class Page(Content):$/;"	c
-Path	majestic/__init__.py	/^from pathlib import Path$/;"	i
-Path	majestic/md.py	/^from pathlib import Path$/;"	i
-Post	majestic/__init__.py	/^class Post(Content):$/;"	c
-PostsCollection	majestic/__init__.py	/^class PostsCollection(BlogObject):$/;"	c
-RSSFeed	majestic/__init__.py	/^class RSSFeed(PostsCollection):$/;"	c
-SimpleHTTPRequestHandler	majestic/__init__.py	/^from http.server import HTTPServer, SimpleHTTPRequestHandler$/;"	i
-Sitemap	majestic/__init__.py	/^class Sitemap(BlogObject):$/;"	c
-absolute_urls	majestic/__init__.py	/^def absolute_urls(html, base_url):$/;"	f
-apply_extensions	majestic/__init__.py	/^def apply_extensions(*, modules, stage, settings,$/;"	f
-chunk	majestic/__init__.py	/^def chunk(iterable, chunk_length):$/;"	f
-copy_directory_tree	majestic/__init__.py	/^    def copy_directory_tree(source, dest):$/;"	f	function:copy_files
-copy_files	majestic/__init__.py	/^def copy_files(path_pairs):$/;"	f
-copy_resources	majestic/__init__.py	/^def copy_resources(settings, use_symlinks=False):$/;"	f
-datetime	majestic/__init__.py	/^from datetime import datetime$/;"	i
-docopt	majestic/__init__.py	/^from docopt import docopt$/;"	i
-from_file	majestic/__init__.py	/^    def from_file(class_, file, settings):$/;"	m	class:Content
+ModificationDateError	majestic/content.py	/^class ModificationDateError(Exception):$/;"	c
+Page	majestic/content.py	/^class Page(Content):$/;"	c
+Post	majestic/content.py	/^class Post(Content):$/;"	c
+PostsCollection	majestic/collections.py	/^class PostsCollection(BlogObject):$/;"	c
+RSSFeed	majestic/collections.py	/^class RSSFeed(PostsCollection):$/;"	c
+Sitemap	majestic/collections.py	/^class Sitemap(BlogObject):$/;"	c
+absolute_urls	majestic/templating.py	/^def absolute_urls(html, base_url):$/;"	f
+apply_extensions	majestic/extensions.py	/^def apply_extensions(*, modules, stage, settings,$/;"	f
+chunk	majestic/utils.py	/^def chunk(iterable, chunk_length):$/;"	f
+copy_directory_tree	majestic/resources.py	/^    def copy_directory_tree(source, dest):$/;"	f	function:copy_files	file:
+copy_files	majestic/resources.py	/^def copy_files(path_pairs):$/;"	f
+copy_resources	majestic/resources.py	/^def copy_resources(resources, output_root, use_symlinks=False):$/;"	f
+from_file	majestic/content.py	/^    def from_file(class_, file, settings):$/;"	m	class:Content
 get_custom_extensions	majestic/md.py	/^def get_custom_extensions(settings):$/;"	f
 get_markdown	majestic/md.py	/^def get_markdown(settings, reload=False):$/;"	f
-glob	majestic/__init__.py	/^from glob import iglob as glob$/;"	i
-html	majestic/__init__.py	/^    def html(self):$/;"	m	class:Content
-importlib	majestic/utils.py	/^import importlib$/;"	i
-is_new	majestic/__init__.py	/^    def is_new(self):$/;"	m	class:Content
-is_new	majestic/__init__.py	/^    def is_new(self, value):$/;"	m	class:Content
-is_older	majestic/__init__.py	/^    def is_older(path_1, path_2):$/;"	f	function:copy_files
-jinja2	majestic/__init__.py	/^import jinja2$/;"	i
-jinja_environment	majestic/__init__.py	/^def jinja_environment(user_templates, settings):$/;"	f
-json	majestic/__init__.py	/^import json$/;"	i
-link_files	majestic/__init__.py	/^def link_files(path_pairs):$/;"	f
+glob	majestic/resources.py	/^from glob import iglob as glob$/;"	x
+html	majestic/content.py	/^    def html(self):$/;"	m	class:Content
+is_new	majestic/content.py	/^    def is_new(self):$/;"	m	class:Content
+is_new	majestic/content.py	/^    def is_new(self, value):$/;"	m	class:Content
+is_older	majestic/resources.py	/^    def is_older(path_1, path_2):$/;"	f	function:copy_files	file:
+jinja_environment	majestic/templating.py	/^def jinja_environment(user_templates, settings):$/;"	f
+link_files	majestic/resources.py	/^def link_files(path_pairs):$/;"	f
 load_custom_markdown_extensions	majestic/md.py	/^def load_custom_markdown_extensions(extensions_dir):$/;"	f
-load_extensions	majestic/__init__.py	/^from majestic.utils import load_extensions$/;"	i
-load_extensions	majestic/md.py	/^from majestic.utils import load_extensions$/;"	i
-load_extensions	majestic/utils.py	/^def load_extensions(directory):$/;"	f
-load_settings	majestic/__init__.py	/^def load_settings(default=True, local=True, files=None):$/;"	f
+load_extensions	majestic/extensions.py	/^def load_extensions(directory):$/;"	f
+load_settings	majestic/utils.py	/^def load_settings(default=True, local=True, files=None):$/;"	f
 main	majestic/__init__.py	/^def main(argv):$/;"	f
-majestic	majestic/__init__.py	/^import majestic.md as md$/;"	i
-markdown	majestic/md.py	/^import markdown$/;"	i
-markdown_files	majestic/__init__.py	/^def markdown_files(directory):$/;"	f
-math	majestic/__init__.py	/^import math$/;"	i
-md	majestic/__init__.py	/^import majestic.md as md$/;"	i
-mkdir_exist_ok	majestic/__init__.py	/^def mkdir_exist_ok(target):$/;"	f
-normalise_slug	majestic/__init__.py	/^def normalise_slug(slug):$/;"	f
-objects_to_write	majestic/__init__.py	/^    objects_to_write = 'process_objects_to_write'$/;"	v	class:ExtensionStage
-os	majestic/__init__.py	/^import os$/;"	i
-output_path	majestic/__init__.py	/^    def output_path(self):$/;"	m	class:BlogObject
-output_path	majestic/__init__.py	/^    def output_path(self, value):$/;"	m	class:BlogObject
-paginate_posts	majestic/__init__.py	/^    def paginate_posts(class_, posts, settings):$/;"	m	class:Index
-parse_copy_paths	majestic/__init__.py	/^def parse_copy_paths(path_list, output_root):$/;"	f
-path_part	majestic/__init__.py	/^    def path_part(self):$/;"	m	class:BlogObject
-path_part	majestic/__init__.py	/^    def path_part(self, value):$/;"	m	class:BlogObject
-posts_and_pages	majestic/__init__.py	/^    posts_and_pages = 'process_posts_and_pages'$/;"	v	class:ExtensionStage
+markdown_files	majestic/utils.py	/^def markdown_files(directory):$/;"	f
+md	majestic/content.py	/^import majestic.md as md$/;"	I
+normalise_slug	majestic/utils.py	/^def normalise_slug(slug):$/;"	f
+objects_to_write	majestic/extensions.py	/^    objects_to_write = 'process_objects_to_write'$/;"	v	class:ExtensionStage
+output_path	majestic/content.py	/^    def output_path(self):$/;"	m	class:BlogObject
+output_path	majestic/content.py	/^    def output_path(self, value):$/;"	m	class:BlogObject
+paginate_posts	majestic/collections.py	/^    def paginate_posts(class_, posts, settings):$/;"	m	class:Index
+parse_copy_paths	majestic/resources.py	/^def parse_copy_paths(path_list, output_root):$/;"	f
+path_part	majestic/content.py	/^    def path_part(self):$/;"	m	class:BlogObject
+path_part	majestic/content.py	/^    def path_part(self, value):$/;"	m	class:BlogObject
+posts_and_pages	majestic/extensions.py	/^    posts_and_pages = 'process_posts_and_pages'$/;"	v	class:ExtensionStage
 process_blog	majestic/__init__.py	/^def process_blog(*, settings, write_only_new=True,$/;"	f
-pytz	majestic/__init__.py	/^import pytz$/;"	i
-re	majestic/__init__.py	/^import re$/;"	i
-render_to_disk	majestic/__init__.py	/^    def render_to_disk(self, environment, **kwargs):$/;"	m	class:BlogObject
-rfc822_date	majestic/__init__.py	/^def rfc822_date(date):$/;"	f
-shutil	majestic/__init__.py	/^import shutil$/;"	i
-string	majestic/__init__.py	/^import string$/;"	i
-sys	majestic/__init__.py	/^import sys$/;"	i
-sys	majestic/utils.py	/^import sys$/;"	i
-tempfile	majestic/__init__.py	/^import tempfile$/;"	i
-unidecode	majestic/__init__.py	/^from unidecode import unidecode$/;"	i
-url	majestic/__init__.py	/^    def url(self):$/;"	m	class:BlogObject
-url	majestic/__init__.py	/^    def url(self, value):$/;"	m	class:BlogObject
-urljoin	majestic/__init__.py	/^from urllib.parse import urljoin, urlparse$/;"	i
-urlparse	majestic/__init__.py	/^from urllib.parse import urljoin, urlparse$/;"	i
-validate_slug	majestic/__init__.py	/^def validate_slug(slug):$/;"	f
-webbrowser	majestic/__init__.py	/^import webbrowser$/;"	i
+render_to_disk	majestic/content.py	/^    def render_to_disk(self, environment, **kwargs):$/;"	m	class:BlogObject
+rfc822_date	majestic/templating.py	/^def rfc822_date(date):$/;"	f
+url	majestic/content.py	/^    def url(self):$/;"	m	class:BlogObject
+url	majestic/content.py	/^    def url(self, value):$/;"	m	class:BlogObject
+validate_slug	majestic/utils.py	/^def validate_slug(slug):$/;"	f
