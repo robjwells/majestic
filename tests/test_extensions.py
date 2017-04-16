@@ -12,7 +12,6 @@ from pathlib import Path
 
 
 TESTS_DIR = Path(__file__).resolve().parent
-MAJESTIC_DIR = TESTS_DIR.parent.joinpath('majestic')
 TEST_BLOG_DIR = TESTS_DIR.joinpath('test-blog')
 
 
