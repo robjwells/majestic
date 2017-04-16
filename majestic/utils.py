@@ -1,5 +1,8 @@
+import os
+from pathlib import Path
 import re
 import string
+
 
 from unidecode import unidecode
 
@@ -83,3 +86,20 @@ def chunk(iterable, chunk_length):
     """
     for idx in range(0, len(iterable), chunk_length):
         yield iterable[idx:idx + chunk_length]
+
+
+def markdown_files(directory):
+    """Return a generator of the markdown files found by walking directory
+
+    Accepted extenions for markdown files:
+        * md
+        * mkd
+        * mdown
+        * mkdown
+        * markdown
+    """
+    extensions = {'.md', '.mkd', '.mdown', '.mkdown', '.markdown'}
+    files = (Path(dirpath, f)
+             for dirpath, dirnames, filenames in os.walk(str(directory))
+             for f in filenames if Path(f).suffix in extensions)
+    return files

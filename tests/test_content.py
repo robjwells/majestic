@@ -3,6 +3,7 @@ import majestic
 from majestic.content import (
     BlogObject, Content, Page, Post, ModificationDateError
     )
+from majestic.utils import markdown_files
 
 from datetime import datetime
 import os
@@ -31,7 +32,7 @@ class TestLoadContentFiles(unittest.TestCase):
                 if os.path.splitext(f)[1] in extensions:
                     test_files.append(os.path.join(path, f))
         test_files = list(map(Path, test_files))
-        returned_files = list(majestic.markdown_files(posts_dir))
+        returned_files = list(markdown_files(posts_dir))
         test_files.sort()
         returned_files.sort()
         self.assertEqual(test_files, returned_files)
@@ -39,7 +40,7 @@ class TestLoadContentFiles(unittest.TestCase):
     def test_markdown_files_empty_dir(self):
         """result is empty when given empty dir"""
         temp_dir = Path(tempfile.mkdtemp())
-        files = majestic.markdown_files(temp_dir)
+        files = markdown_files(temp_dir)
         self.assertFalse(list(files))
         temp_dir.rmdir()
 
@@ -48,7 +49,7 @@ class TestLoadContentFiles(unittest.TestCase):
         temp_dir = Path(tempfile.mkdtemp())
         for x in range(20):
             temp_dir.touch(x)
-        files = majestic.markdown_files(temp_dir)
+        files = markdown_files(temp_dir)
         self.assertFalse(list(files))
         for file in temp_dir.iterdir():
             file.unlink()

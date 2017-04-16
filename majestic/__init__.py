@@ -19,6 +19,7 @@ from majestic.templating import jinja_environment
 from majestic.extensions import (
     ExtensionStage, load_extensions, apply_extensions
     )
+from majestic.utils import markdown_files
 
 __version__ = '0.2.0'
 
@@ -52,23 +53,6 @@ def load_settings(default=True, local=True, files=None):
                 else:
                     settings[key] = from_file[key]
     return settings
-
-
-def markdown_files(directory):
-    """Return a generator of the markdown files found by walking directory
-
-    Accepted extenions for markdown files:
-        * md
-        * mkd
-        * mdown
-        * mkdown
-        * markdown
-    """
-    extensions = {'.md', '.mkd', '.mdown', '.mkdown', '.markdown'}
-    files = (Path(dirpath, f)
-             for dirpath, dirnames, filenames in os.walk(str(directory))
-             for f in filenames if Path(f).suffix in extensions)
-    return files
 
 
 def process_blog(*, settings, write_only_new=True,
