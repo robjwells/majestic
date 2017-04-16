@@ -202,7 +202,8 @@ Options:
                  **process_options)
 
     if not args['--no-resources']:
-        copy_resources(settings=settings,
+        copy_resources(resources=settings['resources'],
+                       output_root=settings['paths']['output root'],
                        use_symlinks=args['--link-resources'])
 
     # Change to temp directory and start web server
