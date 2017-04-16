@@ -2,26 +2,8 @@ import importlib
 import re
 import string
 import sys
-from urllib.parse import urljoin, urlparse
 
-from bs4 import BeautifulSoup
 from unidecode import unidecode
-
-
-def absolute_urls(html, base_url):
-    """Change relative URLs in html to absolute URLs using base_url
-
-    Arguments:
-        html:           str containing HTML markup
-        base_url:       str containing a URL
-    """
-    parsed_html = BeautifulSoup(html, 'html.parser')
-    for attr in ['href', 'src', 'poster']:
-        for tag in parsed_html.select('[{0}]'.format(attr)):
-            tag_url = tag[attr]
-            if not urlparse(tag_url).netloc:
-                tag[attr] = urljoin(base_url, tag_url)
-    return str(parsed_html)
 
 
 def load_extensions(directory):
