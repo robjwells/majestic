@@ -4,7 +4,7 @@ with open('requirements.txt') as req_file:
     reqs = [line.strip() for line in req_file]
 
 setup(name='majestic',
-      version='0.2.0',
+      version='0.3.0',
       description='A basic static website generator',
       url='https://github.com/robjwells/majestic',
       author='Rob Wells',

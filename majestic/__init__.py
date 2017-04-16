@@ -20,7 +20,7 @@ from majestic.resources import copy_resources
 from majestic.templating import jinja_environment
 from majestic.utils import markdown_files, load_settings
 
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 
 
 def process_blog(*, settings, write_only_new=True,
