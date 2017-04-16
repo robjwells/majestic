@@ -12,12 +12,13 @@ import webbrowser
 from docopt import docopt
 import pytz
 
-from majestic.utils import load_extensions
 from majestic.content import Page, Post, DraftError
 from majestic.collections import Archives, Index, RSSFeed, Sitemap
 from majestic.resources import copy_resources
 from majestic.templating import jinja_environment
-from majestic.extensions import ExtensionStage, apply_extensions
+from majestic.extensions import (
+    ExtensionStage, load_extensions, apply_extensions
+    )
 
 __version__ = '0.2.0'
 

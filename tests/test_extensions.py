@@ -1,8 +1,9 @@
 import unittest
 from majestic import load_settings
 from majestic.content import Post, Page
-from majestic.utils import load_extensions
-from majestic.extensions import ExtensionStage, apply_extensions
+from majestic.extensions import (
+    ExtensionStage, load_extensions, apply_extensions
+    )
 
 from datetime import datetime
 import tempfile
