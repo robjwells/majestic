@@ -250,6 +250,9 @@ class Content(BlogObject):
         if ['draft'] in meta:
             raise DraftError('Marked draft in metadata header')
 
+        # Filter out --- (etc) separators in header
+        meta = [l for l in meta if len(l) == 2]
+
         return class_(body=body, settings=settings, source_path=file,
                       **dict(meta))
 
