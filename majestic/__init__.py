@@ -2,7 +2,6 @@
 
 from datetime import datetime
 from http.server import HTTPServer, SimpleHTTPRequestHandler
-import json
 import os
 from pathlib import Path
 import sys
@@ -19,40 +18,9 @@ from majestic.templating import jinja_environment
 from majestic.extensions import (
     ExtensionStage, load_extensions, apply_extensions
     )
-from majestic.utils import markdown_files
+from majestic.utils import markdown_files, load_settings
 
 __version__ = '0.2.0'
-
-MAJESTIC_DIR = Path(__file__).resolve().parent
-
-
-def load_settings(default=True, local=True, files=None):
-    """Load config from standard locations and specified files
-
-    default:    bool, load default config file
-    local:      bool, load config file from current directory
-    files:      list of filenames to load
-    """
-    if files is None:
-        files = []
-    if local:
-        files.insert(0, Path.cwd().joinpath('settings.json'))
-    if default:
-        files.insert(0, MAJESTIC_DIR.joinpath('majestic.json'))
-    settings = {}
-    for file in files:
-        with open(file) as json_file:
-            from_file = json.load(json_file)
-            # Merge settings
-            for key in from_file:
-                if key in settings:
-                    if type(settings[key]) == dict:
-                        settings[key].update(from_file[key])
-                    elif type(settings[key]) == list:
-                        settings[key].extend(from_file[key])
-                else:
-                    settings[key] = from_file[key]
-    return settings
 
 
 def process_blog(*, settings, write_only_new=True,

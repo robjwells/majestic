@@ -1,5 +1,5 @@
 import unittest
-import majestic
+from majestic.utils import load_settings
 
 import os
 from pathlib import Path
@@ -15,14 +15,14 @@ class TestLoadSettings(unittest.TestCase):
 
     def test_load_default_settings(self):
         """Config class contains setting set only in default config file"""
-        settings = majestic.load_settings(default=True, local=False)
+        settings = load_settings(default=True, local=False)
         self.assertTrue(settings['testing']['default cfg loaded'])
 
     def test_load_specific_only_str(self):
         """When given filenames (as str), load only those files"""
         test_settings_fn = str(TEST_BLOG_DIR.joinpath('settings.json'))
-        settings = majestic.load_settings(default=False, local=False,
-                                          files=[test_settings_fn])
+        settings = load_settings(default=False, local=False,
+                                 files=[test_settings_fn])
         self.assertTrue(settings['testing']['test-blog cfg loaded'])
 
     def test_load_specific_only_Path(self):
@@ -34,28 +34,28 @@ class TestLoadSettings(unittest.TestCase):
         itself, not its callers.
         """
         test_settings_fn = TEST_BLOG_DIR.joinpath('settings.json')
-        settings = majestic.load_settings(default=False, local=False,
-                                          files=[test_settings_fn])
+        settings = load_settings(default=False, local=False,
+                                 files=[test_settings_fn])
         self.assertTrue(settings['testing']['test-blog cfg loaded'])
 
     def test_load_default_and_local(self):
         """Properly load defaults and settings.json in current directory"""
         os.chdir(str(TEST_BLOG_DIR))
-        settings = majestic.load_settings(default=True, local=True)
+        settings = load_settings(default=True, local=True)
         self.assertTrue(settings['testing']['test-blog cfg loaded'])
         self.assertTrue(settings['testing']['default cfg loaded'])
 
     def test_defaults_overriden_by_local(self):
         """Config files loaded in order so that locals override defaults"""
-        default_settings = majestic.load_settings(default=True, local=False)
+        default_settings = load_settings(default=True, local=False)
         overridden_value = default_settings['testing']['overridden setting']
         self.assertFalse(overridden_value)
         os.chdir(str(TEST_BLOG_DIR))
-        combined_settings = majestic.load_settings()
+        combined_settings = load_settings()
         overridden_value = combined_settings['testing']['overridden setting']
         self.assertTrue(overridden_value)
 
     def test_settings_empty_when_not_given_anything(self):
         """Returned config object should be empty when everything disabled"""
-        settings = majestic.load_settings(default=False, local=False)
+        settings = load_settings(default=False, local=False)
         self.assertFalse(settings)

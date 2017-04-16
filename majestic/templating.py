@@ -1,11 +1,9 @@
-from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup
 import jinja2
 
-
-MAJESTIC_DIR = Path(__file__).resolve().parent
+from majestic.utils import MAJESTIC_DIR
 
 
 def absolute_urls(html, base_url):
