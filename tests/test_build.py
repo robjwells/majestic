@@ -11,20 +11,6 @@ TESTS_DIR = Path(__file__).resolve().parent
 MAJESTIC_DIR = TESTS_DIR.parent.joinpath('majestic')
 TEST_BLOG_DIR = TESTS_DIR.joinpath('test-blog')
 
-# Timing report code
-# import time
-# @classmethod
-# def setUpClass(class_):
-#     class_.start_time = time.time()
-#
-# @classmethod
-# def tearDownClass(class_):
-#     elapsed = round(time.time() - class_.start_time, 3)
-#     print('\n{0:<30}{1:.3f}s'.format(class_.__name__, elapsed))
-#
-# unittest.TestCase.setUpClass = setUpClass
-# unittest.TestCase.tearDownClass = tearDownClass
-
 
 class TestFull(unittest.TestCase):
     """Test the processing of a full source directory
