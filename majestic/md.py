@@ -1,8 +1,8 @@
-from majestic.extensions import load_extensions
-
 import markdown
 from markdown.extensions import Extension
 from pathlib import Path
+
+from majestic.extensions import load_extensions
 
 MD_INSTANCE = None
 
