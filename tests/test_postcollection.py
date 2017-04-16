@@ -6,6 +6,7 @@ from majestic.collections import (
     )
 
 from datetime import datetime, timedelta
+import os
 from pathlib import Path
 import random
 import shutil
@@ -230,6 +231,7 @@ class TestSitemap(unittest.TestCase):
     written out.
     """
     def setUp(self):
+        os.chdir(TEST_BLOG_DIR)
         settings_path = TEST_BLOG_DIR.joinpath('settings.json')
         self.settings = load_settings(files=[settings_path],
                                       local=False)
@@ -243,10 +245,7 @@ class TestSitemap(unittest.TestCase):
         ]
         # Make dummy files and directories
         for f in self.files:
-            try:
-                f.output_path.parent.mkdir(parents=True)
-            except FileExistsError:
-                pass
+            f.output_path.parent.mkdir(parents=True, exist_ok=True)
             f.output_path.touch()
 
     def tearDown(self):
