@@ -18,8 +18,11 @@
         "json": {
             "author": {
                 "name": "Example Name",
-                "url": "http://www.example.com/about"
-            }
+                "url": "http://www.example.com/about",
+                "avatar": "https://www.placehold.it/512"
+            },
+            "icon": "https://www.placehold.it/512",
+            "favicon": "https://www.placehold.it/64"
         }
     },
 
