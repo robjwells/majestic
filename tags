@@ -46,7 +46,7 @@ normalise_slug	majestic/utils.py	/^def normalise_slug(slug):$/;"	f
 objects_to_write	majestic/extensions.py	/^    objects_to_write = 'process_objects_to_write'$/;"	v	class:ExtensionStage
 output_path	majestic/content.py	/^    def output_path(self):$/;"	m	class:BlogObject
 output_path	majestic/content.py	/^    def output_path(self, value):$/;"	m	class:BlogObject
-paginate_posts	majestic/collections.py	/^    def paginate_posts(class_, posts, settings):$/;"	m	class:Index
+paginate_posts	majestic/collections.py	/^    def paginate_posts(cls, posts, settings):$/;"	m	class:Index
 parse_copy_paths	majestic/resources.py	/^def parse_copy_paths(path_list, output_root):$/;"	f
 path_part	majestic/content.py	/^    def path_part(self):$/;"	m	class:BlogObject
 path_part	majestic/content.py	/^    def path_part(self, value):$/;"	m	class:BlogObject
