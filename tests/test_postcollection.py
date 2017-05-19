@@ -334,9 +334,11 @@ class TestRSSFeed(unittest.TestCase):
 class TestJsonFeed(unittest.TestCase):
     """Test the JsonFeed class"""
     def setUp(self):
+        os.chdir(TEST_BLOG_DIR)
         settings_path = TEST_BLOG_DIR.joinpath('settings.json')
         self.settings = load_settings(files=[settings_path],
                                       local=False)
+        self.output_dir = Path(self.settings['paths']['output root'])
         self.number_of_posts = 5
         self.settings['feeds']['number of posts'] = self.number_of_posts
 
@@ -348,6 +350,11 @@ class TestJsonFeed(unittest.TestCase):
             for i in range(40)
             ]
         random.shuffle(self.posts)      # Ensure not sorted
+
+    def tearDown(self):
+        """Clean up dummy files"""
+        if self.output_dir.exists():
+            shutil.rmtree(str(self.output_dir))
 
     def test_JsonFeed_init_limit_posts(self):
         """JsonFeed sets self.posts to subset of posts arg on init
