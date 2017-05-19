@@ -168,14 +168,14 @@ class TestAbsoluteURLs(unittest.TestCase):
         """
         html = '''\
 <head>
-<link href="/resources/my-stylesheet.css">
-</link></head>
+<link href="/resources/my-stylesheet.css"/>
+</head>
 <p><a href="/latin">Lorem ipsum</a>.</p>
         '''.strip()
         expected = '''\
 <head>
-<link href="http://example.com/resources/my-stylesheet.css">
-</link></head>
+<link href="http://example.com/resources/my-stylesheet.css"/>
+</head>
 <p><a href="http://example.com/latin">Lorem ipsum</a>.</p>
         '''.strip()
         result = utils.absolute_urls(html=html, base_url=self.base_url)
