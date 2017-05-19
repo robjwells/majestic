@@ -402,7 +402,9 @@ class TestJSONFeed(unittest.TestCase):
             ('feed_url',
              urljoin(self.settings['site']['url'],
                      self.settings['paths']['json feed path template'])),
-            ('description', self.settings['site']['description'])
+            ('description', self.settings['site']['description']),
+            ('author', {'name': 'Example Name',
+                        'url': 'http://www.example.com/about'}),
             )
         for key, value in root_data:
             with self.subTest(msg=f'{key} -- {value}'):
