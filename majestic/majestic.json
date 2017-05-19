@@ -19,6 +19,7 @@
         "index pages path template": "page-{content.page_number}/index.html",
         "archives path template": "archives/index.html",
         "rss path template": "rss.xml",
+        "json feed path template": "feed.json",
         "sitemap path template": "sitemap.xml"
     },
 
@@ -41,7 +42,7 @@
         "posts per page": 5
     },
 
-    "rss": {
+    "feeds": {
         "number of posts": 10
     },
 

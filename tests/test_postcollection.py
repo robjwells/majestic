@@ -294,7 +294,7 @@ class TestRSSFeed(unittest.TestCase):
         self.settings = load_settings(files=[settings_path],
                                       local=False)
         self.number_of_posts = 5
-        self.settings['rss']['number of posts'] = self.number_of_posts
+        self.settings['feeds']['number of posts'] = self.number_of_posts
 
         starting_date = datetime(2015, 9, 22, 19)
         self.posts = [

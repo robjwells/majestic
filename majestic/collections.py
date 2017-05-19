@@ -118,7 +118,7 @@ class RSSFeed(PostsCollection):
         calling super().__init__ and doing unnecessary work.
         """
         self._settings = settings
-        post_limit = settings['rss']['number of posts']
+        post_limit = settings['feeds']['number of posts']
         self.posts = sorted(posts, reverse=True)[:post_limit]
 
 
