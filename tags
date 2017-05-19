@@ -9,16 +9,18 @@ BlogObject	majestic/content.py	/^class BlogObject(object):$/;"	c
 Content	majestic/content.py	/^class Content(BlogObject):$/;"	c
 DraftError	majestic/content.py	/^class DraftError(Exception):$/;"	c
 ExtensionStage	majestic/extensions.py	/^class ExtensionStage(Enum):$/;"	c
+Feed	majestic/collections.py	/^class Feed(PostsCollection):$/;"	c
 Index	majestic/collections.py	/^class Index(PostsCollection):$/;"	c
+JSONFeed	majestic/collections.py	/^class JSONFeed(Feed):$/;"	c
 MAJESTIC_DIR	majestic/utils.py	/^MAJESTIC_DIR = Path(__file__).resolve().parent$/;"	v
 MD_INSTANCE	majestic/md.py	/^MD_INSTANCE = None$/;"	v
 ModificationDateError	majestic/content.py	/^class ModificationDateError(Exception):$/;"	c
 Page	majestic/content.py	/^class Page(Content):$/;"	c
 Post	majestic/content.py	/^class Post(Content):$/;"	c
 PostsCollection	majestic/collections.py	/^class PostsCollection(BlogObject):$/;"	c
-RSSFeed	majestic/collections.py	/^class RSSFeed(PostsCollection):$/;"	c
+RSSFeed	majestic/collections.py	/^class RSSFeed(Feed):$/;"	c
 Sitemap	majestic/collections.py	/^class Sitemap(BlogObject):$/;"	c
-absolute_urls	majestic/templating.py	/^def absolute_urls(html, base_url):$/;"	f
+absolute_urls	majestic/utils.py	/^def absolute_urls(html, base_url):$/;"	f
 apply_extensions	majestic/extensions.py	/^def apply_extensions(*, modules, stage, settings,$/;"	f
 chunk	majestic/utils.py	/^def chunk(iterable, chunk_length):$/;"	f
 copy_directory_tree	majestic/resources.py	/^    def copy_directory_tree(source, dest):$/;"	f	function:copy_files	file:
@@ -50,6 +52,7 @@ path_part	majestic/content.py	/^    def path_part(self):$/;"	m	class:BlogObject
 path_part	majestic/content.py	/^    def path_part(self, value):$/;"	m	class:BlogObject
 posts_and_pages	majestic/extensions.py	/^    posts_and_pages = 'process_posts_and_pages'$/;"	v	class:ExtensionStage
 process_blog	majestic/__init__.py	/^def process_blog(*, settings, write_only_new=True,$/;"	f
+render_to_disk	majestic/collections.py	/^    def render_to_disk(self, *args, **kwargs):$/;"	m	class:JSONFeed
 render_to_disk	majestic/content.py	/^    def render_to_disk(self, environment, **kwargs):$/;"	m	class:BlogObject
 rfc822_date	majestic/templating.py	/^def rfc822_date(date):$/;"	f
 url	majestic/content.py	/^    def url(self):$/;"	m	class:BlogObject
