@@ -4,6 +4,7 @@ from majestic.content import Post, Page
 from majestic.collections import (
     PostsCollection, Archives, Index, RSSFeed, JSONFeed, Sitemap
     )
+from majestic.utils import absolute_urls
 
 from datetime import datetime, timedelta
 import json
@@ -344,7 +345,8 @@ class TestJSONFeed(unittest.TestCase):
 
         starting_date = datetime(2015, 9, 22, 19)
         self.posts = [
-            Post(title='post {}'.format(i), body='Here’s some text!',
+            Post(title='post {}'.format(i),
+                 body='Here’s some text! And [a relative URL](/about)',
                  date=starting_date - timedelta(i),
                  settings=self.settings)
             for i in range(40)
@@ -410,7 +412,8 @@ class TestJSONFeed(unittest.TestCase):
             {'id': post.url,
              'url': post.url,
              'title': post.title,
-             'content_html': post.html,
+             'content_html':
+                absolute_urls(post.html, self.settings['site']['url']),
              'date_published': post.date.isoformat(timespec='seconds')
              }
             for post in test_posts
