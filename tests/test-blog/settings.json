@@ -5,7 +5,9 @@
     },
 
     "site": {
-        "url": "http://www.example.com"
+        "url": "http://www.example.com",
+        "title": "Example Blog",
+        "description": "An example blog for testing."
     },
 
     "dates": {

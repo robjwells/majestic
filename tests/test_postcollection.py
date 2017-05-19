@@ -6,10 +6,12 @@ from majestic.collections import (
     )
 
 from datetime import datetime, timedelta
+import json
 import os
 from pathlib import Path
 import random
 import shutil
+from urllib.parse import urljoin
 
 import pytz
 
@@ -327,3 +329,88 @@ class TestRSSFeed(unittest.TestCase):
         feed = RSSFeed(posts=self.posts, settings=self.settings)
         self.assertEqual(feed._path_template_key, 'rss path template')
         self.assertEqual(feed._template_file_key, 'rss')
+
+
+class TestJsonFeed(unittest.TestCase):
+    """Test the JsonFeed class"""
+    def setUp(self):
+        settings_path = TEST_BLOG_DIR.joinpath('settings.json')
+        self.settings = load_settings(files=[settings_path],
+                                      local=False)
+        self.number_of_posts = 5
+        self.settings['feeds']['number of posts'] = self.number_of_posts
+
+        starting_date = datetime(2015, 9, 22, 19)
+        self.posts = [
+            Post(title='post {}'.format(i), body='Here’s some text!',
+                 date=starting_date - timedelta(i),
+                 settings=self.settings)
+            for i in range(40)
+            ]
+        random.shuffle(self.posts)      # Ensure not sorted
+
+    def test_JsonFeed_init_limit_posts(self):
+        """JsonFeed sets self.posts to subset of posts arg on init
+
+        The number of posts in JsonFeed.posts should equal self.number_of_posts
+        """
+        feed = JsonFeed(posts=self.posts, settings=self.settings)
+        self.assertEqual(len(feed.posts), self.number_of_posts)
+
+    def test_JsonFeed_init_posts_sorted(self):
+        """JsonFeed sets self.posts to sorted subset of posts arg on init
+
+        JsonFeed.posts should be sorted by date, newest first.
+        """
+        feed = JsonFeed(posts=self.posts, settings=self.settings)
+        sorted_posts = sorted(self.posts, reverse=True)[:self.number_of_posts]
+        self.assertEqual(feed.posts, sorted_posts)
+
+    def test_JsonFeed_sets_key_variables(self):
+        """JsonFeed should set path template but not template file"""
+        feed = JsonFeed(posts=self.posts, settings=self.settings)
+        self.assertEqual(feed._path_template_key, 'json feed path template')
+        with self.assertRaises(NotImplementedError):
+            feed._template_file_key
+
+    def test_JsonFeed_is_valid(self):
+        """JsonFeed should write a valid JSON Feed file to disk
+
+        JsonFeed must override the default BlogObject write_to_disk
+        because it doesn't use the Jinja templating that the rest of
+        the site's content (HTML or XML) needs.
+        """
+        test_posts = [self.posts[0], self.posts[1]]
+        feed = JsonFeed(posts=self.posts, settings=self.settings)
+        feed.render_to_disk()
+        json_file = Path(self.settings['paths']['output root'],
+                         self.settings['json feed path template'])
+        output = json.loads(json_file.read_text(encoding='utf-8'))
+
+        root_data = (
+            ('version', 'https://jsonfeed.org/version/1'),
+            ('title', self.settings['site']['title']),
+            ('home_page_url', self.settings['site']['url'])
+            ('feed_url',
+             urljoin(self.settings['site']['url'],
+                     self.settings['paths']['json feed path template'])),
+            ('description', self.settings['site']['description'])
+            )
+        for key, value in root_data:
+            with self.subTest(msg=f'{key} -- {value}'):
+                self.assertEqual(self.output['key'], value)
+
+        expected_items = [
+            {'id': post.url,
+             'url': post.url,
+             'title': post.title,
+             'content_html': post.html,
+             'date_published': post.date.isoformat(timespec='seconds')
+            }
+            for post in test_posts
+            ]
+
+        post_id = lambda p: p['id']
+        expected_items.sort(key=post_id)
+        output['items'].sort(key=post_id)
+        self.assertEqual(expected_items, output['items'])
