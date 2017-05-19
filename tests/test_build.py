@@ -30,7 +30,7 @@ class TestFull(unittest.TestCase):
                           'page-2.html',
                           'page-3.html'],
                 'archives': ['archives.html'],
-                'rss': ['rss.xml'],
+                'feeds': ['rss.xml', 'feed.json'],
                 'sitemap': ['sitemap.xml']
                 },
             './2012': {
@@ -145,8 +145,8 @@ class TestFull(unittest.TestCase):
                      if not p.name.startswith('.')}
         self.assertEqual(set(self.expected['.']['archives']), files_set)
 
-    def test_process_blog_rss_only(self):
-        """process_blog correctly writes out the rss feed"""
+    def test_process_blog_feeds_only(self):
+        """process_blog correctly writes out the feed files"""
         majestic.process_blog(
             settings=self.settings, feeds=True,
             posts=False, pages=False, index=False,
@@ -155,7 +155,7 @@ class TestFull(unittest.TestCase):
         files_set = {p.name for p in Path().iterdir()
                      if p.is_file()
                      if not p.name.startswith('.')}
-        self.assertEqual(set(self.expected['.']['rss']), files_set)
+        self.assertEqual(set(self.expected['.']['feeds']), files_set)
 
     def test_process_blog_all(self):
         """process_blog correctly writes out all expected files"""
