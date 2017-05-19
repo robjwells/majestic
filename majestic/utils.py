@@ -130,9 +130,9 @@ def load_settings(default=True, local=True, files=None):
             # Merge settings
             for key in from_file:
                 if key in settings:
-                    if type(settings[key]) == dict:
+                    if isinstance(settings[key], dict):
                         settings[key].update(from_file[key])
-                    elif type(settings[key]) == list:
+                    elif isinstance(settings[key], list):
                         settings[key].extend(from_file[key])
                 else:
                     settings[key] = from_file[key]

@@ -81,7 +81,7 @@ class Index(PostsCollection):
                                url=self.url)
 
     @classmethod
-    def paginate_posts(class_, posts, settings):
+    def paginate_posts(cls, posts, settings):
         """Split up posts across a list of index pages
 
         The returned list is ordered by index page number.
@@ -90,7 +90,7 @@ class Index(PostsCollection):
         posts_newest_first = sorted(posts, reverse=True)
         chunked = chunk(posts_newest_first, chunk_length=posts_per_page)
 
-        index_list = [class_(page_number=n, settings=settings, posts=post_list)
+        index_list = [cls(page_number=n, settings=settings, posts=post_list)
                       for n, post_list in enumerate(chunked, start=1)]
 
         for n, index_object in enumerate(index_list):
@@ -159,7 +159,7 @@ class JSONFeed(Feed):
              'url': p.url,
              'title': p.title,
              'content_html':
-                absolute_urls(p.html, self._settings['site']['url']),
+                 absolute_urls(p.html, self._settings['site']['url']),
              'date_published': p.date.isoformat(timespec='seconds')}
             for p in self.posts
             ]

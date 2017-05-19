@@ -1,6 +1,7 @@
+from pathlib import Path
+
 import markdown
 from markdown.extensions import Extension
-from pathlib import Path
 
 from majestic.extensions import load_extensions
 
