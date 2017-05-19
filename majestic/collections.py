@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 
 import pytz
 
@@ -101,17 +102,15 @@ class Index(PostsCollection):
         return index_list
 
 
-class RSSFeed(PostsCollection):
-    """An RSS feed for a blog"""
-    _path_template_key = 'rss path template'
-    _template_file_key = 'rss'
+class Feed(PostsCollection):
+    """A generic feed for a blog"""
 
     def __init__(self, posts, settings):
-        """Initialise RSSFeed with a list of posts and the site settings
+        """Initialise Feed with a list of posts and the site settings
 
         posts can be any list of posts, and only the most recent n are
         stored as a posts attribute on the object. The number chosen
-        is set in the settings file under [rss][number of posts].
+        is set in the settings file under [feeds][number of posts].
 
         The superclass's __init__ isn't called because the posts list
         has to be sorted before being limited, so there's no point
@@ -120,6 +119,52 @@ class RSSFeed(PostsCollection):
         self._settings = settings
         post_limit = settings['feeds']['number of posts']
         self.posts = sorted(posts, reverse=True)[:post_limit]
+
+
+class RSSFeed(Feed):
+    """An RSS feed for a blog"""
+    _path_template_key = 'rss path template'
+    _template_file_key = 'rss'
+
+
+class JsonFeed(Feed):
+    """A JSON feed for a blog
+
+    Valid for JSON Feed version 1 (https://jsonfeed.org/version/1)
+    """
+
+    _path_template_key = 'json feed path template'
+    # _template_file_key deliberately unset as JsonFeed
+    # will not be rendered using a Jinja template
+
+    def render_to_disk(self, *args, **kwargs):
+        """Write a valid JSON feed dictionary to disk
+
+        This overrides the standard BlogObject method because it
+        doesn't make use of Jinja templating to construct the
+        representation written on disk.
+
+        Intead it constructs a dictionary and serialises that
+        with the standard json module.
+        """
+        feed_dict = dict(
+            version='https://jsonfeed.org/version/1',
+            title=self._settings['site']['title'],
+            home_page_url=self._settings['site']['url'],
+            feed_url=self.url,
+            description=self._settings['site']['description'],
+            )
+        feed_dict['items'] = [
+            {'id': p.url,
+             'url': p.url,
+             'title': p.title,
+             'content_html': p.html,
+             'date_published': p.date.isoformat(timespec='seconds')}
+            for p in self.posts
+            ]
+        self.output_path.parent.mkdir(parents=True, exist_ok=True)
+        with self.output_path.open(mode='w', encoding='utf-8') as file:
+            json.dump(feed_dict, file)
 
 
 class Archives(PostsCollection):
