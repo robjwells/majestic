@@ -2,7 +2,7 @@ import unittest
 from majestic import load_settings
 from majestic.content import Post, Page
 from majestic.collections import (
-    PostsCollection, Archives, Index, RSSFeed, Sitemap
+    PostsCollection, Archives, Index, RSSFeed, JsonFeed, Sitemap
     )
 
 from datetime import datetime, timedelta
@@ -381,16 +381,15 @@ class TestJsonFeed(unittest.TestCase):
         the site's content (HTML or XML) needs.
         """
         test_posts = [self.posts[0], self.posts[1]]
-        feed = JsonFeed(posts=self.posts, settings=self.settings)
+        feed = JsonFeed(posts=test_posts, settings=self.settings)
         feed.render_to_disk()
         json_file = Path(self.settings['paths']['output root'],
-                         self.settings['json feed path template'])
+                         self.settings['paths']['json feed path template'])
         output = json.loads(json_file.read_text(encoding='utf-8'))
-
         root_data = (
             ('version', 'https://jsonfeed.org/version/1'),
             ('title', self.settings['site']['title']),
-            ('home_page_url', self.settings['site']['url'])
+            ('home_page_url', self.settings['site']['url']),
             ('feed_url',
              urljoin(self.settings['site']['url'],
                      self.settings['paths']['json feed path template'])),
@@ -398,7 +397,7 @@ class TestJsonFeed(unittest.TestCase):
             )
         for key, value in root_data:
             with self.subTest(msg=f'{key} -- {value}'):
-                self.assertEqual(self.output['key'], value)
+                self.assertEqual(output[key], value)
 
         expected_items = [
             {'id': post.url,
@@ -406,11 +405,10 @@ class TestJsonFeed(unittest.TestCase):
              'title': post.title,
              'content_html': post.html,
              'date_published': post.date.isoformat(timespec='seconds')
-            }
+             }
             for post in test_posts
             ]
 
-        post_id = lambda p: p['id']
-        expected_items.sort(key=post_id)
-        output['items'].sort(key=post_id)
+        expected_items.sort(key=lambda p: p['id'])
+        output['items'].sort(key=lambda p: p['id'])
         self.assertEqual(expected_items, output['items'])
