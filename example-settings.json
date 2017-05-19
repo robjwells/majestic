@@ -78,6 +78,16 @@
                                     #    "name": "logo.png"}]
     ],
 
+    "preview": {
+        "browser":                  # Specify which browser you want the preview
+                                    # to open in. If unset, it will open the default
+                                    # browser (unless you’re on macOS 10.12.5
+                                    # http://bugs.python.org/issue30392)
+                                    # See the Python webbrowser module docs for
+                                    # a list of browser names you can use.
+                                    # https://docs.python.org/3/library/webbrowser.html
+    }
+
     "user": {                        # optional, put anything you like in here
         "foo": "bar"
     }

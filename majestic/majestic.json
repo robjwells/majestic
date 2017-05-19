@@ -60,5 +60,9 @@
 
     "jinja": {
         "auto_reload": false
+    },
+
+    "preview": {
+        "browser": "default"
     }
 }

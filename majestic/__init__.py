@@ -218,7 +218,7 @@ Options:
         try:
             print('Starting Majestic preview server at {0}'.format(url),
                   file=sys.stderr)
-            webbrowser.open(url)
+            webbrowser.get(settings['preview']['browser']).open(url)
             httpd.serve_forever()
         except KeyboardInterrupt:
             print('Shutting down webserver.', file=sys.stderr)
