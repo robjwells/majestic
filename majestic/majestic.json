@@ -43,7 +43,10 @@
     },
 
     "feeds": {
-        "number of posts": 10
+        "number of posts": 10,
+        "rss": {
+            "generator": "majestic (https://github.com/robjwells/majestic)"
+        }
     },
 
     "site": {},

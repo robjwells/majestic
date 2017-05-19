@@ -8,7 +8,7 @@
         {% if settings['site']['language'] %}<language>{{ settings['site']['language'] }}</language>{% endif %}
         <lastBuildDate>{{ build_date|rfc822_date }}</lastBuildDate>
         <docs>http://blogs.law.harvard.edu/tech/rss</docs>
-        <generator>{{ generator }}</generator>
+        <generator>{{ settings['feeds']['rss']['generator'] }}</generator>
         {% for post in content %}
         <item>
             <title><![CDATA[{{ post.title }}]]></title>
