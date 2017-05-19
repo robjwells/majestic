@@ -153,7 +153,7 @@ class JSONFeed(Feed):
             home_page_url=self._settings['site']['url'],
             feed_url=self.url,
             description=self._settings['site']['description'],
-            )
+            **self._settings['feeds']['json'])
         feed_dict['items'] = [
             {'id': p.url,
              'url': p.url,
