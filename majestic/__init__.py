@@ -11,7 +11,7 @@ import webbrowser
 from docopt import docopt
 import pytz
 
-from majestic.collections import Archives, Index, RSSFeed, Sitemap
+from majestic.collections import Archives, Index, RSSFeed, JsonFeed, Sitemap
 from majestic.content import Page, Post, DraftError
 from majestic.extensions import (
     ExtensionStage, load_extensions, apply_extensions
@@ -25,7 +25,7 @@ __version__ = '0.4.0'
 
 def process_blog(*, settings, write_only_new=True,
                  posts=True, pages=True, index=True, archives=True,
-                 rss=True, sitemap=True, extensions=True):
+                 feeds=True, sitemap=True, extensions=True):
     """Create output files from the blog's source
 
     By default, create the entire blog. Certain parts can
@@ -100,8 +100,9 @@ def process_blog(*, settings, write_only_new=True,
     if archives:
         objects_to_write.append(Archives(posts=posts_list, settings=settings))
 
-    if rss:
+    if feeds:
         objects_to_write.append(RSSFeed(posts=posts_list, settings=settings))
+        objects_to_write.append(JsonFeed(posts=posts_list, settings=settings))
 
     if extensions_loaded:
         processed = apply_extensions(
@@ -156,7 +157,7 @@ Options:
     --skip-pages            Don't create page HTML files.
     --skip-index            Don't create index page HTML files.
     --skip-archives         Don't create archives HTML file.
-    --skip-rss              Don't create an RSS feed XML file.
+    --skip-feeds            Don't create RSS and JSON feed files.
     --skip-sitemap          Don't create a sitemap XML file.
 
     --no-extensions         Disable extensions.
