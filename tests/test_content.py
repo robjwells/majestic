@@ -248,8 +248,10 @@ class TestBlogObject(unittest.TestCase):
         """
 
         # Override BlogObject variables
-        BlogObject._template_file_key = test_file_name
-        bo = BlogObject()
+        class test_BlogObject(BlogObject):
+            pass
+        test_BlogObject._template_file_key = test_file_name
+        bo = test_BlogObject()
         bo.path_part = test_file_name
 
         # Override settings
