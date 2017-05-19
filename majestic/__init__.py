@@ -11,7 +11,7 @@ import webbrowser
 from docopt import docopt
 import pytz
 
-from majestic.collections import Archives, Index, RSSFeed, JsonFeed, Sitemap
+from majestic.collections import Archives, Index, RSSFeed, JSONFeed, Sitemap
 from majestic.content import Page, Post, DraftError
 from majestic.extensions import (
     ExtensionStage, load_extensions, apply_extensions
@@ -102,7 +102,7 @@ def process_blog(*, settings, write_only_new=True,
 
     if feeds:
         objects_to_write.append(RSSFeed(posts=posts_list, settings=settings))
-        objects_to_write.append(JsonFeed(posts=posts_list, settings=settings))
+        objects_to_write.append(JSONFeed(posts=posts_list, settings=settings))
 
     if extensions_loaded:
         processed = apply_extensions(

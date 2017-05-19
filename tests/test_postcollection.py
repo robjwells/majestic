@@ -2,7 +2,7 @@ import unittest
 from majestic import load_settings
 from majestic.content import Post, Page
 from majestic.collections import (
-    PostsCollection, Archives, Index, RSSFeed, JsonFeed, Sitemap
+    PostsCollection, Archives, Index, RSSFeed, JSONFeed, Sitemap
     )
 
 from datetime import datetime, timedelta
@@ -331,8 +331,8 @@ class TestRSSFeed(unittest.TestCase):
         self.assertEqual(feed._template_file_key, 'rss')
 
 
-class TestJsonFeed(unittest.TestCase):
-    """Test the JsonFeed class"""
+class TestJSONFeed(unittest.TestCase):
+    """Test the JSONFeed class"""
     def setUp(self):
         os.chdir(TEST_BLOG_DIR)
         settings_path = TEST_BLOG_DIR.joinpath('settings.json')
@@ -356,39 +356,39 @@ class TestJsonFeed(unittest.TestCase):
         if self.output_dir.exists():
             shutil.rmtree(str(self.output_dir))
 
-    def test_JsonFeed_init_limit_posts(self):
-        """JsonFeed sets self.posts to subset of posts arg on init
+    def test_JSONFeed_init_limit_posts(self):
+        """JSONFeed sets self.posts to subset of posts arg on init
 
-        The number of posts in JsonFeed.posts should equal self.number_of_posts
+        The number of posts in JSONFeed.posts should equal self.number_of_posts
         """
-        feed = JsonFeed(posts=self.posts, settings=self.settings)
+        feed = JSONFeed(posts=self.posts, settings=self.settings)
         self.assertEqual(len(feed.posts), self.number_of_posts)
 
-    def test_JsonFeed_init_posts_sorted(self):
-        """JsonFeed sets self.posts to sorted subset of posts arg on init
+    def test_JSONFeed_init_posts_sorted(self):
+        """JSONFeed sets self.posts to sorted subset of posts arg on init
 
-        JsonFeed.posts should be sorted by date, newest first.
+        JSONFeed.posts should be sorted by date, newest first.
         """
-        feed = JsonFeed(posts=self.posts, settings=self.settings)
+        feed = JSONFeed(posts=self.posts, settings=self.settings)
         sorted_posts = sorted(self.posts, reverse=True)[:self.number_of_posts]
         self.assertEqual(feed.posts, sorted_posts)
 
-    def test_JsonFeed_sets_key_variables(self):
-        """JsonFeed should set path template but not template file"""
-        feed = JsonFeed(posts=self.posts, settings=self.settings)
+    def test_JSONFeed_sets_key_variables(self):
+        """JSONFeed should set path template but not template file"""
+        feed = JSONFeed(posts=self.posts, settings=self.settings)
         self.assertEqual(feed._path_template_key, 'json feed path template')
         with self.assertRaises(NotImplementedError):
             feed._template_file_key
 
-    def test_JsonFeed_is_valid(self):
-        """JsonFeed should write a valid JSON Feed file to disk
+    def test_JSONFeed_is_valid(self):
+        """JSONFeed should write a valid JSON Feed file to disk
 
-        JsonFeed must override the default BlogObject write_to_disk
+        JSONFeed must override the default BlogObject write_to_disk
         because it doesn't use the Jinja templating that the rest of
         the site's content (HTML or XML) needs.
         """
         test_posts = [self.posts[0], self.posts[1]]
-        feed = JsonFeed(posts=test_posts, settings=self.settings)
+        feed = JSONFeed(posts=test_posts, settings=self.settings)
         feed.render_to_disk()
         json_file = Path(self.settings['paths']['output root'],
                          self.settings['paths']['json feed path template'])

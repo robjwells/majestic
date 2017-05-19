@@ -127,14 +127,14 @@ class RSSFeed(Feed):
     _template_file_key = 'rss'
 
 
-class JsonFeed(Feed):
+class JSONFeed(Feed):
     """A JSON feed for a blog
 
     Valid for JSON Feed version 1 (https://jsonfeed.org/version/1)
     """
 
     _path_template_key = 'json feed path template'
-    # _template_file_key deliberately unset as JsonFeed
+    # _template_file_key deliberately unset as JSONFeed
     # will not be rendered using a Jinja template
 
     def render_to_disk(self, *args, **kwargs):
