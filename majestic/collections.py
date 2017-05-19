@@ -165,7 +165,7 @@ class JSONFeed(Feed):
             ]
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
         with self.output_path.open(mode='w', encoding='utf-8') as file:
-            json.dump(feed_dict, file)
+            json.dump(feed_dict, file, indent=2)
 
 
 class Archives(PostsCollection):
