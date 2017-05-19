@@ -4,7 +4,7 @@ import json
 import pytz
 
 from majestic.content import BlogObject
-from majestic.utils import chunk
+from majestic.utils import chunk, absolute_urls
 
 
 class PostsCollection(BlogObject):
@@ -158,7 +158,8 @@ class JSONFeed(Feed):
             {'id': p.url,
              'url': p.url,
              'title': p.title,
-             'content_html': p.html,
+             'content_html':
+                absolute_urls(p.html, self._settings['site']['url']),
              'date_published': p.date.isoformat(timespec='seconds')}
             for p in self.posts
             ]
