@@ -5,7 +5,6 @@
         "url":                       # required
         "title":                     # required, used in RSS feed
         "description":               # required, used in RSS feed
-
     },
 
     "paths": {
@@ -24,7 +23,6 @@
         "archives path template":    # inherited
         "rss path template":         # inherited
         "sitemap path template":     # inherited
-
     },
 
     "templates": {
@@ -40,14 +38,26 @@
     "dates": {
         "format":                    # inherited
         "timezone":                  # recommended that you set, UTC inherited
-
     },
 
     "index": {
         "paginate":                  # inherited
         "posts per page":            # inherited
-
     },
+
+    "feeds": {
+        "json": {                   # optional, set to fill out optional JSON Feed fields
+                                    # these field names match the JSON Feed spec
+                                    # https://jsonfeed.org/version/1
+            "author": {
+                "name":
+                "url":
+                "avatar":
+            },
+            "icon":
+            "favicon"
+        }
+    }
 
     "markdown": {
         "extensions":                # Whitespace separated list of extensions to use
