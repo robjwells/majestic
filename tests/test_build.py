@@ -101,7 +101,7 @@ class TestFull(unittest.TestCase):
         majestic.process_blog(
             settings=self.settings, posts=True,
             pages=False, index=False, archives=False,
-            rss=False, sitemap=False, extensions=False)
+            feeds=False, sitemap=False, extensions=False)
         os.chdir(str(self.outputdir))
         for dirpath, dirnames, filenames in os.walk('.'):
             self.assertTrue(dirpath in self.expected)
@@ -114,7 +114,7 @@ class TestFull(unittest.TestCase):
         majestic.process_blog(
             settings=self.settings, pages=True,
             posts=False, index=False, archives=False,
-            rss=False, sitemap=False, extensions=False)
+            feeds=False, sitemap=False, extensions=False)
         os.chdir(str(self.outputdir))
         files_set = {p.name for p in Path().iterdir()
                      if p.is_file()
@@ -126,7 +126,7 @@ class TestFull(unittest.TestCase):
         majestic.process_blog(
             settings=self.settings, index=True,
             posts=False, pages=False, archives=False,
-            rss=False, sitemap=False, extensions=False)
+            feeds=False, sitemap=False, extensions=False)
         os.chdir(str(self.outputdir))
         files_set = {p.name for p in Path().iterdir()
                      if p.is_file()
@@ -138,7 +138,7 @@ class TestFull(unittest.TestCase):
         majestic.process_blog(
             settings=self.settings, archives=True,
             posts=False, pages=False, index=False,
-            rss=False, sitemap=False, extensions=False)
+            feeds=False, sitemap=False, extensions=False)
         os.chdir(str(self.outputdir))
         files_set = {p.name for p in Path().iterdir()
                      if p.is_file()
@@ -148,7 +148,7 @@ class TestFull(unittest.TestCase):
     def test_process_blog_rss_only(self):
         """process_blog correctly writes out the rss feed"""
         majestic.process_blog(
-            settings=self.settings, rss=True,
+            settings=self.settings, feeds=True,
             posts=False, pages=False, index=False,
             archives=False, sitemap=False, extensions=False)
         os.chdir(str(self.outputdir))
@@ -188,7 +188,7 @@ class TestFull(unittest.TestCase):
         self.settings['templates']['post'] = 'extension-test.html'
         self.settings['templates']['page'] = 'extension-test.html'
         majestic.process_blog(settings=self.settings, index=False,
-                              archives=False, rss=False, sitemap=False)
+                              archives=False, feeds=False, sitemap=False)
         posts = self.outputdir.glob('20*/*/*.html')
 
         existing_page = self.outputdir.joinpath('info.html')
@@ -214,7 +214,7 @@ class TestFull(unittest.TestCase):
         This should be written to disk.
         """
         majestic.process_blog(settings=self.settings, index=False,
-                              archives=False, rss=False, sitemap=False)
+                              archives=False, feeds=False, sitemap=False)
 
         # Check programmatically created page was written
         new_page = self.outputdir.joinpath('objects_to_write.html')
@@ -230,7 +230,7 @@ class TestFull(unittest.TestCase):
         """
         kwargs = dict(settings=self.settings, pages=True,
                       posts=False, index=False, archives=False,
-                      rss=False, sitemap=False)
+                      feeds=False, sitemap=False)
         majestic.process_blog(**kwargs)
         output = self.outputdir.joinpath(self.expected['.']['pages'][0])
         first_mtime = output.stat().st_mtime
@@ -250,7 +250,7 @@ class TestFull(unittest.TestCase):
         """
         kwargs = dict(settings=self.settings, write_only_new=False,
                       pages=True, posts=False, index=False, archives=False,
-                      rss=False, sitemap=False)
+                      feeds=False, sitemap=False)
         majestic.process_blog(**kwargs)
         output = self.outputdir.joinpath(self.expected['.']['pages'][0])
         first_mtime = output.stat().st_mtime
