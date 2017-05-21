@@ -18,4 +18,5 @@ def process_posts_and_pages(*, posts, pages, settings):
 def process_objects_to_write(*, objects, settings):
     new_page = majestic.Page(title='', body='', slug='objects_to_write',
                              settings=settings)
+    new_page.test_attr = 'page'
     return {'objects': objects + [new_page]}
