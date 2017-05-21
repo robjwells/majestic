@@ -42,7 +42,10 @@ def jinja_environment(user_templates, settings):
     default_templates = MAJESTIC_DIR.joinpath('default_templates')
     loader = jinja2.FileSystemLoader(
         map(str, [user_templates, default_templates]))  # order is important
-    env = jinja2.Environment(loader=loader, **options)
+    env = jinja2.Environment(
+        loader=loader,
+        undefined=jinja2.StrictUndefined,
+        **options)
 
     env.globals['settings'] = settings            # add settings as a global
     env.filters['rfc822_date'] = rfc822_date      # add custom filter

@@ -5,7 +5,7 @@
         <link>{{ settings['site']['url'] }}</link>
         <atom:link href="{{ content.url }}" rel="self" type="application/rss+xml" />
         <description><![CDATA[{{ settings['site']['description'] }}]]></description>
-        {% if settings['site']['language'] %}<language>{{ settings['site']['language'] }}</language>{% endif %}
+        {% if 'language' in settings['site'] %}<language>{{ settings['site']['language'] }}</language>{% endif %}
         <lastBuildDate>{{ build_date|rfc822_date }}</lastBuildDate>
         <docs>http://blogs.law.harvard.edu/tech/rss</docs>
         <generator>{{ settings['feeds']['rss']['generator'] }}</generator>
